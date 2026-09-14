@@ -32,6 +32,7 @@ export function useVisibleSidebarWorktrees(args: {
    *  423-workspace scan on every unrelated settings write. */
   defaultHostId: ExecutionHostId
   agentSendTargetWorktreeId: string | null
+  showHiddenProjects: boolean
 }) {
   const { filterState, sortBy, sortedIds, repoMap, worktreeLineageById, defaultHostId } = args
   const {
@@ -129,10 +130,21 @@ export function useVisibleSidebarWorktrees(args: {
     worktreesByRepo,
     pairedDeviceIdsByEnvironment
   ])
+  // Why here, not on the repo list: project headers render from their worktrees,
+  // so a hidden repo's header only disappears if its worktrees leave this stream.
+  const hiddenFilteredWorktrees = useMemo(
+    () =>
+      args.showHiddenProjects
+        ? recomputedVisibleWorktrees
+        : recomputedVisibleWorktrees.filter(
+            (worktree) => repoMap.get(worktree.repoId)?.hidden !== true
+          ),
+    [args.showHiddenProjects, recomputedVisibleWorktrees, repoMap]
+  )
   // Why: agentStatusEpoch bumps recompute this memo even when membership and
   // order are unchanged; keeping the previous identity stops the whole
   // rows/sectionRows/renderedWorktrees chain from churning per epoch.
-  const visibleWorktrees = useReusedArrayIdentity(recomputedVisibleWorktrees)
+  const visibleWorktrees = useReusedArrayIdentity(hiddenFilteredWorktrees)
 
   return { visibleWorktrees, pairedDeviceIdsByEnvironment }
 }

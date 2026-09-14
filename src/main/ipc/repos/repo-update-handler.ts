@@ -44,6 +44,7 @@ export function registerRepoUpdateHandler(mainWindow: BrowserWindow, store: Stor
             | 'worktreeVisibilitySourcePreferences'
             | 'projectGroupId'
             | 'projectGroupOrder'
+            | 'hidden'
           >
         > & {
           externalWorktreeVisibility?: Repo['externalWorktreeVisibility'] | null
@@ -97,6 +98,9 @@ export function registerRepoUpdateHandler(mainWindow: BrowserWindow, store: Stor
         } else {
           updates.repoIcon = repoIcon
         }
+      }
+      if ('hidden' in updates && typeof updates.hidden !== 'boolean') {
+        delete updates.hidden
       }
       if ('badgeColor' in updates) {
         const badgeColor = normalizeRepoBadgeColor(updates.badgeColor)

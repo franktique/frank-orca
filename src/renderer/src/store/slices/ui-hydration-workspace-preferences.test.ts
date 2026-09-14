@@ -96,6 +96,18 @@ describe('createUISlice hydratePersistedUI', () => {
     expect(store.getState().showSleepingWorkspaces).toBe(true)
   })
 
+  it('restores the show-hidden-projects toggle and defaults it off for absent profiles', () => {
+    const store = createUIStore()
+
+    expect(store.getState().showHiddenProjects).toBe(false)
+
+    store.getState().hydratePersistedUI(makePersistedUI({ showHiddenProjects: true }))
+    expect(store.getState().showHiddenProjects).toBe(true)
+
+    store.getState().hydratePersistedUI(makePersistedUI({ showHiddenProjects: undefined }))
+    expect(store.getState().showHiddenProjects).toBe(false)
+  })
+
   it('restores the hide-default-branch filter from persisted UI state', () => {
     const store = createUIStore()
 

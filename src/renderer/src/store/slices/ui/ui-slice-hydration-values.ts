@@ -2,6 +2,7 @@ import type { PersistedUIState } from '../../../../../shared/persisted-ui-state-
 import type { TaskResumeState, TaskViewPresetId } from '../../../../../shared/ui-chrome-types'
 import type { FeatureInteractionState } from '../../../../../shared/feature-interactions'
 import type { ContextualTourId } from '../../../../../shared/contextual-tours'
+import { DEFAULT_HIDE_SLEEPING_WORKSPACES } from '../../../../../shared/constants'
 import { normalizeFeatureInteractions } from '../../../../../shared/feature-interactions'
 import { normalizeContextualTourIds } from '../../../../../shared/contextual-tours'
 import type { UISlice } from './ui-slice-contract'
@@ -137,6 +138,17 @@ export function mergeContextualTourSeenIds(
     merged.add(id)
   }
   return [...merged]
+}
+
+/** Workspace-list visibility filters, hydrated as a unit.
+ *  Why: ignore older positive-form keys so old profiles start from the new default (sleeping workspaces visible). */
+export function hydrateWorkspaceVisibilityFilters(
+  ui: PersistedUIState
+): Pick<UISlice, 'showSleepingWorkspaces' | 'showHiddenProjects'> {
+  return {
+    showSleepingWorkspaces: !(ui.hideSleepingWorkspaces ?? DEFAULT_HIDE_SLEEPING_WORKSPACES),
+    showHiddenProjects: ui.showHiddenProjects === true
+  }
 }
 
 /** Stale acks/marks are inert (paneKey reuse beats them via stateStartedAt); the sanitizers only bound growth past HYDRATE_MAX_AGE_MS. */

@@ -34,6 +34,7 @@ import {
 import {
   RepoHeaderCreateWorkspaceButton,
   RepoHeaderProjectActionsMenu,
+  RepoHeaderVisibilityToggleButton,
   type RepoHeaderProjectActions
 } from './repo-header-project-actions'
 import {
@@ -244,6 +245,7 @@ export function renderWorktreeSectionHeaderRow(args: {
           isPinnedHeader &&
             ctx.pinDragOver &&
             'rounded-md bg-worktree-sidebar-accent ring-1 ring-worktree-sidebar-ring/40',
+          row.repo?.hidden === true && 'opacity-60',
           row.repo && 'overflow-hidden'
         )}
         style={{
@@ -385,6 +387,14 @@ export function renderWorktreeSectionHeaderRow(args: {
               label={row.label}
               projectGroups={ctx.projectGroups}
               actions={ctx.projectActions}
+            />
+          ) : null}
+
+          {row.repo && ctx.groupBy === 'repo' ? (
+            <RepoHeaderVisibilityToggleButton
+              repo={row.repo}
+              label={row.label}
+              onToggleProjectHidden={ctx.projectActions.onToggleProjectHidden}
             />
           ) : null}
 

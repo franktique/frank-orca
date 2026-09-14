@@ -139,6 +139,7 @@ export const UiUpdateFields = z
     hideSleepingWorkspaces: z.boolean().optional(),
     showSleepingWorkspaces: z.boolean().optional(),
     showInactiveWorkspaces: z.boolean().optional(),
+    showHiddenProjects: z.boolean().optional(),
     workspaceHostScope: z.string().optional(),
     visibleWorkspaceHostIds: z.array(z.string()).nullable().optional(),
     agentsVisibleHostIds: z.array(z.string()).nullable().optional(),

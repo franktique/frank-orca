@@ -20,6 +20,7 @@ function makeBaseline(overrides: Partial<PersistedUIWriteBaseline> = {}): Persis
     sortBy: 'recent',
     projectOrderBy: 'manual',
     showSleepingWorkspaces: true,
+    showHiddenProjects: false,
     hideDefaultBranchWorkspace: false,
     hideAutomationGeneratedWorkspaces: false,
     hideCliCreatedWorkspaces: false,
@@ -142,5 +143,14 @@ describe('persistedUIWriteFieldsToWireUpdate', () => {
       groupBy: 'none'
     })
     expect(update).toEqual({ hideDefaultBranchWorkspace: true, groupBy: 'none' })
+  })
+
+  it('persists showHiddenProjects under the same name with no inversion', () => {
+    expect(persistedUIWriteFieldsToWireUpdate({ showHiddenProjects: true })).toEqual({
+      showHiddenProjects: true
+    })
+    expect(persistedUIWriteFieldsToWireUpdate({ showHiddenProjects: false })).toEqual({
+      showHiddenProjects: false
+    })
   })
 })

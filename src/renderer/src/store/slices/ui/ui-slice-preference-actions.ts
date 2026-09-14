@@ -63,6 +63,9 @@ export function createUiPreferenceActions(set: UISliceSet, get: UISliceGet): Par
     showSleepingWorkspaces: DEFAULT_SHOW_SLEEPING_WORKSPACES,
     setShowSleepingWorkspaces: (v) => set({ showSleepingWorkspaces: v }),
 
+    showHiddenProjects: false,
+    setShowHiddenProjects: (v) => set({ showHiddenProjects: v }),
+
     workspaceHostScope: 'all',
     // Why: host scope is presentation/filtering only — must never trigger resource teardown (terminals, browser pages).
     setWorkspaceHostScope: (scope) => {

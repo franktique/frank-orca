@@ -87,6 +87,7 @@ const WorktreeList = React.memo(function WorktreeList({
   const toggleGroup = useAppStore((s) => s.toggleCollapsedGroup)
   const projectGroups = useAppStore((s) => s.projectGroups ?? EMPTY_PROJECT_GROUPS)
   const folderWorkspaces = useAppStore((s) => s.folderWorkspaces)
+  const showHiddenProjects = useAppStore((s) => s.showHiddenProjects)
   const settings = useAppStore((s) => s.settings)
   const cardProps = useAppStore((s) => s.worktreeCardProperties)
   const { prCache, hostedReviewCache } = useAppStore(
@@ -117,7 +118,8 @@ const WorktreeList = React.memo(function WorktreeList({
     repoMap,
     worktreeLineageById,
     defaultHostId,
-    agentSendTargetWorktreeId
+    agentSendTargetWorktreeId,
+    showHiddenProjects
   })
   const effectiveCollapsedGroups = useEffectiveCollapsedGroups({
     collapsedGroups,
@@ -142,7 +144,8 @@ const WorktreeList = React.memo(function WorktreeList({
     repos,
     projectGroups,
     folderWorkspaces,
-    pairedDeviceIdsByEnvironment
+    pairedDeviceIdsByEnvironment,
+    showHiddenProjects
   })
   const externalWorktreeCards = useSidebarExternalWorktreeCards({
     repos,
@@ -219,6 +222,13 @@ const WorktreeList = React.memo(function WorktreeList({
       })
     },
     [openModal]
+  )
+  const updateRepo = useAppStore((s) => s.updateRepo)
+  const handleToggleProjectHidden = useCallback(
+    (repo: Repo) => {
+      void updateRepo(repo.id, { hidden: !(repo.hidden === true) })
+    },
+    [updateRepo]
   )
   const handleCreateFolderWorkspace = useCallback(
     (projectGroup: ProjectGroup) => {
@@ -307,6 +317,7 @@ const WorktreeList = React.memo(function WorktreeList({
           externalWorktreeCards.newExternalWorktreeInboxActionState
         }
         handleRemoveProject={handleRemoveProject}
+        handleToggleProjectHidden={handleToggleProjectHidden}
         handleCreateGroupFromRepo={projectGroupDialogs.handleCreateGroupFromRepo}
         handleMoveProjectToGroup={projectGroupDialogs.handleMoveProjectToGroup}
         handleRemoveProjectFromGroup={projectGroupDialogs.handleRemoveProjectFromGroup}
