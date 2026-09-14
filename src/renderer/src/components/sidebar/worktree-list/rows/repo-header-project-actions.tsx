@@ -3,6 +3,7 @@ import {
   CircleX,
   Ellipsis,
   Eye,
+  EyeOff,
   FolderInput,
   FolderTree,
   Plus,
@@ -64,6 +65,7 @@ export type RepoHeaderProjectActions = {
   onMoveProjectToGroup: (repo: Repo, groupId: string) => void
   onRemoveProjectFromGroup: (repo: Repo) => void
   onRemoveProject: (repo: Repo) => void
+  onToggleProjectHidden: (repo: Repo) => void
   onCreateForRepo: (projectId: string) => void
 }
 
@@ -171,6 +173,52 @@ export function RepoHeaderProjectActionsMenu({
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  )
+}
+
+export function RepoHeaderVisibilityToggleButton({
+  repo,
+  label,
+  onToggleProjectHidden
+}: {
+  repo: Repo
+  label: string
+  onToggleProjectHidden: (repo: Repo) => void
+}): React.JSX.Element {
+  const hidden = repo.hidden === true
+  const actionLabel = hidden
+    ? translate('sidebar.projectVisibility.show', 'Show project')
+    : translate('sidebar.projectVisibility.hide', 'Hide project')
+  const ariaLabel = translate(
+    'auto.components.sidebar.WorktreeList.toggleProjectVisibility',
+    '{{value0}} visibility',
+    { value0: label }
+  )
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-xs"
+          className={REPO_HEADER_ACTION_BUTTON_CLASS}
+          data-repo-header-action=""
+          aria-label={ariaLabel}
+          onKeyDown={stopRepoHeaderKeyboardToggle}
+          onPointerDown={handleRepoHeaderActionPointerDown}
+          onClick={(event) => {
+            event.preventDefault()
+            event.stopPropagation()
+            onToggleProjectHidden(repo)
+          }}
+        >
+          {hidden ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" sideOffset={6}>
+        {actionLabel}
+      </TooltipContent>
+    </Tooltip>
   )
 }
 

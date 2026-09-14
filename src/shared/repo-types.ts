@@ -102,6 +102,8 @@ export type Repo = {
   sourceControlAi?: RepoSourceControlAiOverrides
   /** Transitional source for ProjectHostSetup.setupMethod while Repo remains compatibility storage. */
   projectHostSetupMethod?: RepoProjectHostSetupMethod
+  /** User-hidden from the sidebar project list; the project and its data are untouched. */
+  hidden?: boolean
 }
 
 /**

@@ -98,6 +98,7 @@ export function buildWorktreeVirtualRowContext(args: BuildArgs): WorktreeVirtual
         onMoveProjectToGroup: props.handleMoveProjectToGroup,
         onRemoveProjectFromGroup: props.handleRemoveProjectFromGroup,
         onRemoveProject: props.handleRemoveProject,
+        onToggleProjectHidden: props.handleToggleProjectHidden,
         onCreateForRepo: props.handleCreateForRepo
       },
       onRenameProjectGroup: props.handleRenameProjectGroup,

@@ -44,6 +44,7 @@ export type VirtualizedWorktreeViewportProps = {
   handleOpenSuppressExternalWorktreeInbox: (projectId: string) => void
   newExternalWorktreeInboxActionState: ReadonlyMap<string, NewExternalWorktreesInboxActionState>
   handleRemoveProject: (repo: Repo) => void
+  handleToggleProjectHidden: (repo: Repo) => void
   handleCreateGroupFromRepo: (repo: Repo) => void
   handleMoveProjectToGroup: (repo: Repo, groupId: string) => void
   handleRemoveProjectFromGroup: (repo: Repo) => void

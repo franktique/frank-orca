@@ -60,7 +60,8 @@ describe('useVisibleSidebarWorktrees', () => {
         repoMap: new Map([[repo.id, repo]]),
         worktreeLineageById: {},
         defaultHostId: LOCAL_EXECUTION_HOST_ID,
-        agentSendTargetWorktreeId: null
+        agentSendTargetWorktreeId: null,
+        showHiddenProjects: true
       })
     )
 
@@ -95,13 +96,51 @@ describe('useVisibleSidebarWorktrees', () => {
         repoMap: new Map([[repo.id, repo]]),
         worktreeLineageById: {},
         defaultHostId: LOCAL_EXECUTION_HOST_ID,
-        agentSendTargetWorktreeId: null
+        agentSendTargetWorktreeId: null,
+        showHiddenProjects: true
       })
     )
 
     expect(result.current.visibleWorktrees.map(getWorktreeHostIdentity)).toEqual([
       getWorktreeHostIdentity(ssh)
     ])
+  })
+
+  it('drops worktrees of hidden repos unless showHiddenProjects is set', () => {
+    const repo = { ...makeRepo(), hidden: true }
+    const alpha = makeWorktree('alpha', 'Alpha workspace', { hostId: 'local' })
+    const beta = makeWorktree('beta', 'Beta workspace', { hostId: 'local' })
+    useAppStore.setState({ worktreesByRepo: { [repo.id]: [alpha, beta] } })
+
+    const args = (
+      showHiddenProjects: boolean
+    ): Parameters<typeof useVisibleSidebarWorktrees>[0] => ({
+      filterState: {
+        showSleepingWorkspaces: true,
+        filterRepoIds: [],
+        hideDefaultBranchWorkspace: false,
+        hideAutomationGeneratedWorkspaces: false,
+        hideCliCreatedWorkspaces: false,
+        hideDetachedHeadWorkspaces: false,
+        hideWorkspacesFromOtherDevices: false,
+        alwaysShowDefaultBranchWorkspace: true,
+        visibleWorkspaceHostIds: null,
+        workspaceHostScope: 'all'
+      },
+      sortBy: 'recent' as const,
+      sortedIds: [alpha.id, beta.id],
+      repoMap: new Map([[repo.id, repo]]),
+      worktreeLineageById: {},
+      defaultHostId: LOCAL_EXECUTION_HOST_ID,
+      agentSendTargetWorktreeId: null,
+      showHiddenProjects
+    })
+
+    const { result } = renderHook(() => useVisibleSidebarWorktrees(args(false)))
+    expect(result.current.visibleWorktrees).toEqual([])
+
+    const openResult = renderHook(() => useVisibleSidebarWorktrees(args(true)))
+    expect(openResult.result.current.visibleWorktrees.map((w) => w.id)).toEqual([alpha.id, beta.id])
   })
   it('does not rescan every worktree when a settings write leaves the focused host unchanged', () => {
     const repo = makeRepo()
@@ -126,7 +165,8 @@ describe('useVisibleSidebarWorktrees', () => {
       repoMap: new Map([[repo.id, repo]]),
       worktreeLineageById: {},
       defaultHostId: LOCAL_EXECUTION_HOST_ID,
-      agentSendTargetWorktreeId: null
+      agentSendTargetWorktreeId: null,
+      showHiddenProjects: true
     } as Parameters<typeof useVisibleSidebarWorktrees>[0]
     // Why the extra `settings`: it is the pre-fix memo key. Passing it keeps
     // this test red against the old hook, which re-keyed the whole scan on the

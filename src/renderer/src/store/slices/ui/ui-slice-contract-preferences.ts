@@ -37,6 +37,9 @@ export type UISlicePreferences = {
   setShowActiveOnly: (v: boolean) => void
   showSleepingWorkspaces: boolean
   setShowSleepingWorkspaces: (v: boolean) => void
+  /** Whether the project list includes projects hidden via the per-project eye toggle. */
+  showHiddenProjects: boolean
+  setShowHiddenProjects: (v: boolean) => void
   workspaceHostScope: WorkspaceHostScope
   setWorkspaceHostScope: (scope: WorkspaceHostScope) => void
   visibleWorkspaceHostIds: VisibleWorkspaceHostIds

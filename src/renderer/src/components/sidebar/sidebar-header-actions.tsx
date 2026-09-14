@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { FolderPlus, Plus } from 'lucide-react'
+import { Eye, EyeOff, FolderPlus, Plus } from 'lucide-react'
 import { useAppStore } from '@/store'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -79,6 +79,44 @@ function NewWorkspaceButton({
   )
 }
 
+function ShowHiddenProjectsToggleButton({
+  preserveWorkspaceBoardOpen
+}: {
+  preserveWorkspaceBoardOpen: boolean
+}): React.JSX.Element {
+  const showHiddenProjects = useAppStore((s) => s.showHiddenProjects)
+  const setShowHiddenProjects = useAppStore((s) => s.setShowHiddenProjects)
+  const label = showHiddenProjects
+    ? translate('sidebar.hiddenProjects.showing', 'Hidden projects shown — click to hide')
+    : translate('sidebar.hiddenProjects.hidden', 'Show hidden projects')
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon-xs"
+          type="button"
+          className="text-muted-foreground"
+          aria-label={label}
+          aria-pressed={showHiddenProjects}
+          data-workspace-board-preserve-open={preserveWorkspaceBoardOpen ? '' : undefined}
+          onClick={() => setShowHiddenProjects(!showHiddenProjects)}
+        >
+          {showHiddenProjects ? (
+            <Eye className="size-3.5" strokeWidth={2.25} />
+          ) : (
+            <EyeOff className="size-3.5" strokeWidth={2.25} />
+          )}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" sideOffset={6}>
+        {label}
+      </TooltipContent>
+    </Tooltip>
+  )
+}
+
 export function SidebarHeaderActions({
   onWorkspaceBoardMenuOpenChange,
   agentsViewActive = false
@@ -96,6 +134,7 @@ export function SidebarHeaderActions({
             onMenuOpenChange={onWorkspaceBoardMenuOpenChange}
           />
           <AddProjectButton preserveWorkspaceBoardOpen />
+          <ShowHiddenProjectsToggleButton preserveWorkspaceBoardOpen />
         </>
       )}
       <NewWorkspaceButton preserveWorkspaceBoardOpen />

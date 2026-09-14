@@ -16,7 +16,6 @@ import { normalizeFeatureInteractions } from '../../../../../shared/feature-inte
 import { normalizeContextualTourIds } from '../../../../../shared/contextual-tours'
 import { normalizeFeatureTipIds } from '../../../../../shared/feature-tips'
 import {
-  DEFAULT_HIDE_SLEEPING_WORKSPACES,
   normalizeWorktreeCardProperties,
   normalizeAgentActivityDisplayMode
 } from '../../../../../shared/constants'
@@ -64,7 +63,11 @@ import {
   migrateStatusBarItems,
   clampPetSize
 } from './ui-slice-hydration-sanitizers'
-import { hydrateAgentReadState, sanitizeTaskResumeState } from './ui-slice-hydration-values'
+import {
+  hydrateAgentReadState,
+  hydrateWorkspaceVisibilityFilters,
+  sanitizeTaskResumeState
+} from './ui-slice-hydration-values'
 
 const MAX_LEFT_SIDEBAR_WIDTH = 500
 const MAX_RIGHT_SIDEBAR_WIDTH = 4000
@@ -89,9 +92,8 @@ function hydrateStatusBarItems(ui: PersistedUIState): StatusBarItem[] {
     }
   }
   if (typeof window !== 'undefined' && defaults.some(([flag]) => !ui[flag])) {
-    window.api.ui
-      .set({ statusBarItems: items, ...Object.fromEntries(defaults.map(([flag]) => [flag, true])) })
-      .catch(console.error)
+    const additions = Object.fromEntries(defaults.map(([flag]) => [flag, true]))
+    window.api.ui.set({ statusBarItems: items, ...additions }).catch(console.error)
   }
   return items
 }
@@ -151,8 +153,7 @@ export function createUiHydrationActions(set: UISliceSet, _get: UISliceGet): Par
           projectOrderBy: ui.projectOrderBy,
           // Why: Active-only was retired; force the old flag off so an old profile can't invisibly narrow the workspace list.
           showActiveOnly: false,
-          // Why: ignore older positive-form keys so old profiles start from the new default (sleeping workspaces visible).
-          showSleepingWorkspaces: !(ui.hideSleepingWorkspaces ?? DEFAULT_HIDE_SLEEPING_WORKSPACES),
+          ...hydrateWorkspaceVisibilityFilters(ui),
           workspaceHostScope: normalizeExecutionHostScope(ui.workspaceHostScope),
           visibleWorkspaceHostIds: normalizeHydratedVisibleWorkspaceHostIds(ui),
           workspaceHostOrder: normalizeExecutionHostOrder(ui.workspaceHostOrder),
@@ -218,10 +219,7 @@ export function createUiHydrationActions(set: UISliceSet, _get: UISliceGet): Par
             if (typeof id !== 'string') {
               return DEFAULT_PET_ID
             }
-            if (isBundledPetId(id)) {
-              return id
-            }
-            if (customPets.some((m) => m.id === id)) {
+            if (isBundledPetId(id) || customPets.some((m) => m.id === id)) {
               return id
             }
             return DEFAULT_PET_ID
