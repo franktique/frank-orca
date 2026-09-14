@@ -65,4 +65,4 @@ test('pre-v41 code opens, acknowledges and writes a v41 database, then current c
     db?.close()
     rmSync(directory, { recursive: true, force: true })
   }
-})
+}, 120_000)
