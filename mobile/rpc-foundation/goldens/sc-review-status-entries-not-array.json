@@ -1,0 +1,90 @@
+{
+  "operation": "source-control.review-git-preparation",
+  "family": "git.review-preparation",
+  "namedDeltas": [],
+  "runnerVersion": 1,
+  "baseline": "5ec0b2698fbb74574650d21f96ccef8d4cb33d4f",
+  "lockfileSha256": "788c1234b38a61fc882fca292341fce6690deee9cc6695673b0575cf2c4cf571",
+  "recorderSha256": "70aa6f59e01f8195ab8512a6fb4834315f54b64fa8009d377a45d271422bcf6b",
+  "platform": "darwin",
+  "scenarioVersion": 1,
+  "projectionVersion": 2,
+  "goldenFormatVersion": 3,
+  "values": {
+    "5e330d49c396": {
+      "name": "git.status#1",
+      "json": "{\"id\":\"frame-1\",\"deviceToken\":\"recording-device\",\"method\":\"git.status\",\"params\":{\"worktree\":\"id:repo42::/p\"}}"
+    },
+    "6cfd467eb392": {
+      "name": "git.status#1",
+      "args": [
+        {
+          "name": "method",
+          "value": "git.status"
+        },
+        {
+          "name": "params",
+          "value": {
+            "worktree": "id:repo42::/p"
+          }
+        },
+        {
+          "name": "options",
+          "value": {
+            "$rpc": "absent"
+          }
+        }
+      ],
+      "settlement": {
+        "status": "fulfilled",
+        "startedAt": 0,
+        "settledAt": 0,
+        "value": {
+          "id": "frame-1",
+          "ok": true,
+          "result": {
+            "branch": "feature",
+            "entries": "nope"
+          }
+        }
+      }
+    },
+    "6decf368b25a": {
+      "committed": "uncommitted",
+      "status": {
+        "ok": true,
+        "status": {
+          "$rpc": "null"
+        }
+      }
+    },
+    "da676cfabd9b": {
+      "status": "fulfilled",
+      "startedAt": 0,
+      "settledAt": 0,
+      "value": {
+        "ok": true,
+        "status": {
+          "$rpc": "null"
+        }
+      }
+    }
+  },
+  "recording": {
+    "scenario": "sc-review-status-entries-not-array",
+    "checkpoints": [
+      {
+        "id": "settled",
+        "observation": {
+          "sender": ["6cfd467eb392"],
+          "payloads": ["5e330d49c396"],
+          "settlements": {
+            "status": "da676cfabd9b"
+          },
+          "state": "6decf368b25a",
+          "effects": []
+        }
+      }
+    ]
+  }
+}
