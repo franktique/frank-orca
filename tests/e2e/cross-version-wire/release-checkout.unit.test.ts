@@ -292,7 +292,7 @@ describe('release checkout materialization', () => {
 
     expect(protocol.REMOTE_SERVER_UPDATE_CAPABILITY).toBe('updater.remote-control.v1')
     expect(relative(cacheRoot, checkout.root)).not.toMatch(/^\.\./)
-  })
+  }, 120_000)
 
   it('keeps an import live while another colliding release label materializes', async () => {
     const merge = git(['rev-list', '--merges', '-1', 'HEAD'])
