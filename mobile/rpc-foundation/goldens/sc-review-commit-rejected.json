@@ -1,0 +1,84 @@
+{
+  "operation": "source-control.review-git-preparation",
+  "family": "git.review-preparation",
+  "namedDeltas": [],
+  "runnerVersion": 1,
+  "baseline": "5ec0b2698fbb74574650d21f96ccef8d4cb33d4f",
+  "lockfileSha256": "788c1234b38a61fc882fca292341fce6690deee9cc6695673b0575cf2c4cf571",
+  "recorderSha256": "70aa6f59e01f8195ab8512a6fb4834315f54b64fa8009d377a45d271422bcf6b",
+  "platform": "darwin",
+  "scenarioVersion": 1,
+  "projectionVersion": 2,
+  "goldenFormatVersion": 3,
+  "values": {
+    "01bab795ab1e": {
+      "name": "git.commit#1",
+      "args": [
+        {
+          "name": "method",
+          "value": "git.commit"
+        },
+        {
+          "name": "params",
+          "value": {
+            "message": "recorded message",
+            "worktree": "id:repo42::/p"
+          }
+        },
+        {
+          "name": "options",
+          "value": {
+            "$rpc": "absent"
+          }
+        }
+      ],
+      "settlement": {
+        "status": "rejected",
+        "startedAt": 0,
+        "settledAt": 0,
+        "error": {
+          "category": "Error",
+          "message": "connection lost",
+          "isRpcDeliveryUnknown": true
+        }
+      }
+    },
+    "465d78c22406": {
+      "status": "fulfilled",
+      "startedAt": 0,
+      "settledAt": 0,
+      "value": {
+        "error": "connection lost",
+        "ok": false
+      }
+    },
+    "7c923ba16626": {
+      "committed": {
+        "error": "connection lost",
+        "ok": false
+      },
+      "status": "unread"
+    },
+    "e9c816eee026": {
+      "name": "git.commit#1",
+      "json": "{\"id\":\"frame-1\",\"deviceToken\":\"recording-device\",\"method\":\"git.commit\",\"params\":{\"worktree\":\"id:repo42::/p\",\"message\":\"recorded message\"}}"
+    }
+  },
+  "recording": {
+    "scenario": "sc-review-commit-rejected",
+    "checkpoints": [
+      {
+        "id": "settled",
+        "observation": {
+          "sender": ["01bab795ab1e"],
+          "payloads": ["e9c816eee026"],
+          "settlements": {
+            "commit": "465d78c22406"
+          },
+          "state": "7c923ba16626",
+          "effects": []
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "operation": "source-control.remote-prerequisite",
+  "family": "git.remote-prerequisite",
+  "namedDeltas": [],
+  "runnerVersion": 1,
+  "baseline": "5ec0b2698fbb74574650d21f96ccef8d4cb33d4f",
+  "lockfileSha256": "788c1234b38a61fc882fca292341fce6690deee9cc6695673b0575cf2c4cf571",
+  "recorderSha256": "70aa6f59e01f8195ab8512a6fb4834315f54b64fa8009d377a45d271422bcf6b",
+  "platform": "darwin",
+  "scenarioVersion": 1,
+  "projectionVersion": 2,
+  "goldenFormatVersion": 3,
+  "values": {
+    "00e8a3bac22f": {
+      "status": "fulfilled",
+      "startedAt": 0,
+      "settledAt": 0,
+      "value": {
+        "ok": true,
+        "ran": true
+      }
+    },
+    "0fe2eb2410a4": {
+      "outcome": {
+        "ok": true,
+        "ran": true
+      }
+    },
+    "3d5bc718d103": {
+      "name": "git.push#1",
+      "args": [
+        {
+          "name": "method",
+          "value": "git.push"
+        },
+        {
+          "name": "params",
+          "value": {
+            "forceWithLease": true,
+            "worktree": "id:repo42::/p"
+          }
+        },
+        {
+          "name": "options",
+          "value": {
+            "$rpc": "absent"
+          }
+        }
+      ],
+      "settlement": {
+        "status": "fulfilled",
+        "startedAt": 0,
+        "settledAt": 0,
+        "value": {
+          "id": "frame-1",
+          "ok": true,
+          "result": {
+            "ok": true
+          }
+        }
+      }
+    },
+    "ef6c20bf075b": {
+      "name": "git.push#1",
+      "json": "{\"id\":\"frame-1\",\"deviceToken\":\"recording-device\",\"method\":\"git.push\",\"params\":{\"worktree\":\"id:repo42::/p\",\"forceWithLease\":true}}"
+    },
+    "f664712ae7ac": {
+      "name": "progress",
+      "value": "force_pushing"
+    }
+  },
+  "recording": {
+    "scenario": "sc-prerequisite-force-with-lease",
+    "checkpoints": [
+      {
+        "id": "settled",
+        "observation": {
+          "sender": ["3d5bc718d103"],
+          "payloads": ["ef6c20bf075b"],
+          "settlements": {
+            "apply": "00e8a3bac22f"
+          },
+          "state": "0fe2eb2410a4",
+          "effects": ["f664712ae7ac"]
+        }
+      }
+    ]
+  }
+}
