@@ -17,3 +17,13 @@ export function formatUsagePercentageLabel(
         value0: String(percentage)
       })
 }
+
+const usageAmountFormatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 })
+
+/** "3,627.1 / 6,726" — the raw amounts behind a window's percentage (Copilot credits). */
+export function formatUsageAmountLabel(amount: { used: number; total: number }): string {
+  return translate('auto.components.status.bar.usageAmountLabel', '{{value0}} / {{value1}}', {
+    value0: usageAmountFormatter.format(amount.used),
+    value1: usageAmountFormatter.format(amount.total)
+  })
+}

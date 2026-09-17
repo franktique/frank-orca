@@ -9,7 +9,7 @@ import type { StatusBarUsageMode } from '../../../../shared/status-bar-usage-mod
 import { ProviderIcon, clampUsedPercent, getProviderUsageStatusLabel } from './tooltip'
 import { getTightestUsageSection } from './UsageRosterPanel'
 import { formatRateLimitWindowChipLabel } from '@/lib/window-label-formatter'
-import { formatUsagePercentageLabel } from './usage-percentage-label'
+import { formatUsageAmountLabel, formatUsagePercentageLabel } from './usage-percentage-label'
 import { translate } from '@/i18n/i18n'
 
 function MiniBar({
@@ -47,6 +47,10 @@ function WindowLabel({
     <span className="tabular-nums">
       {formatUsagePercentageLabel(w.usedPercent, display)}
       {showLabel ? ` ${label}` : ''}
+      {/* Why: raw amounts (Copilot credits) ride inline so the numbers aren't hover-only. */}
+      {w.usageAmount ? (
+        <span className="text-muted-foreground"> · {formatUsageAmountLabel(w.usageAmount)}</span>
+      ) : null}
     </span>
   )
 }
@@ -70,6 +74,8 @@ function getProviderLetter(provider: ProviderRateLimits['provider']): string {
   switch (provider) {
     case 'claude':
       return 'C'
+    case 'copilot':
+      return 'P'
     case 'gemini':
       return 'G'
     case 'opencode-go':

@@ -41,6 +41,14 @@ vi.mock('./grok-fetcher', () => ({
   fetchGrokRateLimits: vi.fn()
 }))
 
+vi.mock('./copilot-usage-fetch', () => ({
+  fetchCopilotRateLimits: vi.fn()
+}))
+
+vi.mock('./copilot-usage-cache-path', () => ({
+  resolveCopilotUsageCachePath: vi.fn(() => '/nonexistent/copilot-user-cache.json')
+}))
+
 vi.mock('./grok-auth', () => ({
   readGrokAuthSession: vi.fn(() => ({ status: 'missing' }))
 }))

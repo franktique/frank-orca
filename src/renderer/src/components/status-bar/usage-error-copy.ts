@@ -8,6 +8,9 @@ export function getProviderDisplayName(provider: ProviderRateLimits['provider'])
   if (provider === 'codex') {
     return 'Codex'
   }
+  if (provider === 'copilot') {
+    return 'GitHub Copilot'
+  }
   if (provider === 'gemini') {
     return 'Gemini'
   }

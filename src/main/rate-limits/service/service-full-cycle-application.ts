@@ -29,6 +29,7 @@ export abstract class RateLimitServiceFullCycleApplication extends RateLimitServ
       results: [
         claudeResult,
         codexResult,
+        copilotResult,
         geminiResult,
         opencodeGoResult,
         kimiResult,
@@ -63,6 +64,21 @@ export abstract class RateLimitServiceFullCycleApplication extends RateLimitServ
             updatedAt: Date.now(),
             error:
               codexResult.reason instanceof Error ? codexResult.reason.message : 'Unknown error',
+            status: 'error'
+          } satisfies ProviderRateLimits)
+
+    const copilot =
+      copilotResult.status === 'fulfilled'
+        ? copilotResult.value
+        : ({
+            provider: 'copilot',
+            session: null,
+            weekly: null,
+            updatedAt: Date.now(),
+            error:
+              copilotResult.reason instanceof Error
+                ? copilotResult.reason.message
+                : 'Unknown error',
             status: 'error'
           } satisfies ProviderRateLimits)
 
@@ -176,6 +192,7 @@ export abstract class RateLimitServiceFullCycleApplication extends RateLimitServ
         : codexBecameUnavailable
           ? codexStateBeforeFetch
           : this.state.codex,
+      copilot: this.applyStalePolicy(copilot, previousState.copilot),
       gemini: this.applyStalePolicy(gemini, previousState.gemini),
       opencodeGo: shouldApplyOpencode
         ? opencodeConfigChanged

@@ -49,6 +49,14 @@ vi.mock('./grok-fetcher', () => ({
   fetchGrokRateLimits: vi.fn()
 }))
 
+vi.mock('./copilot-usage-fetch', () => ({
+  fetchCopilotRateLimits: vi.fn()
+}))
+
+vi.mock('./copilot-usage-cache-path', () => ({
+  resolveCopilotUsageCachePath: vi.fn(() => '/nonexistent/copilot-user-cache.json')
+}))
+
 vi.mock('./grok-auth', () => ({
   readGrokAuthSession: vi.fn(() => ({ status: 'missing' }))
 }))
@@ -95,6 +103,10 @@ describe('RateLimitService', () => {
   it('sanitizes renderer-provided polling intervals before scheduling timers', () => {
     vi.useFakeTimers()
     const intervalSpy = vi.spyOn(globalThis, 'setInterval')
+    // Why: start() also schedules Copilot's fixed 30s poll timer, so main-poll
+    // assertions must count matching intervals instead of checking the last call.
+    const callsWithMs = (ms: number): number =>
+      intervalSpy.mock.calls.filter((call) => call[1] === ms).length
     try {
       vi.mocked(fetchClaudeRateLimits).mockResolvedValue(okProvider('claude', 12))
       vi.mocked(fetchCodexRateLimits).mockResolvedValue(okProvider('codex', 24))
@@ -102,13 +114,14 @@ describe('RateLimitService', () => {
 
       service.setPollingInterval(Number.NaN)
       service.start()
-      expect(intervalSpy).toHaveBeenLastCalledWith(expect.any(Function), 15 * 60 * 1000)
+      expect(callsWithMs(15 * 60 * 1000)).toBe(1)
+      expect(callsWithMs(30_000)).toBe(1)
 
       service.setPollingInterval(Number.MAX_SAFE_INTEGER)
-      expect(intervalSpy).toHaveBeenLastCalledWith(expect.any(Function), 2_147_483_647)
+      expect(callsWithMs(2_147_483_647)).toBe(1)
 
       service.setPollingInterval(10)
-      expect(intervalSpy).toHaveBeenLastCalledWith(expect.any(Function), 30_000)
+      expect(callsWithMs(30_000)).toBe(2)
 
       service.stop()
     } finally {

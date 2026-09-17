@@ -7,6 +7,8 @@ export type RateLimitWindow = {
   resetsAt: number | null
   /** Human-readable reset description, e.g. "2:30 PM" or "Thu". */
   resetDescription: string | null
+  /** Raw consumed/total amounts behind usedPercent, when the source reports them (Copilot credits). */
+  usageAmount?: { used: number; total: number }
 }
 
 export type ProviderRateLimitStatus = 'idle' | 'fetching' | 'ok' | 'error' | 'unavailable'
@@ -49,6 +51,7 @@ export type ProviderRateLimits = {
   provider:
     | 'claude'
     | 'codex'
+    | 'copilot'
     | 'gemini'
     | 'opencode-go'
     | 'kimi'
@@ -118,6 +121,7 @@ export type GrokAccountStatus = {
 export type RateLimitState = {
   claude: ProviderRateLimits | null
   codex: ProviderRateLimits | null
+  copilot: ProviderRateLimits | null
   gemini: ProviderRateLimits | null
   opencodeGo: ProviderRateLimits | null
   kimi: ProviderRateLimits | null
@@ -140,6 +144,12 @@ export type RateLimitState = {
   minimaxApiKeyConfigured: boolean
   /** True when main finds a Grok CLI session file (~/.grok/auth.json or GROK_HOME). */
   grokAuthConfigured: boolean
+  /**
+   * True when main finds the Copilot CLI's own usage cache file on disk. The
+   * file lives outside GlobalSettings, so this flag is the durable signal that
+   * the status bar uses to keep the Copilot bar visible across reloads.
+   */
+  copilotUsageConfigured: boolean
   claudeTarget: RateLimitRuntimeTarget
   codexTarget: RateLimitRuntimeTarget
   inactiveClaudeAccounts: InactiveAccountUsage[]

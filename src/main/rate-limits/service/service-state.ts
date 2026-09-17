@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs'
 import type { BrowserWindow } from 'electron'
 import type {
   InactiveAccountUsage,
@@ -21,11 +22,13 @@ import {
   DEFAULT_POLL_MS
 } from './service-types'
 import { readGrokAuthSession } from '../grok-auth'
+import { resolveCopilotUsageCachePath } from '../copilot-usage-cache-path'
 
 export abstract class RateLimitServiceState {
   protected state: InternalRateLimitState = {
     claude: null,
     codex: null,
+    copilot: null,
     gemini: null,
     opencodeGo: null,
     kimi: null,
@@ -34,8 +37,10 @@ export abstract class RateLimitServiceState {
     grok: null
   }
   protected grokAuthConfigured = readGrokAuthSession().status === 'ok'
+  protected copilotUsageConfigured = existsSync(resolveCopilotUsageCachePath())
   protected pollInterval: number = DEFAULT_POLL_MS
   protected timer: ReturnType<typeof setInterval> | null = null
+  protected copilotTimer: ReturnType<typeof setInterval> | null = null
   protected deferredStartupRefreshTimer: ReturnType<typeof setTimeout> | null = null
   // Why: throttle repeated focus/show/restore events so one outage doesn't create a tight provider retry loop.
   protected lastActiveFailureRetryAtByProvider: Record<ActiveRateLimitProvider, number> = {

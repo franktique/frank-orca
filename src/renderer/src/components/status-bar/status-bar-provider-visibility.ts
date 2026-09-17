@@ -14,15 +14,17 @@ export type UsageProviderSettings = Pick<
   // requires geminiCliOAuthEnabled — the snapshot mirrors the Gemini fetch,
   // which never yields data while that opt-in is off.
   antigravityUsageConfigured: boolean
-  // Why: MiniMax/Grok sign-in live on disk, not in settings; main sets these each poll.
+  // Why: MiniMax/Grok/Copilot credentials live on disk, not in settings; main sets these each poll.
   minimaxCookieConfigured: boolean
   minimaxApiKeyConfigured: boolean
   grokAuthConfigured: boolean
+  copilotUsageConfigured: boolean
 }
 
 type UsageProviderSnapshots = {
   claude: ProviderRateLimits | null | undefined
   codex: ProviderRateLimits | null | undefined
+  copilot: ProviderRateLimits | null | undefined
   gemini: ProviderRateLimits | null | undefined
   opencodeGo: ProviderRateLimits | null | undefined
   kimi: ProviderRateLimits | null | undefined
@@ -79,7 +81,8 @@ export function hasUsageProviderSettings(
     // already covered by the gemini term above.
     settings?.minimaxCookieConfigured === true ||
     settings?.minimaxApiKeyConfigured === true ||
-    settings?.grokAuthConfigured === true
+    settings?.grokAuthConfigured === true ||
+    settings?.copilotUsageConfigured === true
   )
 }
 
@@ -113,6 +116,11 @@ export function hasUsageProviderSettingsForProvider(
   }
   if (providerId === 'grok') {
     return settings.grokAuthConfigured === true
+  }
+  if (providerId === 'copilot') {
+    // Why: the durable signal is the CLI's own cache file on disk; Orca keeps
+    // no Copilot credential of its own.
+    return settings.copilotUsageConfigured === true
   }
   return false
 }
@@ -162,6 +170,7 @@ export function isUsageEmptyState(
   if (
     isProviderSnapshotPending(providers.claude) ||
     isProviderSnapshotPending(providers.codex) ||
+    isProviderSnapshotPending(providers.copilot) ||
     isProviderSnapshotPending(providers.gemini) ||
     isProviderSnapshotPending(providers.opencodeGo) ||
     isProviderSnapshotPending(providers.kimi) ||
@@ -175,6 +184,7 @@ export function isUsageEmptyState(
     !hasUsageProviderSettings(settings) &&
     !isProviderConfigured(providers.claude) &&
     !isProviderConfigured(providers.codex) &&
+    !isProviderConfigured(providers.copilot) &&
     !isProviderConfigured(providers.gemini) &&
     !isProviderConfigured(providers.opencodeGo) &&
     !isProviderConfigured(providers.kimi) &&

@@ -102,6 +102,7 @@ export abstract class RateLimitServiceConfiguration extends RateLimitServiceAcco
       this.scheduleDeferredStartupRefresh()
     }
     this.startTimer()
+    this.startCopilotTimer()
   }
 
   stop(): void {
@@ -111,6 +112,7 @@ export abstract class RateLimitServiceConfiguration extends RateLimitServiceAcco
     this.inactiveCodexFetching.clear()
     this.resolveAndClearFetchIdleWaiters()
     this.stopTimer()
+    this.stopCopilotTimer()
     this.clearDeferredStartupRefresh()
     this.detachWindowListeners?.()
     this.detachWindowListeners = null
@@ -126,6 +128,7 @@ export abstract class RateLimitServiceConfiguration extends RateLimitServiceAcco
       minimaxCookieConfigured: hasMiniMaxSessionCookie(),
       minimaxApiKeyConfigured: hasMiniMaxApiKey(),
       grokAuthConfigured: this.grokAuthConfigured,
+      copilotUsageConfigured: this.copilotUsageConfigured,
       claudeTarget: this.claudeFetchTarget,
       codexTarget: this.codexFetchTarget,
       inactiveClaudeAccounts: this.buildInactiveArray(

@@ -19,7 +19,9 @@ export function getUsageProviderAccountsSectionId(
     case 'grok':
       return 'accounts-grok'
     case 'kimi':
-      // Why: Orca must not mutate Kimi's CLI-owned credential lifecycle.
+    case 'copilot':
+      // Why: Orca only reads Copilot's CLI-owned cache file and must not mutate
+      // Kimi's CLI-owned credential lifecycle — neither has a Settings surface.
       return null
   }
 }
