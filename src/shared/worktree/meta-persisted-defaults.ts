@@ -26,7 +26,8 @@ export const WORKTREE_META_PERSISTED_DEFAULTS = {
   linkedWorkItem: null,
   linkedTaskSourceContext: null,
   isArchived: false,
-  isPinned: false
+  isPinned: false,
+  isHidden: false
 } as const satisfies Partial<WorktreeMeta>
 
 type DefaultedField = keyof typeof WORKTREE_META_PERSISTED_DEFAULTS

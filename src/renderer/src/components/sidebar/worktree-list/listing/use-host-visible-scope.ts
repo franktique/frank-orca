@@ -57,19 +57,21 @@ export function useSidebarHostVisibleScope(args: {
       visibleHostIdSet,
       defaultHostId
     )
+    // Why: same reveal flag as hidden git worktrees — one "Show hidden" control.
+    const withoutHidden = showHiddenProjects
+      ? hostVisibleWorkspaces
+      : hostVisibleWorkspaces.filter((workspace) => workspace.isHidden !== true)
     if (!hideWorkspacesFromOtherDevices) {
-      return hostVisibleWorkspaces
+      return withoutHidden
     }
-    return filterFolderWorkspacesFromOtherDevices(
-      hostVisibleWorkspaces,
-      args.pairedDeviceIdsByEnvironment
-    )
+    return filterFolderWorkspacesFromOtherDevices(withoutHidden, args.pairedDeviceIdsByEnvironment)
   }, [
     args.pairedDeviceIdsByEnvironment,
     defaultHostId,
     folderWorkspaces,
     hideWorkspacesFromOtherDevices,
     projectGroups,
+    showHiddenProjects,
     visibleHostIdSet
   ])
 

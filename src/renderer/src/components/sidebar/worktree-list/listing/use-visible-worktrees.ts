@@ -132,12 +132,14 @@ export function useVisibleSidebarWorktrees(args: {
   ])
   // Why here, not on the repo list: project headers render from their worktrees,
   // so a hidden repo's header only disappears if its worktrees leave this stream.
+  // Why the same flag covers worktree.isHidden too: "Show hidden" is one reveal
+  // control for both hidden projects and individually hidden worktrees.
   const hiddenFilteredWorktrees = useMemo(
     () =>
       args.showHiddenProjects
         ? recomputedVisibleWorktrees
         : recomputedVisibleWorktrees.filter(
-            (worktree) => repoMap.get(worktree.repoId)?.hidden !== true
+            (worktree) => repoMap.get(worktree.repoId)?.hidden !== true && !worktree.isHidden
           ),
     [args.showHiddenProjects, recomputedVisibleWorktrees, repoMap]
   )

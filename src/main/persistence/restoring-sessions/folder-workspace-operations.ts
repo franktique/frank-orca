@@ -91,6 +91,7 @@ export class FolderWorkspacePersistenceOperations {
       isArchived: false,
       isUnread: false,
       isPinned: false,
+      isHidden: false,
       sortOrder: now,
       ...(input.createdWithAgent ? { createdWithAgent: input.createdWithAgent } : {}),
       ...(input.pendingFirstAgentMessageRename === true && input.createdWithAgent
@@ -118,6 +119,7 @@ export class FolderWorkspacePersistenceOperations {
         | 'isArchived'
         | 'isUnread'
         | 'isPinned'
+        | 'isHidden'
         | 'sortOrder'
         | 'manualOrder'
         | 'workspaceStatus'
@@ -173,6 +175,9 @@ export class FolderWorkspacePersistenceOperations {
     }
     if (updates.isPinned !== undefined) {
       workspace.isPinned = updates.isPinned
+    }
+    if (updates.isHidden !== undefined) {
+      workspace.isHidden = updates.isHidden
     }
     if (updates.sortOrder !== undefined && Number.isFinite(updates.sortOrder)) {
       workspace.sortOrder = updates.sortOrder

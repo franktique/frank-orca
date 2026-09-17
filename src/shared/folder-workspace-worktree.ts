@@ -33,6 +33,7 @@ export function folderWorkspaceToWorktree(folderWorkspace: FolderWorkspace): Wor
     isArchived: folderWorkspace.isArchived,
     isUnread: folderWorkspace.isUnread,
     isPinned: folderWorkspace.isPinned,
+    isHidden: folderWorkspace.isHidden,
     sortOrder: folderWorkspace.sortOrder,
     manualOrder: folderWorkspace.manualOrder,
     lastActivityAt: folderWorkspace.lastActivityAt,

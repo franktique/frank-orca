@@ -1,3 +1,5 @@
+import type React from 'react'
+import { useCallback } from 'react'
 import { canShowWorkspaceDeleteQuickAction } from './workspace-delete-quick-action'
 import { useWorktreeCardDetailsHoverControl } from './worktree-card-details-hover-state'
 import type { ResolvedWorktreeCardProps } from './worktree-card-model'
@@ -89,6 +91,18 @@ export function useWorktreeCardController(props: ResolvedWorktreeCardProps) {
       isDeleting: linked.isDeleting,
       isMainWorktree: worktree.isMainWorktree
     })
+  // Why not modifier-gated like delete: hiding is non-destructive and instantly
+  // reversible via "Show hidden", so ordinary hover is enough to reveal it.
+  const showHiddenToggle = !props.affiliateListMode && !worktree.isMainWorktree
+  const { updateWorktreeMeta } = foundation
+  const handleToggleWorktreeHidden = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault()
+      event.stopPropagation()
+      void updateWorktreeMeta(worktree.id, { isHidden: !worktree.isHidden })
+    },
+    [updateWorktreeMeta, worktree.id, worktree.isHidden]
+  )
   const workspaceActions = useWorktreeCardWorkspaceActions({
     worktree,
     lineageChildCount: props.lineageChildCount,
@@ -157,6 +171,8 @@ export function useWorktreeCardController(props: ResolvedWorktreeCardProps) {
     shouldRefreshHostedReview,
     ...activation,
     showDeleteQuickAction,
+    showHiddenToggle,
+    handleToggleWorktreeHidden,
     ...workspaceActions,
     ...secondary
   }

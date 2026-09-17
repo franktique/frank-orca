@@ -31,6 +31,8 @@ export type FolderWorkspace = {
   isArchived: boolean
   isUnread: boolean
   isPinned: boolean
+  /** See Worktree.isHidden. Optional so older persisted rows keep loading. */
+  isHidden?: boolean
   sortOrder: number
   /** User-authored sidebar ordering. Higher values render earlier in Manual sort. */
   manualOrder?: number

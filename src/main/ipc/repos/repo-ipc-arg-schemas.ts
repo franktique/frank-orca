@@ -152,6 +152,7 @@ export const FolderWorkspaceUpdateArgs = z.object({
       isArchived: z.boolean().optional(),
       isUnread: z.boolean().optional(),
       isPinned: z.boolean().optional(),
+      isHidden: z.boolean().optional(),
       sortOrder: z.number().finite().optional(),
       manualOrder: z.number().finite().optional(),
       workspaceStatus: z.string().optional(),

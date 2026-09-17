@@ -87,8 +87,8 @@ function ShowHiddenProjectsToggleButton({
   const showHiddenProjects = useAppStore((s) => s.showHiddenProjects)
   const setShowHiddenProjects = useAppStore((s) => s.setShowHiddenProjects)
   const label = showHiddenProjects
-    ? translate('sidebar.hiddenProjects.showing', 'Hidden projects shown — click to hide')
-    : translate('sidebar.hiddenProjects.hidden', 'Show hidden projects')
+    ? translate('sidebar.hiddenItems.showing', 'Hidden items shown — click to hide')
+    : translate('sidebar.hiddenItems.hidden', 'Show hidden')
 
   return (
     <Tooltip>
