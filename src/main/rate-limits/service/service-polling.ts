@@ -1,6 +1,10 @@
+import { existsSync } from 'node:fs'
 import { RateLimitServiceFetchQueue } from './service-fetch-queue'
+import { fetchCopilotRateLimits } from '../copilot-usage-fetch'
+import { resolveCopilotUsageCachePath } from '../copilot-usage-cache-path'
 import {
   ACTIVE_FAILURE_REFETCH_MS,
+  COPILOT_POLL_MS,
   DEFERRED_STARTUP_ACTIVE_REFRESH_MS,
   INDIVIDUALLY_REFRESHABLE_PROVIDERS,
   MAX_ACTIVE_FAILURE_REFETCH_MS,
@@ -40,6 +44,35 @@ export abstract class RateLimitServicePolling extends RateLimitServiceFetchQueue
       clearInterval(this.timer)
       this.timer = null
     }
+  }
+
+  // Why: Copilot rides its own fast timer instead of the shared 15-min cycle —
+  // its fetch is a local file read, so frequent polling costs no API budget.
+  protected startCopilotTimer(): void {
+    this.stopCopilotTimer()
+    this.copilotTimer = setInterval(() => {
+      if (!this.shouldBackgroundPoll()) {
+        return
+      }
+      void this.refreshCopilotOnly()
+    }, COPILOT_POLL_MS)
+  }
+
+  protected stopCopilotTimer(): void {
+    if (this.copilotTimer) {
+      clearInterval(this.copilotTimer)
+      this.copilotTimer = null
+    }
+  }
+
+  protected refreshCopilotOnly(): void {
+    this.copilotUsageConfigured = existsSync(resolveCopilotUsageCachePath())
+    void fetchCopilotRateLimits().then((copilot) => {
+      this.updateState({
+        ...this.state,
+        copilot: this.applyStalePolicy(copilot, this.state.copilot)
+      })
+    })
   }
 
   protected scheduleDeferredStartupRefresh(): void {
@@ -177,6 +210,8 @@ export abstract class RateLimitServicePolling extends RateLimitServiceFetchQueue
     if (!this.shouldBackgroundPoll()) {
       return
     }
+    // Why: reactivating the window shouldn't wait for the next 30s Copilot tick.
+    this.refreshCopilotOnly()
     const plan = this.getActiveWindowRefreshPlan(Date.now())
     await this.runActiveWindowRefreshPlan(plan)
   }

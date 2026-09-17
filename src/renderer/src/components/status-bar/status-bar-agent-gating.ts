@@ -10,6 +10,7 @@ import type { StatusBarItem } from '../../../../shared/ui-chrome-types'
 const CLI_GATED_ITEMS: ReadonlySet<StatusBarItem> = new Set([
   'claude',
   'codex',
+  'copilot',
   'gemini',
   'kimi',
   'antigravity',

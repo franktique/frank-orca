@@ -8,6 +8,7 @@ import { fetchKimiRateLimits } from './kimi-fetcher'
 import { fetchMiniMaxRateLimits } from './minimax/minimax-fetcher'
 import { fetchGrokRateLimits } from './grok-fetcher'
 import { readGrokAuthSession } from './grok-auth'
+import { fetchCopilotRateLimits } from './copilot-usage-fetch'
 import { fetchOpenCodeGoRateLimits } from './opencode-go-usage-fetcher'
 import { hasMiniMaxSessionCookie } from '../minimax/minimax-cookie-store'
 
@@ -89,6 +90,7 @@ export function mockFreshBackgroundProviderFetches(): void {
   vi.mocked(fetchKimiRateLimits).mockImplementation(async () => okProvider('kimi', 0))
   vi.mocked(fetchMiniMaxRateLimits).mockImplementation(async () => okProvider('minimax', 0))
   vi.mocked(fetchGrokRateLimits).mockImplementation(async () => unavailableProvider('grok'))
+  vi.mocked(fetchCopilotRateLimits).mockImplementation(async () => unavailableProvider('copilot'))
 }
 
 /** Shared `beforeEach` body: healthy stubs for every provider the service polls. */
@@ -100,6 +102,14 @@ export function resetRateLimitProviderMocks(): void {
   vi.mocked(fetchMiniMaxRateLimits).mockResolvedValue(okProvider('minimax', 0, Date.now()))
   vi.mocked(fetchGrokRateLimits).mockResolvedValue({
     provider: 'grok',
+    session: null,
+    weekly: null,
+    updatedAt: Date.now(),
+    error: null,
+    status: 'unavailable'
+  })
+  vi.mocked(fetchCopilotRateLimits).mockResolvedValue({
+    provider: 'copilot',
     session: null,
     weekly: null,
     updatedAt: Date.now(),

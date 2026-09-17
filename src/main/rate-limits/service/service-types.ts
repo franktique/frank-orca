@@ -60,7 +60,9 @@ export type MiniMaxResolvedConfig = {
 }
 
 export type GeminiCliOAuthEnabledResolver = () => boolean
-export type ActiveRateLimitProvider = ProviderRateLimits['provider']
+// Why: Copilot polls on its own timer from a local cache file, so it stays out
+// of the active-window refresh/backoff bookkeeping entirely.
+export type ActiveRateLimitProvider = Exclude<ProviderRateLimits['provider'], 'copilot'>
 export type ActiveProviderState = {
   provider: ActiveRateLimitProvider
   limits: ProviderRateLimits | null
@@ -73,6 +75,8 @@ export type ActiveWindowRefreshPlan =
 // Why: Claude's usage endpoint has a tight budget and quota is only informational; prefer a recent snapshot over polling into 429s.
 export const DEFAULT_POLL_MS = 15 * 60 * 1000 // 15 minutes
 export const MIN_POLL_MS = 30 * 1000 // 30 seconds — renderer input should never create a tight loop.
+// Why: Copilot's fetch is a local cache-file read with no network/rate-limit concern, so it can poll at the MIN_POLL_MS floor.
+export const COPILOT_POLL_MS = MIN_POLL_MS
 export const MAX_POLL_MS = 2_147_483_647 // Max safe setInterval delay before Node clamps back to 1ms.
 export const MIN_REFETCH_MS = 5 * 60 * 1000 // 5 minutes — debounce resume/manual refresh bursts
 export const ACTIVE_FAILURE_REFETCH_MS = MIN_POLL_MS
@@ -101,6 +105,7 @@ export const DEFERRED_STARTUP_ACTIVE_REFRESH_MS = 1000
 export type InternalRateLimitState = {
   claude: ProviderRateLimits | null
   codex: ProviderRateLimits | null
+  copilot: ProviderRateLimits | null
   gemini: ProviderRateLimits | null
   opencodeGo: ProviderRateLimits | null
   kimi: ProviderRateLimits | null

@@ -16,7 +16,8 @@ import {
   getDisplayedUsagePercentage,
   type UsagePercentageDisplay
 } from '../../../../shared/usage-percentage-display'
-import { formatUsagePercentageLabel } from './usage-percentage-label'
+import { formatUsageAmountLabel, formatUsagePercentageLabel } from './usage-percentage-label'
+import { formatPlanLabel } from './usage-roster-formatting'
 import { useResetCountdownClock } from '@/hooks/useResetCountdownClock'
 
 // Re-exported from its shared home so status-bar callers keep a single import.
@@ -78,6 +79,9 @@ export function formatResetCreditExpiry(
 export function ProviderIcon({ provider }: { provider: string }): React.JSX.Element {
   if (provider === 'codex') {
     return <OpenAIIcon size={13} />
+  }
+  if (provider === 'copilot') {
+    return <AgentIcon agent="copilot" size={13} />
   }
   if (provider === 'gemini') {
     return <GeminiIcon size={13} />
@@ -170,7 +174,11 @@ export function getWindowSections(
   }
   if (p.monthly !== undefined && p.monthly !== null) {
     sections.push({
-      label: translate('auto.components.status.bar.tooltip.7f7f208060', 'Monthly'),
+      // Why: Copilot's monthly quota is the "Credits" row VS Code's own popup shows.
+      label:
+        p.provider === 'copilot'
+          ? translate('auto.components.status.bar.tooltip.creditsLabel', 'Credits')
+          : translate('auto.components.status.bar.tooltip.7f7f208060', 'Monthly'),
       window: p.monthly
     })
   }
@@ -236,6 +244,10 @@ function ProviderRateLimitWindowSection({
         <span>{formatUsagePercentageLabel(usedPct, usagePercentageDisplay)}</span>
         {resetLabel && <span>{resetLabel}</span>}
       </div>
+      {/* Why: raw amounts (Copilot credits) ride inline so the numbers aren't hover-only. */}
+      {window.usageAmount ? (
+        <div className={mutedClass}>{formatUsageAmountLabel(window.usageAmount)}</div>
+      ) : null}
     </div>
   )
 }
@@ -270,13 +282,16 @@ export function ProviderPanel({
   }
 
   const name = getProviderDisplayName(p.provider)
+  // Why: Copilot's plan tier ("Copilot Business") mirrors VS Code's popup header.
+  const planLabel = p.provider === 'copilot' ? (formatPlanLabel(p.planType) ?? null) : null
+  const displayName = planLabel ? `${name} ${planLabel}` : name
 
   if (p.status === 'unavailable') {
     return (
       <div className={`text-xs ${className ?? 'w-full'}`}>
         <div className={`flex items-center gap-1.5 font-medium ${textClass}`}>
           <ProviderIcon provider={p.provider} />
-          {name}
+          {displayName}
         </div>
         <div className={mutedClass}>
           {p.error ?? translate('auto.components.status.bar.tooltip.1292d4f2ee', 'Unavailable')}
@@ -290,7 +305,7 @@ export function ProviderPanel({
       <div className={`text-xs ${className ?? 'w-full'}`}>
         <div className={`flex items-center gap-1.5 font-medium ${textClass}`}>
           <ProviderIcon provider={p.provider} />
-          {name}
+          {displayName}
         </div>
         <div className="mt-2">
           <ErrorMessage
@@ -318,7 +333,7 @@ export function ProviderPanel({
       <div>
         <div className={`flex items-center gap-1.5 text-[13px] font-medium ${textClass}`}>
           <ProviderIcon provider={p.provider} />
-          {name}
+          {displayName}
         </div>
         <div className={faintClass}>{updatedAgo}</div>
         {resetCreditCount !== null && resetCreditCount !== undefined ? (
