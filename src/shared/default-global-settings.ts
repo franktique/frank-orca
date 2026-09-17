@@ -90,6 +90,7 @@ export function buildDefaultSettings(args: {
     terminalRightClickToPaste: args.terminalRightClickToPaste,
     terminalRightClickToPasteDefaultedForPlatform: true,
     terminalWindowsShell: 'powershell.exe',
+    terminalDefaultShell: '',
     terminalWindowsWslDistro: null,
     localAccountRuntime: 'auto',
     localAccountRuntimeDefaultedToAutoForAllUsers: true,
