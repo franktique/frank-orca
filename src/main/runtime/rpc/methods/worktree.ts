@@ -4,6 +4,7 @@ import {
   resolveAutomationWorkspaceProvenance
 } from '../../../automations/workspace-provenance'
 import { buildCliWorkspaceProvenance } from '../../../../shared/cli-workspace-provenance'
+import type { DiffComment, MobileDiffReviewState } from '../../../../shared/diff-comment-types'
 import { displayNameUpdatePinsLabel } from '../../../../shared/worktree/display-name-provenance'
 import { defineMethod } from '../core'
 import { buildManagedWorktreeCreateArgs } from './worktree-create-args'
@@ -154,6 +155,7 @@ export const WORKTREE_METHODS = [
         isArchived: params.isArchived,
         isUnread: params.isUnread,
         isPinned: params.isPinned,
+        isHidden: params.isHidden,
         sortOrder: params.sortOrder,
         manualOrder: params.manualOrder,
         lastActivityAt: params.lastActivityAt,
@@ -164,8 +166,10 @@ export const WORKTREE_METHODS = [
         baseRef: params.baseRef,
         workspaceStatus: params.workspaceStatus,
         pushTarget: params.pushTarget,
-        diffComments: params.diffComments,
-        mobileDiffReview: params.mobileDiffReview,
+        // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: the wire schema leaves these two loosely typed (z.unknown) for old-client tolerance; the target shapes are what this handler has always forwarded.
+        diffComments: params.diffComments as DiffComment[] | undefined,
+        // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: same loose wire typing as diffComments above.
+        mobileDiffReview: params.mobileDiffReview as MobileDiffReviewState | undefined,
         lineage:
           params.parentWorktree || params.noParent === true
             ? {
@@ -173,7 +177,7 @@ export const WORKTREE_METHODS = [
                 noParent: params.noParent === true
               }
             : undefined
-      } as Parameters<typeof runtime.updateManagedWorktreeMeta>[1])
+      })
     })
   }),
   defineMethod({

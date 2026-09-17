@@ -83,6 +83,7 @@ export function normalizeFolderWorkspaces(
       isArchived: raw.isArchived === true,
       isUnread: raw.isUnread === true,
       isPinned: raw.isPinned === true,
+      isHidden: raw.isHidden === true,
       sortOrder:
         typeof raw.sortOrder === 'number' && Number.isFinite(raw.sortOrder) ? raw.sortOrder : now,
       ...(typeof raw.manualOrder === 'number' && Number.isFinite(raw.manualOrder)

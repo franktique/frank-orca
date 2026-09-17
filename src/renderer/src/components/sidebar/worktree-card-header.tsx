@@ -1,5 +1,5 @@
 import React from 'react'
-import { AlertCircle, Server, ServerOff, Star, Trash2 } from 'lucide-react'
+import { AlertCircle, Eye, EyeOff, Server, ServerOff, Star, Trash2 } from 'lucide-react'
 
 import { RepoIconGlyph } from '@/components/repo/repo-icon'
 import { Badge } from '@/components/ui/badge'
@@ -69,6 +69,7 @@ export function WorktreeCardHeader({
     visibleCardTitle,
     isDeleting,
     showUnreadEmphasis,
+    handleToggleWorktreeHidden,
     setTitleRenaming,
     handleRenameTitle,
     renamingWorktreeId,
@@ -84,10 +85,14 @@ export function WorktreeCardHeader({
     showHeaderActions,
     showTitleRowPrimary,
     showDeleteQuickAction,
+    showHiddenToggle,
     showTitleRowIndicators,
     titleRowIndicators,
     titleWrapper
   } = presentation
+  const visibilityActionLabel = worktree.isHidden
+    ? translate('sidebar.worktreeVisibility.show', 'Show workspace')
+    : translate('sidebar.worktreeVisibility.hide', 'Hide workspace')
 
   return (
     <div className="flex min-w-0 items-center justify-between gap-2">
@@ -284,6 +289,34 @@ export function WorktreeCardHeader({
                   'auto.components.sidebar.WorktreeCard.0777de5970',
                   'Primary worktree (original clone directory)'
                 )}
+              </TooltipContent>
+            </Tooltip>
+          )}
+
+          {showHiddenToggle && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  data-workspace-board-preserve-open=""
+                  onPointerDown={stopQuickActionPointerPropagation}
+                  onClick={handleToggleWorktreeHidden}
+                  className={cn(
+                    'inline-flex size-4 items-center justify-center rounded bg-transparent opacity-0 transition-colors transition-opacity',
+                    'group-hover/worktree-card:opacity-100 group-focus-within/worktree-card:opacity-100 focus-visible:opacity-100',
+                    'text-muted-foreground hover:bg-foreground/10 hover:text-foreground focus-visible:bg-foreground/10 focus-visible:text-foreground'
+                  )}
+                  aria-label={visibilityActionLabel}
+                >
+                  {worktree.isHidden ? (
+                    <EyeOff className="size-3.5" />
+                  ) : (
+                    <Eye className="size-3.5" />
+                  )}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={8}>
+                {visibilityActionLabel}
               </TooltipContent>
             </Tooltip>
           )}

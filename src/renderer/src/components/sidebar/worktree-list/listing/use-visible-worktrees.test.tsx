@@ -142,6 +142,48 @@ describe('useVisibleSidebarWorktrees', () => {
     const openResult = renderHook(() => useVisibleSidebarWorktrees(args(true)))
     expect(openResult.result.current.visibleWorktrees.map((w) => w.id)).toEqual([alpha.id, beta.id])
   })
+  it('drops individually hidden worktrees unless showHiddenProjects is set', () => {
+    const repo = makeRepo()
+    const visible = makeWorktree('alpha', 'Alpha workspace', { hostId: 'local' })
+    const hidden = {
+      ...makeWorktree('beta', 'Beta workspace', { hostId: 'local' }),
+      isHidden: true
+    }
+    useAppStore.setState({ worktreesByRepo: { [repo.id]: [visible, hidden] } })
+
+    const args = (
+      showHiddenProjects: boolean
+    ): Parameters<typeof useVisibleSidebarWorktrees>[0] => ({
+      filterState: {
+        showSleepingWorkspaces: true,
+        filterRepoIds: [],
+        hideDefaultBranchWorkspace: false,
+        hideAutomationGeneratedWorkspaces: false,
+        hideCliCreatedWorkspaces: false,
+        hideDetachedHeadWorkspaces: false,
+        hideWorkspacesFromOtherDevices: false,
+        alwaysShowDefaultBranchWorkspace: true,
+        visibleWorkspaceHostIds: null,
+        workspaceHostScope: 'all'
+      },
+      sortBy: 'recent' as const,
+      sortedIds: [visible.id, hidden.id],
+      repoMap: new Map([[repo.id, repo]]),
+      worktreeLineageById: {},
+      defaultHostId: LOCAL_EXECUTION_HOST_ID,
+      agentSendTargetWorktreeId: null,
+      showHiddenProjects
+    })
+
+    const { result } = renderHook(() => useVisibleSidebarWorktrees(args(false)))
+    expect(result.current.visibleWorktrees.map((w) => w.id)).toEqual([visible.id])
+
+    const openResult = renderHook(() => useVisibleSidebarWorktrees(args(true)))
+    expect(openResult.result.current.visibleWorktrees.map((w) => w.id)).toEqual([
+      visible.id,
+      hidden.id
+    ])
+  })
   it('does not rescan every worktree when a settings write leaves the focused host unchanged', () => {
     const repo = makeRepo()
     const worktree = makeWorktree('alpha', 'Alpha workspace', { hostId: 'local' })

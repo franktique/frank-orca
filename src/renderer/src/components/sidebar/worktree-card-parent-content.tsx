@@ -66,7 +66,11 @@ export function WorktreeCardParentContent({
 
   const identityContent = (
     <div
-      className="group/worktree-card flex w-full min-w-0 flex-col gap-1.5"
+      className={cn(
+        'group/worktree-card flex w-full min-w-0 flex-col gap-1.5',
+        // Why: same dim as a revealed-but-hidden project header row.
+        worktree.isHidden && 'opacity-60'
+      )}
       data-worktree-card-hover-trigger=""
     >
       <WorktreeCardHeader card={card} presentation={presentation} />

@@ -105,6 +105,9 @@ export type Worktree = {
   isArchived: boolean
   isUnread: boolean
   isPinned: boolean
+  /** User-hidden from the sidebar worktree list; the worktree and its data are untouched.
+   *  Optional so fixtures and persisted rows from before the field continue to load. */
+  isHidden?: boolean
   sortOrder: number
   /** User-authored sidebar ordering. Higher values render earlier in Manual sort. */
   manualOrder?: number

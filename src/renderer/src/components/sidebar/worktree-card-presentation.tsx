@@ -66,7 +66,8 @@ export function buildWorktreeCardPresentation(card: WorktreeCardController) {
     canUnlinkReview,
     handleUnlinkReview,
     detailsHoverControl,
-    showDeleteQuickAction
+    showDeleteQuickAction,
+    showHiddenToggle
   } = card
 
   // Why: pinned trees mix repos, so the repo icon shows regardless of groupBy's hideRepoBadge.
@@ -109,7 +110,7 @@ export function buildWorktreeCardPresentation(card: WorktreeCardController) {
   const hasMetaRow = compactCards
     ? hasMetadataBadge || cacheStartedAt != null
     : hasDetailedMetaRowContent
-  const showHeaderActions = showTitleRowPrimary || showDeleteQuickAction
+  const showHeaderActions = showTitleRowPrimary || showDeleteQuickAction || showHiddenToggle
   // Why: normalize the title once so title/branch de-dupe and identity-only hover eligibility stay in sync.
   const trimmedVisibleCardTitle = visibleCardTitle.trim()
   const showBranchIdentityHover = newCardStyle
@@ -278,6 +279,7 @@ export function buildWorktreeCardPresentation(card: WorktreeCardController) {
     hasMetaRow,
     showHeaderActions,
     showDeleteQuickAction,
+    showHiddenToggle,
     hoverBranchName,
     hoverWorkspaceTitle,
     hasHoverDetails,

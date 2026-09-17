@@ -53,6 +53,8 @@ export type WorktreeMeta = {
   isArchived: boolean
   isUnread: boolean
   isPinned: boolean
+  /** See Worktree.isHidden. Optional for backward compatibility. */
+  isHidden?: boolean
   sortOrder: number
   /** User-authored sidebar ordering. Higher values render earlier in Manual sort. */
   manualOrder?: number
