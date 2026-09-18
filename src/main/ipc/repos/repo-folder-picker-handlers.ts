@@ -4,7 +4,7 @@ import { dialog, ipcMain } from 'electron'
 export function registerRepoFolderPickerHandlers(mainWindow: BrowserWindow): void {
   ipcMain.handle('repos:pickFolder', async () => {
     const result = await dialog.showOpenDialog(mainWindow, {
-      properties: ['openDirectory']
+      properties: ['openDirectory', 'showHiddenFiles']
     })
     if (result.canceled || result.filePaths.length === 0) {
       return null
@@ -14,7 +14,7 @@ export function registerRepoFolderPickerHandlers(mainWindow: BrowserWindow): voi
 
   ipcMain.handle('repos:pickFolders', async () => {
     const result = await dialog.showOpenDialog(mainWindow, {
-      properties: ['openDirectory', 'multiSelections']
+      properties: ['openDirectory', 'multiSelections', 'showHiddenFiles']
     })
     if (result.canceled || result.filePaths.length === 0) {
       return []
@@ -26,7 +26,7 @@ export function registerRepoFolderPickerHandlers(mainWindow: BrowserWindow): voi
   ipcMain.handle('repos:pickDirectory', async () => {
     const result = await dialog.showOpenDialog(mainWindow, {
       // Why: macOS materializes typed partial paths with directory creation on; clone/create make the final path on submit.
-      properties: ['openDirectory']
+      properties: ['openDirectory', 'showHiddenFiles']
     })
     if (result.canceled || result.filePaths.length === 0) {
       return null
