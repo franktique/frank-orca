@@ -267,7 +267,8 @@ describe('useVisibleSidebarWorktrees', () => {
         repoMap: new Map([[repo.id, repo]]),
         worktreeLineageById: {},
         defaultHostId: LOCAL_EXECUTION_HOST_ID,
-        agentSendTargetWorktreeId: null
+        agentSendTargetWorktreeId: null,
+        showHiddenProjects: false
       })
     )
     const callsAfterFirstRender = computeVisibleWorktreesCalls.count

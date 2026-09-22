@@ -34,6 +34,7 @@ export function useVisibleWorkspaceKanbanWorktreeIds({
   const hideCliCreatedWorkspaces = useAppStore((s) => s.hideCliCreatedWorkspaces)
   const hideDetachedHeadWorkspaces = useAppStore((s) => s.hideDetachedHeadWorkspaces)
   const hideWorkspacesFromOtherDevices = useAppStore((s) => s.hideWorkspacesFromOtherDevices)
+  const showHiddenProjects = useAppStore((s) => s.showHiddenProjects)
   const runtimeEnvironments = useAppStore((s) =>
     s.hideWorkspacesFromOtherDevices ? s.runtimeEnvironments : EMPTY_RUNTIME_ENVIRONMENTS
   )
@@ -78,34 +79,40 @@ export function useVisibleWorkspaceKanbanWorktreeIds({
     // Why: the board has its own status ordering, but visibility must match
     // the sidebar filters exactly so hidden workspaces do not reappear here.
     const sortedIds = allWorktrees.map((worktree) => worktree.id)
-    return new Set(
-      computeVisibleWorktrees(worktreesByRepo, sortedIds, {
-        filterRepoIds,
-        showSleepingWorkspaces,
-        tabsByWorktree,
-        ptyIdsByTabId,
-        browserTabsByWorktree,
-        worktreeIdsWithLiveAgent,
-        worktreeIdsWithStructuredChat,
-        hideDefaultBranchWorkspace,
-        hideAutomationGeneratedWorkspaces,
-        hideCliCreatedWorkspaces,
-        hideDetachedHeadWorkspaces,
-        hideWorkspacesFromOtherDevices,
-        pairedDeviceIdsByEnvironment: hideWorkspacesFromOtherDevices
-          ? getPairedDeviceIdsByEnvironment(runtimeEnvironments, runtimeStatusByEnvironmentId)
-          : EMPTY_PAIRED_DEVICE_IDS_BY_ENVIRONMENT,
-        alwaysShowDefaultBranchWorkspace,
-        repoMap,
-        workspaceHostScope,
-        visibleWorkspaceHostIds,
-        defaultHostId: getSettingsFocusedExecutionHostId(settings),
-        worktreeLineageById: {},
-        // Why: the board has no nested lineage presentation. Ancestor injection
-        // would make filtered-out parents appear as ordinary cards.
-        injectLineageAncestors: false
-      }).map(getWorktreeHostIdentity)
-    )
+    const visible = computeVisibleWorktrees(worktreesByRepo, sortedIds, {
+      filterRepoIds,
+      showSleepingWorkspaces,
+      tabsByWorktree,
+      ptyIdsByTabId,
+      browserTabsByWorktree,
+      worktreeIdsWithLiveAgent,
+      worktreeIdsWithStructuredChat,
+      hideDefaultBranchWorkspace,
+      hideAutomationGeneratedWorkspaces,
+      hideCliCreatedWorkspaces,
+      hideDetachedHeadWorkspaces,
+      hideWorkspacesFromOtherDevices,
+      pairedDeviceIdsByEnvironment: hideWorkspacesFromOtherDevices
+        ? getPairedDeviceIdsByEnvironment(runtimeEnvironments, runtimeStatusByEnvironmentId)
+        : EMPTY_PAIRED_DEVICE_IDS_BY_ENVIRONMENT,
+      alwaysShowDefaultBranchWorkspace,
+      repoMap,
+      workspaceHostScope,
+      visibleWorkspaceHostIds,
+      defaultHostId: getSettingsFocusedExecutionHostId(settings),
+      worktreeLineageById: {},
+      // Why: the board has no nested lineage presentation. Ancestor injection
+      // would make filtered-out parents appear as ordinary cards.
+      injectLineageAncestors: false
+    })
+    // Why: "Show hidden" must cover the board the same as the sidebar list, so a
+    // project/worktree hidden via the eye toggle doesn't reappear here.
+    const hiddenFiltered = showHiddenProjects
+      ? visible
+      : visible.filter(
+          (worktree) => repoMap.get(worktree.repoId)?.hidden !== true && !worktree.isHidden
+        )
+    return new Set(hiddenFiltered.map(getWorktreeHostIdentity))
   }, [
     allWorktrees,
     browserTabsByWorktree,
@@ -123,6 +130,7 @@ export function useVisibleWorkspaceKanbanWorktreeIds({
     repoMap,
     runtimeEnvironments,
     runtimeStatusByEnvironmentId,
+    showHiddenProjects,
     showSleepingWorkspaces,
     tabsByWorktree,
     worktreeIdsWithLiveAgent,
