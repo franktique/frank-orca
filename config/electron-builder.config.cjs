@@ -14,6 +14,10 @@ const {
 } = require('./packaged-runtime-node-modules.cjs')
 const { verifyLinuxGlibcFloor } = require('./scripts/verify-linux-glibc-floor.cjs')
 const { writeMacBuildCompatibility } = require('./scripts/mac-build-compatibility.cjs')
+const {
+  MOBILE_WEB_BUNDLE_DIR,
+  assertMobileWebBundleBuilt
+} = require('./scripts/verify-packaged-mobile-web-bundle.cjs')
 const { verifyPackagedPluginResources } = require('./scripts/verify-packaged-plugin-resources.cjs')
 const {
   verifyPackagedWindowsNodePty
@@ -289,8 +293,11 @@ module.exports = {
       verifyStaticAppImagePackage(file, arch)
     }
   },
-  beforePack: (context) => {
+  // electron-builder calls this with the context alone. The second parameter is the bundle root,
+  // so a test can point the guard at a scratch bundle instead of needing the repo's out/ built.
+  beforePack: (context, mobileWebBundleDir = MOBILE_WEB_BUNDLE_DIR) => {
     assertPackagedNativeVariantsInstalled(context.electronPlatformName, context.arch)
+    assertMobileWebBundleBuilt(mobileWebBundleDir)
   },
   afterPack: async (context) => {
     const resourcesDir =
@@ -655,7 +662,11 @@ module.exports = {
     provider: 'github',
     owner: 'stablyai',
     repo: devChannelRepo ?? 'orca',
-    releaseType: devChannelRepo ? 'prerelease' : 'release'
+    // Why draft on the main repo: `--publish always` otherwise creates a
+    // public GitHub release as soon as the first platform uploads, and
+    // /releases/latest serves a missing Windows exe. release-cut undrafts
+    // only after every required asset exists.
+    releaseType: devChannelRepo ? 'prerelease' : 'draft'
   }
 }
 
