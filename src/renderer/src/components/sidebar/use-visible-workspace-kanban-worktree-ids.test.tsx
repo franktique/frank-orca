@@ -71,4 +71,65 @@ describe('useVisibleWorkspaceKanbanWorktreeIds', () => {
 
     expect(result.current).toEqual(new Set([getWorktreeHostIdentity(worktree)]))
   })
+
+  it('drops worktrees of hidden repos unless showHiddenProjects is set', () => {
+    const repo = { ...makeRepo(), hidden: true }
+    const alpha = makeWorktree('alpha', 'Alpha workspace', { hostId: 'local' })
+    const beta = makeWorktree('beta', 'Beta workspace', { hostId: 'local' })
+    useAppStore.setState({
+      worktreesByRepo: { [repo.id]: [alpha, beta] },
+      showSleepingWorkspaces: true
+    })
+
+    const { result } = renderHook(() =>
+      useVisibleWorkspaceKanbanWorktreeIds({
+        allWorktrees: [alpha, beta],
+        repoMap: new Map([[repo.id, repo]])
+      })
+    )
+    expect(result.current).toEqual(new Set())
+
+    useAppStore.setState({ showHiddenProjects: true })
+    const openResult = renderHook(() =>
+      useVisibleWorkspaceKanbanWorktreeIds({
+        allWorktrees: [alpha, beta],
+        repoMap: new Map([[repo.id, repo]])
+      })
+    )
+    expect(openResult.result.current).toEqual(
+      new Set([getWorktreeHostIdentity(alpha), getWorktreeHostIdentity(beta)])
+    )
+  })
+
+  it('drops individually hidden worktrees unless showHiddenProjects is set', () => {
+    const repo = makeRepo()
+    const visible = makeWorktree('alpha', 'Alpha workspace', { hostId: 'local' })
+    const hidden = {
+      ...makeWorktree('beta', 'Beta workspace', { hostId: 'local' }),
+      isHidden: true
+    }
+    useAppStore.setState({
+      worktreesByRepo: { [repo.id]: [visible, hidden] },
+      showSleepingWorkspaces: true
+    })
+
+    const { result } = renderHook(() =>
+      useVisibleWorkspaceKanbanWorktreeIds({
+        allWorktrees: [visible, hidden],
+        repoMap: new Map([[repo.id, repo]])
+      })
+    )
+    expect(result.current).toEqual(new Set([getWorktreeHostIdentity(visible)]))
+
+    useAppStore.setState({ showHiddenProjects: true })
+    const openResult = renderHook(() =>
+      useVisibleWorkspaceKanbanWorktreeIds({
+        allWorktrees: [visible, hidden],
+        repoMap: new Map([[repo.id, repo]])
+      })
+    )
+    expect(openResult.result.current).toEqual(
+      new Set([getWorktreeHostIdentity(visible), getWorktreeHostIdentity(hidden)])
+    )
+  })
 })
