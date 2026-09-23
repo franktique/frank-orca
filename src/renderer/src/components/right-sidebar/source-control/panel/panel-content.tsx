@@ -59,10 +59,14 @@ export function SourceControlPanelContent(props: SourceControlPanelReadyProps) {
     requestDiscardEntry,
     requestDiscardPaths,
     revealInExplorer,
+    reviewedBranchByPath,
+    reviewedChangedByPath,
     selectedKeySet,
     setBaseRefDialogOpen,
     sourceControlAiActionsVisible,
     sourceControlViewMode,
+    toggleBranchFileReviewed,
+    toggleChangedFileReviewed,
     toggleSection,
     toggleSubmodule,
     toggleTreeDir,
@@ -169,6 +173,8 @@ export function SourceControlPanelContent(props: SourceControlPanelReadyProps) {
           handleUnstage={handleUnstage}
           requestDiscardEntry={requestDiscardEntry}
           diffCommentCountByPath={diffCommentCountByPath}
+          reviewedByPath={reviewedChangedByPath}
+          onToggleReviewed={toggleChangedFileReviewed}
         />
       )}
 
@@ -204,6 +210,8 @@ export function SourceControlPanelContent(props: SourceControlPanelReadyProps) {
           openCommittedDiff={openCommittedDiff}
           openBranchAllDiffs={openBranchAllDiffs}
           diffCommentCountByPath={diffCommentCountByPath}
+          reviewedByPath={reviewedBranchByPath}
+          onToggleReviewed={toggleBranchFileReviewed}
         />
       )}
 

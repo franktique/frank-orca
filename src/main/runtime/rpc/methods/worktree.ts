@@ -5,6 +5,7 @@ import {
 } from '../../../automations/workspace-provenance'
 import { buildCliWorkspaceProvenance } from '../../../../shared/cli-workspace-provenance'
 import type { DiffComment, MobileDiffReviewState } from '../../../../shared/diff-comment-types'
+import type { FileReviewRecord } from '../../../../shared/file-review-types'
 import { displayNameUpdatePinsLabel } from '../../../../shared/worktree/display-name-provenance'
 import { defineMethod } from '../core'
 import { buildManagedWorktreeCreateArgs } from './worktree-create-args'
@@ -110,7 +111,10 @@ export const WORKTREE_METHODS = [
           // Why: agent callers need a stable dispatch target without traversing
           // terminal-list layout duplicates after creating the worktree.
           return params.startupAgent && result.startupTerminal?.handle
-            ? { ...result, agentTerminalHandle: result.startupTerminal.handle }
+            ? {
+                ...result,
+                agentTerminalHandle: result.startupTerminal.handle
+              }
             : result
         } catch (error) {
           releaseAutomationWorkspaceProvenanceRequest(params.automationProvenanceRequest)
@@ -136,7 +140,9 @@ export const WORKTREE_METHODS = [
       worktree: await runtime.updateManagedWorktreeMeta(params.worktree, {
         displayName: params.displayName,
         ...(params.displayName !== undefined
-          ? { displayNameIsPinned: displayNameUpdatePinsLabel(params.displayName) }
+          ? {
+              displayNameIsPinned: displayNameUpdatePinsLabel(params.displayName)
+            }
           : {}),
         linkedIssue: params.linkedIssue,
         linkedPR: params.linkedPR,
@@ -170,6 +176,10 @@ export const WORKTREE_METHODS = [
         diffComments: params.diffComments as DiffComment[] | undefined,
         // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: same loose wire typing as diffComments above.
         mobileDiffReview: params.mobileDiffReview as MobileDiffReviewState | undefined,
+        // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: same loose wire typing as diffComments above.
+        reviewedChangedFiles: params.reviewedChangedFiles as FileReviewRecord | undefined,
+        // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: same loose wire typing as diffComments above.
+        reviewedBranchFiles: params.reviewedBranchFiles as FileReviewRecord | undefined,
         lineage:
           params.parentWorktree || params.noParent === true
             ? {

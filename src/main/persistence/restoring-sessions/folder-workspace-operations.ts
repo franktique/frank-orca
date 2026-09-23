@@ -128,6 +128,8 @@ export class FolderWorkspacePersistenceOperations {
         | 'firstAgentMessageRenameError'
         | 'lastActivityAt'
         | 'diffComments'
+        | 'reviewedChangedFiles'
+        | 'reviewedBranchFiles'
       >
     >
   ): FolderWorkspace | null {
@@ -206,6 +208,12 @@ export class FolderWorkspacePersistenceOperations {
     }
     if (updates.diffComments !== undefined) {
       workspace.diffComments = updates.diffComments
+    }
+    if (updates.reviewedChangedFiles !== undefined) {
+      workspace.reviewedChangedFiles = updates.reviewedChangedFiles
+    }
+    if (updates.reviewedBranchFiles !== undefined) {
+      workspace.reviewedBranchFiles = updates.reviewedBranchFiles
     }
     workspace.updatedAt = Date.now()
     this.scheduleSave()

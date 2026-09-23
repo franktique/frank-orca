@@ -5,6 +5,7 @@ import { isWorkspaceLinkedItemSourceContextMatch } from '../workspace-linked-ite
 import { isTuiAgent } from '../tui-agent-config'
 import { OptionalFiniteNumber, OptionalString, requiredString } from './rpc-param-primitives'
 import { DiffCommentSchema } from '../diff-comment-schema'
+import { FileReviewRecordSchema } from '../file-review-schema'
 
 export const FolderWorkspaceLinkedTask = WorkspaceLinkedItemSchema.nullable()
 
@@ -60,7 +61,9 @@ export const FolderWorkspaceUpdate = z.object({
       pendingFirstAgentMessageRename: z.boolean().optional(),
       firstAgentMessageRenameError: z.string().nullable().optional(),
       lastActivityAt: OptionalFiniteNumber,
-      diffComments: z.array(DiffCommentSchema).optional()
+      diffComments: z.array(DiffCommentSchema).optional(),
+      reviewedChangedFiles: FileReviewRecordSchema.optional(),
+      reviewedBranchFiles: FileReviewRecordSchema.optional()
     })
     .superRefine(assertLinkedTaskSourceContextMatch)
 })

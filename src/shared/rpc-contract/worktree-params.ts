@@ -30,7 +30,10 @@ export const OptionalTuiAgent = z
   .unknown()
   .superRefine((value, ctx) => {
     if (value !== undefined && !isTuiAgent(value)) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Unknown TUI agent' })
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Unknown TUI agent'
+      })
     }
   })
   .transform((value): TuiAgent | undefined => (isTuiAgent(value) ? value : undefined))
@@ -152,6 +155,8 @@ export const WorktreeSet = WorktreeSelector.extend({
     .nullable()
     .optional(),
   diffComments: z.array(z.unknown()).optional(),
+  reviewedChangedFiles: z.record(z.string(), z.unknown()).optional(),
+  reviewedBranchFiles: z.record(z.string(), z.unknown()).optional(),
   mobileDiffReview: z.unknown().optional(),
   parentWorktree: OptionalString,
   noParent: OptionalBoolean

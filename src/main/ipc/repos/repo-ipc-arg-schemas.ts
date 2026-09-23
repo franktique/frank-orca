@@ -4,6 +4,7 @@ import { TaskSourceContextSchema } from '../../../shared/task-source-context-sch
 import { WorkspaceLinkedItemSchema } from '../../../shared/workspace-linked-item-schema'
 import { isWorkspaceLinkedItemSourceContextMatch } from '../../../shared/workspace-linked-item-source-context'
 import { DiffCommentSchema } from '../../../shared/diff-comment-schema'
+import { FileReviewRecordSchema } from '../../../shared/file-review-schema'
 import { normalizeExecutionHostId } from '../../../shared/execution-host'
 
 export const ProjectGroupCreateArgs = z.object({
@@ -160,7 +161,9 @@ export const FolderWorkspaceUpdateArgs = z.object({
       pendingFirstAgentMessageRename: z.boolean().optional(),
       firstAgentMessageRenameError: z.string().nullable().optional(),
       lastActivityAt: z.number().finite().optional(),
-      diffComments: z.array(DiffCommentSchema).optional()
+      diffComments: z.array(DiffCommentSchema).optional(),
+      reviewedChangedFiles: FileReviewRecordSchema.optional(),
+      reviewedBranchFiles: FileReviewRecordSchema.optional()
     })
     .superRefine(assertFolderWorkspaceLinkedSourceContextMatch)
 })

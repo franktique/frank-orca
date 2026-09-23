@@ -85,6 +85,8 @@ export function SourceControlUncommittedSections(props: {
   handleUnstage: (path: string) => Promise<void>
   requestDiscardEntry: (entry: GitStatusEntry) => void
   diffCommentCountByPath: Map<string, number>
+  reviewedByPath: Map<string, boolean>
+  onToggleReviewed: (entry: GitStatusEntry) => void
 }): React.JSX.Element {
   return (
     <>
@@ -210,6 +212,8 @@ export function SourceControlUncommittedSections(props: {
                 handleUnstage={props.handleUnstage}
                 requestDiscardEntry={props.requestDiscardEntry}
                 diffCommentCountByPath={props.diffCommentCountByPath}
+                reviewedByPath={props.reviewedByPath}
+                onToggleReviewed={props.onToggleReviewed}
               />
             )}
           </div>
