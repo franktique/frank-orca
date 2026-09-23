@@ -3,6 +3,7 @@ import type { AutomationExecutionTargetType } from '../automations-types'
 import type { TaskSourceContext } from '../task-source-context'
 import type { TuiAgent } from '../tui-agent'
 import type { DiffComment, MobileDiffReviewState } from '../diff-comment-types'
+import type { FileReviewRecord } from '../file-review-types'
 import type { EphemeralVmCheckoutMode } from '../orca-yaml-hook-types'
 import type { BuiltInWorktreeVisibilitySourceId } from '../repo-types'
 import type { WorktreeIdentity } from './identity'
@@ -142,6 +143,11 @@ export type Worktree = {
   priorWorktreeIds?: string[]
   workspaceStatus?: WorkspaceStatus
   diffComments?: DiffComment[]
+  /** Local-only "reviewed" checkbox state for the Source Control panel's uncommitted
+   *  Changes section, keyed by file path. Never committed to the repo. */
+  reviewedChangedFiles?: FileReviewRecord
+  /** Same as `reviewedChangedFiles`, for the Committed on Branch section. */
+  reviewedBranchFiles?: FileReviewRecord
   mobileDiffReview?: MobileDiffReviewState
   automationProvenance?: AutomationWorkspaceProvenance
   cliProvenance?: CliWorkspaceProvenance

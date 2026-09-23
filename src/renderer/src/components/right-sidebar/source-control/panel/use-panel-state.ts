@@ -1,4 +1,5 @@
 import { useSourceControlDiffCommentNotes } from '../notes/use-diff-comment-notes'
+import { useSourceControlFileReviewState } from '../listing/use-file-review-state'
 import { useSourceControlStoreActions } from '../listing/use-store-actions'
 import { useSourceControlWorktreeContext } from '../listing/use-worktree-context'
 import { useSourceControlBranchLineTotalGate } from '../sync/use-branch-line-total-gate'
@@ -19,8 +20,10 @@ export function useSourceControlPanelState() {
     activeWorktree,
     activeWorktreeId,
     activeWorktreeInstanceId,
+    branchEntries,
     branchSummary,
     conflictOperationsByWorktree,
+    entries,
     isBranchVisible,
     isFolder,
     repositoryHuge,
@@ -33,6 +36,13 @@ export function useSourceControlPanelState() {
     activeWorktreeId,
     clearDiffComments: storeActions.clearDiffComments,
     clearDiffCommentsForFile: storeActions.clearDiffCommentsForFile
+  })
+  const fileReview = useSourceControlFileReviewState({
+    activeWorktreeId,
+    entries,
+    branchEntries,
+    setChangedFileReviewed: storeActions.setChangedFileReviewed,
+    setBranchFileReviewed: storeActions.setBranchFileReviewed
   })
   const viewState = useSourceControlPanelViewState({
     activeWorktreeId,
@@ -66,6 +76,7 @@ export function useSourceControlPanelState() {
     ...context,
     ...storeActions,
     ...notes,
+    ...fileReview,
     ...viewState,
     ...operationState,
     ...statusRefresh

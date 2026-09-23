@@ -53,6 +53,8 @@ function renderBranchSection(): void {
         openCommittedDiff={vi.fn()}
         openBranchAllDiffs={vi.fn()}
         diffCommentCountByPath={new Map()}
+        reviewedByPath={new Map()}
+        onToggleReviewed={vi.fn()}
       />
     </TooltipProvider>
   )
@@ -104,6 +106,8 @@ function renderUncommittedSections(): void {
         handleUnstage={vi.fn()}
         requestDiscardEntry={vi.fn()}
         diffCommentCountByPath={new Map()}
+        reviewedByPath={new Map()}
+        onToggleReviewed={vi.fn()}
       />
     </TooltipProvider>
   )
@@ -136,7 +140,9 @@ describe('source control section header actions', () => {
   it('seats the branch View all button in a header slot that cannot shrink or wrap', () => {
     renderBranchSection()
 
-    const actionsSlot = screen.getByRole('button', { name: 'View all' }).parentElement
+    const actionsSlot = screen.getByRole('button', {
+      name: 'View all'
+    }).parentElement
     expect(actionsSlot).toHaveClass('shrink-0')
     expect(actionsSlot?.className).not.toContain('flex-wrap')
   })

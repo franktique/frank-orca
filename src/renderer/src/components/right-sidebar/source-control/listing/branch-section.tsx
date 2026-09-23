@@ -31,7 +31,9 @@ export function SourceControlBranchSection({
   activeConnectionId,
   openCommittedDiff,
   openBranchAllDiffs,
-  diffCommentCountByPath
+  diffCommentCountByPath,
+  reviewedByPath,
+  onToggleReviewed
 }: {
   branchSummary: GitBranchCompareSummary
   filteredBranchEntries: GitBranchChangeEntry[]
@@ -54,6 +56,8 @@ export function SourceControlBranchSection({
     summary: GitBranchCompareSummary
   ) => void
   diffCommentCountByPath: Map<string, number>
+  reviewedByPath: Map<string, boolean>
+  onToggleReviewed: (entry: GitBranchChangeEntry) => void
 }): React.JSX.Element {
   const baseRef = branchSummary.baseRef?.trim()
   const fileCount = filteredBranchEntries.length
@@ -132,6 +136,8 @@ export function SourceControlBranchSection({
                   connectionId={activeConnectionId}
                   onOpen={(event) => openCommittedDiff(node.entry, event)}
                   commentCount={diffCommentCountByPath.get(node.entry.path) ?? 0}
+                  reviewed={reviewedByPath.get(node.entry.path) ?? false}
+                  onToggleReviewed={() => onToggleReviewed(node.entry)}
                   showPathHint={false}
                 />
               )
@@ -152,6 +158,8 @@ export function SourceControlBranchSection({
                 connectionId={activeConnectionId}
                 onOpen={(event) => openCommittedDiff(entry, event)}
                 commentCount={diffCommentCountByPath.get(entry.path) ?? 0}
+                reviewed={reviewedByPath.get(entry.path) ?? false}
+                onToggleReviewed={() => onToggleReviewed(entry)}
               />
             )}
           />

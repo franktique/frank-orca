@@ -6,7 +6,7 @@ import type { Worktree } from '../../../../shared/worktree/types'
 import { getRepoIdFromWorktreeId } from './worktree-helpers'
 import { callRuntimeRpc, getActiveRuntimeTarget } from '../../runtime/runtime-rpc-client'
 import { toRuntimeWorktreeSelector } from '../../runtime/runtime-worktree-selector'
-import { getRuntimeEnvironmentIdForWorktree } from '@/lib/worktree-runtime-owner'
+import { settingsForWorktreeOwner } from './worktree-settings-owner'
 import {
   findFolderWorkspaceOwner,
   getExecutionHostIdForFolderWorkspace,
@@ -65,7 +65,9 @@ async function persist(
       scope.folderWorkspaceId,
       executionHostId
     )
-    const target = getActiveRuntimeTarget({ activeRuntimeEnvironmentId: runtimeEnvironmentId })
+    const target = getActiveRuntimeTarget({
+      activeRuntimeEnvironmentId: runtimeEnvironmentId
+    })
     const updated =
       target.kind === 'local'
         ? await window.api.folderWorkspaces.update({
@@ -76,7 +78,10 @@ async function persist(
             await callRuntimeRpc<{ folderWorkspace: FolderWorkspace | null }>(
               target,
               'folderWorkspace.update',
-              { folderWorkspaceId: scope.folderWorkspaceId, updates: { diffComments } },
+              {
+                folderWorkspaceId: scope.folderWorkspaceId,
+                updates: { diffComments }
+              },
               { timeoutMs: 15_000 }
             )
           ).folderWorkspace
@@ -99,13 +104,6 @@ async function persist(
     { worktree: toRuntimeWorktreeSelector(worktreeId), diffComments },
     { timeoutMs: 15_000 }
   )
-}
-
-function settingsForWorktreeOwner(state: AppState, worktreeId: string): AppState['settings'] {
-  const runtimeEnvironmentId = getRuntimeEnvironmentIdForWorktree(state, worktreeId)
-  return state.settings
-    ? { ...state.settings, activeRuntimeEnvironmentId: runtimeEnvironmentId }
-    : ({ activeRuntimeEnvironmentId: runtimeEnvironmentId } as AppState['settings'])
 }
 
 // Why: IPC writes aren't ordered, so serialize per worktree to stop an older snapshot from overwriting a newer one on disk.

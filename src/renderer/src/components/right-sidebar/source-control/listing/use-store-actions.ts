@@ -49,6 +49,8 @@ export function useSourceControlStoreActions() {
       pushBranch: state.pushBranch,
       rebaseFromBase: state.rebaseFromBase,
       revealInExplorer: state.revealInExplorer,
+      setBranchFileReviewed: state.setBranchFileReviewed,
+      setChangedFileReviewed: state.setChangedFileReviewed,
       setCommitMessageGenerationRecord: state.setCommitMessageGenerationRecord,
       setGitBranchCompareResult: state.setGitBranchCompareResult,
       setGitStatus: state.setGitStatus,

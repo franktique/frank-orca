@@ -22,6 +22,7 @@ import {
   SUBMODULE_WORKTREE_ONLY_LABEL,
   SUBMODULE_WORKTREE_ONLY_TOOLTIP
 } from './row-layout'
+import { ReviewedCheckbox } from './reviewed-checkbox'
 import { STATUS_COLORS, STATUS_LABELS } from '../../status-display'
 
 /**
@@ -48,6 +49,8 @@ export const UncommittedEntryRow = React.memo(function UncommittedEntryRow({
   onUnstage,
   onDiscard,
   commentCount,
+  reviewed,
+  onToggleReviewed,
   showPathHint = true,
   submoduleExpansion
 }: {
@@ -67,6 +70,9 @@ export const UncommittedEntryRow = React.memo(function UncommittedEntryRow({
   onUnstage: (filePath: string) => Promise<void>
   onDiscard: (entry: GitStatusEntry) => void
   commentCount: number
+  // Local-only "reviewed" checkbox for manual code review tracking; never committed to the repo.
+  reviewed: boolean
+  onToggleReviewed: () => void
   showPathHint?: boolean
   // When set, the row is a dirty submodule: clicking toggles lazy expansion instead of opening an uninformative gitlink diff.
   submoduleExpansion?: { isExpanded: boolean; onToggle: () => void }
@@ -148,6 +154,7 @@ export const UncommittedEntryRow = React.memo(function UncommittedEntryRow({
           onOpen(entry, toPermanentSourceControlRowOpenEvent(e))
         }}
       >
+        <ReviewedCheckbox checked={reviewed} onToggle={onToggleReviewed} filePath={entry.path} />
         {submoduleExpansion && (
           <ChevronDown
             className={cn(

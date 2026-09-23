@@ -2,6 +2,7 @@ import type { ExecutionHostId } from './execution-host'
 import type { TaskSourceContext } from './task-source-context'
 import type { TuiAgent } from './tui-agent'
 import type { DiffComment } from './diff-comment-types'
+import type { FileReviewRecord } from './file-review-types'
 import type {
   WorkspaceCreatorProvenance,
   WorkspaceLinkedItem,
@@ -44,6 +45,10 @@ export type FolderWorkspace = {
   createdAt: number
   updatedAt: number
   diffComments?: DiffComment[]
+  /** See {@link import('./worktree/types').Worktree.reviewedChangedFiles}. */
+  reviewedChangedFiles?: FileReviewRecord
+  /** See {@link import('./worktree/types').Worktree.reviewedBranchFiles}. */
+  reviewedBranchFiles?: FileReviewRecord
 }
 
 export type FolderWorkspaceLinkedTask = WorkspaceLinkedItem

@@ -106,6 +106,8 @@ export function mergeWorktree(
     // Why: diff comments are persisted on WorktreeMeta and forwarded verbatim
     // so the renderer store mirrors on-disk state.
     diffComments: meta?.diffComments,
+    reviewedChangedFiles: meta?.reviewedChangedFiles,
+    reviewedBranchFiles: meta?.reviewedBranchFiles,
     mobileDiffReview: meta?.mobileDiffReview
   }
 }
