@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { translate } from '@/i18n/i18n'
 import type { GitStatusEntry } from '../../../../../../shared/git-status-types'
 import type { SourceControlViewMode } from '../../../../../../shared/ui-chrome-types'
+import type { FileReviewDisplayState } from '../../../../../../shared/file-review-types'
 import {
   getDiscardAllPaths,
   getUnstageAllPaths,
@@ -85,8 +86,8 @@ export function SourceControlUncommittedSections(props: {
   handleUnstage: (path: string) => Promise<void>
   requestDiscardEntry: (entry: GitStatusEntry) => void
   diffCommentCountByPath: Map<string, number>
-  reviewedByPath: Map<string, boolean>
-  onToggleReviewed: (entry: GitStatusEntry) => void
+  reviewedByPath: Map<string, FileReviewDisplayState>
+  onCycleReviewed: (entry: GitStatusEntry) => void
 }): React.JSX.Element {
   return (
     <>
@@ -213,7 +214,7 @@ export function SourceControlUncommittedSections(props: {
                 requestDiscardEntry={props.requestDiscardEntry}
                 diffCommentCountByPath={props.diffCommentCountByPath}
                 reviewedByPath={props.reviewedByPath}
-                onToggleReviewed={props.onToggleReviewed}
+                onCycleReviewed={props.onCycleReviewed}
               />
             )}
           </div>

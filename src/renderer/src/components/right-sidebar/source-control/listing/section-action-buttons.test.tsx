@@ -54,7 +54,7 @@ function renderBranchSection(): void {
         openBranchAllDiffs={vi.fn()}
         diffCommentCountByPath={new Map()}
         reviewedByPath={new Map()}
-        onToggleReviewed={vi.fn()}
+        onCycleReviewed={vi.fn()}
       />
     </TooltipProvider>
   )
@@ -107,7 +107,7 @@ function renderUncommittedSections(): void {
         requestDiscardEntry={vi.fn()}
         diffCommentCountByPath={new Map()}
         reviewedByPath={new Map()}
-        onToggleReviewed={vi.fn()}
+        onCycleReviewed={vi.fn()}
       />
     </TooltipProvider>
   )

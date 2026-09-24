@@ -22,8 +22,9 @@ import {
   SUBMODULE_WORKTREE_ONLY_LABEL,
   SUBMODULE_WORKTREE_ONLY_TOOLTIP
 } from './row-layout'
-import { ReviewedCheckbox } from './reviewed-checkbox'
+import { FileReviewStateCheckbox } from './file-review-state-checkbox'
 import { STATUS_COLORS, STATUS_LABELS } from '../../status-display'
+import type { FileReviewDisplayState } from '../../../../../../shared/file-review-types'
 
 /**
  * Renders one uncommitted change row: file identity, conflict/diff badges, and the hover actions
@@ -49,8 +50,8 @@ export const UncommittedEntryRow = React.memo(function UncommittedEntryRow({
   onUnstage,
   onDiscard,
   commentCount,
-  reviewed,
-  onToggleReviewed,
+  reviewState,
+  onCycleReviewed,
   showPathHint = true,
   submoduleExpansion
 }: {
@@ -70,9 +71,9 @@ export const UncommittedEntryRow = React.memo(function UncommittedEntryRow({
   onUnstage: (filePath: string) => Promise<void>
   onDiscard: (entry: GitStatusEntry) => void
   commentCount: number
-  // Local-only "reviewed" checkbox for manual code review tracking; never committed to the repo.
-  reviewed: boolean
-  onToggleReviewed: () => void
+  // Local-only 3-state review checkbox for manual code review tracking; never committed to the repo.
+  reviewState: FileReviewDisplayState
+  onCycleReviewed: () => void
   showPathHint?: boolean
   // When set, the row is a dirty submodule: clicking toggles lazy expansion instead of opening an uninformative gitlink diff.
   submoduleExpansion?: { isExpanded: boolean; onToggle: () => void }
@@ -154,7 +155,11 @@ export const UncommittedEntryRow = React.memo(function UncommittedEntryRow({
           onOpen(entry, toPermanentSourceControlRowOpenEvent(e))
         }}
       >
-        <ReviewedCheckbox checked={reviewed} onToggle={onToggleReviewed} filePath={entry.path} />
+        <FileReviewStateCheckbox
+          state={reviewState}
+          onCycle={onCycleReviewed}
+          filePath={entry.path}
+        />
         {submoduleExpansion && (
           <ChevronDown
             className={cn(

@@ -10,8 +10,9 @@ import { DiffLineCounts } from './diff-line-counts'
 import { SourceControlEntryContextMenu } from './entry-context-menu'
 import { toPermanentSourceControlRowOpenEvent, type SourceControlRowOpenEvent } from './split-open'
 import { SOURCE_CONTROL_TREE_FILE_PADDING_PX, SOURCE_CONTROL_TREE_INDENT_PX } from './row-layout'
-import { ReviewedCheckbox } from './reviewed-checkbox'
+import { FileReviewStateCheckbox } from './file-review-state-checkbox'
 import { STATUS_COLORS, STATUS_LABELS } from '../../status-display'
+import type { FileReviewDisplayState } from '../../../../../../shared/file-review-types'
 
 export function BranchEntryRow({
   entry,
@@ -22,8 +23,8 @@ export function BranchEntryRow({
   connectionId,
   onOpen,
   commentCount,
-  reviewed,
-  onToggleReviewed,
+  reviewState,
+  onCycleReviewed,
   showPathHint = true
 }: {
   entry: GitBranchChangeEntry
@@ -34,9 +35,9 @@ export function BranchEntryRow({
   connectionId?: string | null
   onOpen: (event?: SourceControlRowOpenEvent) => void
   commentCount: number
-  // Local-only "reviewed" checkbox for manual code review tracking; never committed to the repo.
-  reviewed: boolean
-  onToggleReviewed: () => void
+  // Local-only 3-state review checkbox for manual code review tracking; never committed to the repo.
+  reviewState: FileReviewDisplayState
+  onCycleReviewed: () => void
   showPathHint?: boolean
 }): React.JSX.Element {
   const FileIcon = getFileTypeIcon(entry.path)
@@ -68,7 +69,11 @@ export function BranchEntryRow({
         onClick={(e) => onOpen(e)}
         onDoubleClick={(e) => onOpen(toPermanentSourceControlRowOpenEvent(e))}
       >
-        <ReviewedCheckbox checked={reviewed} onToggle={onToggleReviewed} filePath={entry.path} />
+        <FileReviewStateCheckbox
+          state={reviewState}
+          onCycle={onCycleReviewed}
+          filePath={entry.path}
+        />
         {React.createElement(FileIcon, {
           className: 'size-3.5 shrink-0',
           style: { color: STATUS_COLORS[entry.status] }

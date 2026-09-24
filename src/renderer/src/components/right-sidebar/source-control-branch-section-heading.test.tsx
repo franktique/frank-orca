@@ -45,7 +45,7 @@ function render(
       openBranchAllDiffs={vi.fn()}
       diffCommentCountByPath={new Map()}
       reviewedByPath={new Map()}
-      onToggleReviewed={vi.fn()}
+      onCycleReviewed={vi.fn()}
     />
   )
 }

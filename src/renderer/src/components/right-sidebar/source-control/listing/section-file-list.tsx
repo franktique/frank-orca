@@ -1,5 +1,6 @@
 import React from 'react'
 import type { GitStatusEntry } from '../../../../../../shared/git-status-types'
+import type { FileReviewDisplayState } from '../../../../../../shared/file-review-types'
 import type { SourceControlViewMode } from '../../../../../../shared/ui-chrome-types'
 import type { DiscardAllArea } from '../commit/discard-all-sequence'
 import {
@@ -43,7 +44,7 @@ export function SourceControlSectionFileList({
   requestDiscardEntry,
   diffCommentCountByPath,
   reviewedByPath,
-  onToggleReviewed
+  onCycleReviewed
 }: {
   sourceControlViewMode: SourceControlViewMode
   treeRows: RenderableSourceControlNode[]
@@ -71,8 +72,8 @@ export function SourceControlSectionFileList({
   handleUnstage: (path: string) => Promise<void>
   requestDiscardEntry: (entry: GitStatusEntry) => void
   diffCommentCountByPath: Map<string, number>
-  reviewedByPath: Map<string, boolean>
-  onToggleReviewed: (entry: GitStatusEntry) => void
+  reviewedByPath: Map<string, FileReviewDisplayState>
+  onCycleReviewed: (entry: GitStatusEntry) => void
 }): React.JSX.Element {
   return sourceControlViewMode === 'tree' ? (
     <VirtualizedList
@@ -131,8 +132,8 @@ export function SourceControlSectionFileList({
             onUnstage={handleUnstage}
             onDiscard={requestDiscardEntry}
             commentCount={diffCommentCountByPath.get(node.entry.path) ?? 0}
-            reviewed={reviewedByPath.get(node.entry.path) ?? false}
-            onToggleReviewed={() => onToggleReviewed(node.entry)}
+            reviewState={reviewedByPath.get(node.entry.path) ?? 'unreviewed'}
+            onCycleReviewed={() => onCycleReviewed(node.entry)}
             showPathHint={false}
             submoduleExpansion={submoduleExpansion}
           />
@@ -184,8 +185,8 @@ export function SourceControlSectionFileList({
             onUnstage={handleUnstage}
             onDiscard={requestDiscardEntry}
             commentCount={diffCommentCountByPath.get(entry.path) ?? 0}
-            reviewed={reviewedByPath.get(entry.path) ?? false}
-            onToggleReviewed={() => onToggleReviewed(entry)}
+            reviewState={reviewedByPath.get(entry.path) ?? 'unreviewed'}
+            onCycleReviewed={() => onCycleReviewed(entry)}
             submoduleExpansion={submoduleExpansion}
           />
         )

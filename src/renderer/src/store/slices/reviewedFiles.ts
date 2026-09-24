@@ -52,7 +52,8 @@ async function setFileReviewed(
       current &&
       current.status === signature.status &&
       current.added === signature.added &&
-      current.removed === signature.removed
+      current.removed === signature.removed &&
+      current.state === signature.state
     ) {
       return null
     }
