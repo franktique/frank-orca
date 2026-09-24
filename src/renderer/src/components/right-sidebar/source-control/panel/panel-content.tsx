@@ -20,6 +20,8 @@ export function SourceControlPanelContent(props: SourceControlPanelReadyProps) {
     collapsedSections,
     collapsedTreeDirs,
     conflictOperation,
+    cycleBranchFileReviewed,
+    cycleChangedFileReviewed,
     diffCommentCountByPath,
     displaySections,
     expandedSubmoduleKeys,
@@ -65,8 +67,6 @@ export function SourceControlPanelContent(props: SourceControlPanelReadyProps) {
     setBaseRefDialogOpen,
     sourceControlAiActionsVisible,
     sourceControlViewMode,
-    toggleBranchFileReviewed,
-    toggleChangedFileReviewed,
     toggleSection,
     toggleSubmodule,
     toggleTreeDir,
@@ -174,7 +174,7 @@ export function SourceControlPanelContent(props: SourceControlPanelReadyProps) {
           requestDiscardEntry={requestDiscardEntry}
           diffCommentCountByPath={diffCommentCountByPath}
           reviewedByPath={reviewedChangedByPath}
-          onToggleReviewed={toggleChangedFileReviewed}
+          onCycleReviewed={cycleChangedFileReviewed}
         />
       )}
 
@@ -211,7 +211,7 @@ export function SourceControlPanelContent(props: SourceControlPanelReadyProps) {
           openBranchAllDiffs={openBranchAllDiffs}
           diffCommentCountByPath={diffCommentCountByPath}
           reviewedByPath={reviewedBranchByPath}
-          onToggleReviewed={toggleBranchFileReviewed}
+          onCycleReviewed={cycleBranchFileReviewed}
         />
       )}
 

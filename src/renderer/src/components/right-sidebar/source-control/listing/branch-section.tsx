@@ -6,6 +6,7 @@ import type {
   GitBranchCompareSummary
 } from '../../../../../../shared/git-diff-compare-types'
 import type { SourceControlViewMode } from '../../../../../../shared/ui-chrome-types'
+import type { FileReviewDisplayState } from '../../../../../../shared/file-review-types'
 import type { SourceControlTreeNode } from '../../source-control-tree'
 import type { SourceControlRowOpenEvent } from './split-open'
 import { BranchEntryRow } from './branch-entry-row'
@@ -33,7 +34,7 @@ export function SourceControlBranchSection({
   openBranchAllDiffs,
   diffCommentCountByPath,
   reviewedByPath,
-  onToggleReviewed
+  onCycleReviewed
 }: {
   branchSummary: GitBranchCompareSummary
   filteredBranchEntries: GitBranchChangeEntry[]
@@ -56,8 +57,8 @@ export function SourceControlBranchSection({
     summary: GitBranchCompareSummary
   ) => void
   diffCommentCountByPath: Map<string, number>
-  reviewedByPath: Map<string, boolean>
-  onToggleReviewed: (entry: GitBranchChangeEntry) => void
+  reviewedByPath: Map<string, FileReviewDisplayState>
+  onCycleReviewed: (entry: GitBranchChangeEntry) => void
 }): React.JSX.Element {
   const baseRef = branchSummary.baseRef?.trim()
   const fileCount = filteredBranchEntries.length
@@ -136,8 +137,8 @@ export function SourceControlBranchSection({
                   connectionId={activeConnectionId}
                   onOpen={(event) => openCommittedDiff(node.entry, event)}
                   commentCount={diffCommentCountByPath.get(node.entry.path) ?? 0}
-                  reviewed={reviewedByPath.get(node.entry.path) ?? false}
-                  onToggleReviewed={() => onToggleReviewed(node.entry)}
+                  reviewState={reviewedByPath.get(node.entry.path) ?? 'unreviewed'}
+                  onCycleReviewed={() => onCycleReviewed(node.entry)}
                   showPathHint={false}
                 />
               )
@@ -158,8 +159,8 @@ export function SourceControlBranchSection({
                 connectionId={activeConnectionId}
                 onOpen={(event) => openCommittedDiff(entry, event)}
                 commentCount={diffCommentCountByPath.get(entry.path) ?? 0}
-                reviewed={reviewedByPath.get(entry.path) ?? false}
-                onToggleReviewed={() => onToggleReviewed(entry)}
+                reviewState={reviewedByPath.get(entry.path) ?? 'unreviewed'}
+                onCycleReviewed={() => onCycleReviewed(entry)}
               />
             )}
           />

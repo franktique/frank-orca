@@ -1,4 +1,8 @@
-import type { FileReviewRecord, FileReviewSignature } from '../../../shared/file-review-types'
+import type {
+  FileDiffSignature,
+  FileReviewDisplayState,
+  FileReviewRecord
+} from '../../../shared/file-review-types'
 import type { AppState } from './types'
 import type { ReviewedFilesField } from './slices/reviewed-files-persistence'
 import { getIndexedWorktreeById } from './worktree-repo-index'
@@ -31,7 +35,7 @@ export function selectWorktreeReviewedFiles(
 export function isFileReviewSignatureCurrent(
   reviewed: FileReviewRecord,
   path: string,
-  liveSignature: FileReviewSignature
+  liveSignature: FileDiffSignature
 ): boolean {
   const recorded = reviewed[path]
   return (
@@ -40,4 +44,22 @@ export function isFileReviewSignatureCurrent(
     recorded.added === liveSignature.added &&
     recorded.removed === liveSignature.removed
   )
+}
+
+// Why: `markedForDeletion` is a manual to-do note independent of the diff, so unlike `reviewed`
+// it never falls back to unreviewed on its own — only an explicit cycle click or the path
+// disappearing from the entry list clears it.
+export function getFileReviewDisplayState(
+  reviewed: FileReviewRecord,
+  path: string,
+  liveSignature: FileDiffSignature
+): FileReviewDisplayState {
+  const recorded = reviewed[path]
+  if (!recorded) {
+    return 'unreviewed'
+  }
+  if (recorded.state === 'markedForDeletion') {
+    return 'markedForDeletion'
+  }
+  return isFileReviewSignatureCurrent(reviewed, path, liveSignature) ? 'reviewed' : 'unreviewed'
 }

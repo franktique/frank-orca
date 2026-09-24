@@ -1,20 +1,25 @@
 import { useCallback, useMemo } from 'react'
 import { useAppStore } from '@/store'
 import {
-  isFileReviewSignatureCurrent,
+  getFileReviewDisplayState,
   selectWorktreeReviewedFiles
 } from '@/store/worktree-file-review-selector'
-import type { FileReviewSignature } from '../../../../../../shared/file-review-types'
+import type {
+  FileDiffSignature,
+  FileReviewDisplayState,
+  FileReviewSignature,
+  FileReviewState
+} from '../../../../../../shared/file-review-types'
 import type { GitStatusEntry } from '../../../../../../shared/git-status-types'
 import type { GitBranchChangeEntry } from '../../../../../../shared/git-diff-compare-types'
 
 // Why: added/removed are optional on both entry types (e.g. huge-repo capped rows), but a
 // review signature needs concrete numbers to compare for equality on the next status refresh.
-function toFileReviewSignature(entry: {
+function toFileDiffSignature(entry: {
   status: string
   added?: number
   removed?: number
-}): FileReviewSignature {
+}): FileDiffSignature {
   return {
     status: entry.status,
     added: entry.added ?? 0,
@@ -22,11 +27,26 @@ function toFileReviewSignature(entry: {
   }
 }
 
+// Why: cycling past `markedForDeletion` clears the mark (back to unreviewed) instead of
+// looping straight back to `reviewed`, so a stray extra click doesn't silently re-mark a file.
+function nextFileReviewState(current: FileReviewDisplayState): FileReviewState | null {
+  switch (current) {
+    case 'unreviewed':
+      return 'reviewed'
+    case 'reviewed':
+      return 'markedForDeletion'
+    case 'markedForDeletion':
+      return null
+  }
+}
+
 /**
- * Backs the Source Control panel's per-file "reviewed" checkbox (local to Orca, never
- * committed to the repo). A path reads as reviewed only while the diff signature it was
- * marked at ({@link GitStatusEntry.status}/added/removed) still matches the live entry —
- * any further edit to the file falls it back to unreviewed with no extra reconciliation step.
+ * Backs the Source Control panel's per-file 3-state review checkbox (local to Orca, never
+ * committed to the repo): unreviewed → reviewed → marked for deletion, cycled by click.
+ * `reviewed` reads as current only while the diff signature it was marked at
+ * ({@link GitStatusEntry.status}/added/removed) still matches the live entry — any further
+ * edit falls it back to unreviewed with no extra reconciliation step. `markedForDeletion`
+ * ignores that drift; see {@link FileReviewState}.
  */
 export function useSourceControlFileReviewState({
   activeWorktreeId,
@@ -57,55 +77,57 @@ export function useSourceControlFileReviewState({
   )
 
   const reviewedChangedByPath = useMemo(() => {
-    const map = new Map<string, boolean>()
+    const map = new Map<string, FileReviewDisplayState>()
     for (const entry of entries) {
       map.set(
         entry.path,
-        isFileReviewSignatureCurrent(reviewedChangedFiles, entry.path, toFileReviewSignature(entry))
+        getFileReviewDisplayState(reviewedChangedFiles, entry.path, toFileDiffSignature(entry))
       )
     }
     return map
   }, [entries, reviewedChangedFiles])
 
   const reviewedBranchByPath = useMemo(() => {
-    const map = new Map<string, boolean>()
+    const map = new Map<string, FileReviewDisplayState>()
     for (const entry of branchEntries) {
       map.set(
         entry.path,
-        isFileReviewSignatureCurrent(reviewedBranchFiles, entry.path, toFileReviewSignature(entry))
+        getFileReviewDisplayState(reviewedBranchFiles, entry.path, toFileDiffSignature(entry))
       )
     }
     return map
   }, [branchEntries, reviewedBranchFiles])
 
-  const toggleChangedFileReviewed = useCallback(
+  const cycleChangedFileReviewed = useCallback(
     (entry: GitStatusEntry) => {
       if (!activeWorktreeId) {
         return
       }
-      const signature = toFileReviewSignature(entry)
-      const alreadyReviewed = isFileReviewSignatureCurrent(
-        reviewedChangedFiles,
+      const diffSignature = toFileDiffSignature(entry)
+      const current = getFileReviewDisplayState(reviewedChangedFiles, entry.path, diffSignature)
+      const nextState = nextFileReviewState(current)
+      void setChangedFileReviewed(
+        activeWorktreeId,
         entry.path,
-        signature
+        nextState ? { ...diffSignature, state: nextState } : null
       )
-      void setChangedFileReviewed(activeWorktreeId, entry.path, alreadyReviewed ? null : signature)
     },
     [activeWorktreeId, reviewedChangedFiles, setChangedFileReviewed]
   )
 
-  const toggleBranchFileReviewed = useCallback(
+  const cycleBranchFileReviewed = useCallback(
     (entry: GitBranchChangeEntry) => {
       if (!activeWorktreeId) {
         return
       }
-      const signature = toFileReviewSignature(entry)
-      const alreadyReviewed = isFileReviewSignatureCurrent(
-        reviewedBranchFiles,
+      const diffSignature = toFileDiffSignature(entry)
+      const current = getFileReviewDisplayState(reviewedBranchFiles, entry.path, diffSignature)
+      const nextState = nextFileReviewState(current)
+      void setBranchFileReviewed(
+        activeWorktreeId,
         entry.path,
-        signature
+        nextState ? { ...diffSignature, state: nextState } : null
       )
-      void setBranchFileReviewed(activeWorktreeId, entry.path, alreadyReviewed ? null : signature)
     },
     [activeWorktreeId, reviewedBranchFiles, setBranchFileReviewed]
   )
@@ -113,8 +135,8 @@ export function useSourceControlFileReviewState({
   return {
     reviewedChangedByPath,
     reviewedBranchByPath,
-    toggleChangedFileReviewed,
-    toggleBranchFileReviewed
+    cycleChangedFileReviewed,
+    cycleBranchFileReviewed
   }
 }
 
