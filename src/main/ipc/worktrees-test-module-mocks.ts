@@ -86,6 +86,7 @@ export const getSshGitProviderMock: StringArgMock = vi.fn()
 export const getSshFilesystemProviderMock: ModuleMock = vi.fn()
 export const getActiveMultiplexerMock: ModuleMock = vi.fn()
 export const deleteWorktreeHistoryDirMock: ModuleMock = vi.fn()
+export const deleteWorktreeApiClientDataMock: ModuleMock = vi.fn()
 export const advertisedUrlWatcherForgetWorktreeMock: ModuleMock = vi.fn()
 export const pruneCleanupScanSnapshotMock: ModuleMock = vi.fn().mockResolvedValue(undefined)
 export const pruneCleanupScanSnapshotsMock: ModuleMock = vi.fn().mockResolvedValue(undefined)
@@ -244,6 +245,10 @@ export const worktreeLogicModuleMock = (actual: Record<string, unknown>) => ({
 
 export const terminalHistoryDeletionModuleMock = () => ({
   deleteWorktreeHistoryDir: deleteWorktreeHistoryDirMock
+})
+
+export const apiClientDataDeletionModuleMock = () => ({
+  deleteWorktreeApiClientData: deleteWorktreeApiClientDataMock
 })
 
 export const advertisedUrlWatcherModuleMock = () => ({

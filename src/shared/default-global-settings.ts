@@ -228,6 +228,7 @@ export function buildDefaultSettings(args: {
     terminalJISYenToBackslash: false,
     experimentalMobile: false,
     mobileEmulatorEnabled: true,
+    apiClientSslVerification: true,
     mobileEmulatorDefaultDeviceUdid: null,
     androidSdkPath: null,
     // Why: indefinite hold — the "Restore" banner is the explicit return action, no wall-clock guess. See docs/mobile-fit-hold.md.

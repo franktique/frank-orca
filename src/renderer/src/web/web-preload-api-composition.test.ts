@@ -42,6 +42,7 @@ describe('web preload API composition', () => {
       'git',
       'browser',
       'emulator',
+      'apiClient',
       'gh',
       'gl',
       'hostedReview',

@@ -10,6 +10,7 @@ import {
 } from '../../runtime/web-runtime-session'
 import { openTabBarEntry, type TabCreateEntryArgs } from '../tab-bar/tab-create-entry-action'
 import { openMobileEmulatorTab } from '@/lib/open-mobile-emulator-tab'
+import { ensureApiClientTab } from '@/lib/ensure-api-client-tab'
 import { ensureSimulatorTab, getSimulatorTabForWorktree } from '@/lib/ensure-simulator-tab'
 import { buildDuplicatedBrowserTabOptions } from '@/lib/duplicate-browser-tab-options'
 import { getRuntimeEnvironmentIdForWorktree } from '@/lib/worktree-runtime-owner'
@@ -80,6 +81,9 @@ export function useTabGroupCreationCommands({
       void openNewBrowserTabInActiveWorkspace(groupId).catch((error) => {
         toast.error(error instanceof Error ? error.message : String(error))
       })
+    },
+    newApiClientTab: () => {
+      ensureApiClientTab(worktreeId, { forceNew: true, targetGroupId: groupId })
     },
     newSimulatorTab: worktreeState.mobileEmulatorEnabled
       ? () => {

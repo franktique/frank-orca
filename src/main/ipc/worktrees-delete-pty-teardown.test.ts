@@ -8,6 +8,7 @@ import {
   runHookMock,
   getSshGitProviderMock,
   deleteWorktreeHistoryDirMock,
+  deleteWorktreeApiClientDataMock,
   killAllProcessesForWorktreeMock,
   clearProviderPtyStateMock,
   getSshPtyProviderMock
@@ -81,6 +82,9 @@ vi.mock('./worktree-logic', async (importOriginal) =>
 vi.mock('../terminal-history-deletion', async () =>
   (await import('./worktrees-test-module-mocks')).terminalHistoryDeletionModuleMock()
 )
+vi.mock('../api-client/api-client-data-deletion', async () =>
+  (await import('./worktrees-test-module-mocks')).apiClientDataDeletionModuleMock()
+)
 vi.mock('../ports/advertised-url-watcher', async () =>
   (await import('./worktrees-test-module-mocks')).advertisedUrlWatcherModuleMock()
 )
@@ -108,6 +112,7 @@ describe('registerWorktreeHandlers', () => {
   it('coalesces concurrent deletes for the same worktree id', async () => {
     mockKnownFeatureWorktree()
     deleteWorktreeHistoryDirMock.mockClear()
+    deleteWorktreeApiClientDataMock.mockClear()
     let removalStarted!: () => void
     let finishRemoval!: () => void
     const started = new Promise<void>((resolve) => {
@@ -139,6 +144,7 @@ describe('registerWorktreeHandlers', () => {
     await expect(Promise.all([first, second])).resolves.toEqual([{}, {}])
     expect(store.removeWorktreeMeta).toHaveBeenCalledTimes(1)
     expect(deleteWorktreeHistoryDirMock).toHaveBeenCalledTimes(1)
+    expect(deleteWorktreeApiClientDataMock).toHaveBeenCalledTimes(1)
     expect(mainWindow.webContents.send).toHaveBeenCalledTimes(1)
   })
 

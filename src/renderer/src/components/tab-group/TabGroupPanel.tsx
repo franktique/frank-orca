@@ -26,6 +26,7 @@ import { useClientHostedBrowserRows } from '@/lib/pane-manager/client-hosted-bro
 import { resolveClientHostedBrowserRowStripGroupId } from '../tab-bar/client-hosted-browser-row-strip-placement'
 
 const EditorPanel = lazy(() => import('../editor/EditorPanel'))
+const ApiClientPane = lazy(() => import('../api-client/ApiClientPane'))
 const EMPTY_GROUPS: readonly TabGroup[] = []
 const EMPTY_CLIENT_HOSTED_ROWS: readonly ClientHostedBrowserRow[] = []
 
@@ -148,6 +149,7 @@ export default function TabGroupPanel({
       onNewTerminalWithShell={commands.newTerminalWithShell}
       onNewBrowserTab={commands.newBrowserTab}
       onNewSimulatorTab={commands.newSimulatorTab}
+      onNewApiClientTab={commands.newApiClientTab}
       onOpenEntry={commands.openEntry}
       onNewFileTab={commands.newFileTab}
       onSetCustomTitle={commands.setTabCustomTitle}
@@ -162,12 +164,17 @@ export default function TabGroupPanel({
         activeTab?.contentType === 'terminal' ||
         activeTab?.contentType === 'agent-session' ||
         activeTab?.contentType === 'browser' ||
-        activeTab?.contentType === 'simulator'
+        activeTab?.contentType === 'simulator' ||
+        activeTab?.contentType === 'api-client'
           ? null
           : activeTab?.id
       }
       activeBrowserTabId={activeTab?.contentType === 'browser' ? activeTab.entityId : null}
-      activeSimulatorTabId={activeTab?.contentType === 'simulator' ? activeTab.id : null}
+      activeSimulatorTabId={
+        activeTab?.contentType === 'simulator' || activeTab?.contentType === 'api-client'
+          ? activeTab.id
+          : null
+      }
       activeTabType={
         activeTab?.contentType === 'terminal'
           ? 'terminal'
@@ -177,7 +184,9 @@ export default function TabGroupPanel({
               ? 'browser'
               : activeTab?.contentType === 'simulator'
                 ? 'simulator'
-                : 'editor'
+                : activeTab?.contentType === 'api-client'
+                  ? 'api-client'
+                  : 'editor'
       }
       onActivateFile={commands.activateEditor}
       onCloseFile={commands.closeItem}
@@ -353,7 +362,8 @@ export default function TabGroupPanel({
           activeTab.contentType !== 'terminal' &&
           activeTab.contentType !== 'agent-session' &&
           activeTab.contentType !== 'browser' &&
-          activeTab.contentType !== 'simulator' && (
+          activeTab.contentType !== 'simulator' &&
+          activeTab.contentType !== 'api-client' && (
             <div className="absolute inset-0 flex min-h-0 min-w-0">
               {/* Why: split groups render editor content in a plain relative pane body, not the legacy Terminal.tsx flex column. */}
               <Suspense
@@ -375,6 +385,14 @@ export default function TabGroupPanel({
               </Suspense>
             </div>
           )}
+
+        {activeTab?.contentType === 'api-client' && (
+          <div className="absolute inset-0 flex min-h-0 min-w-0">
+            <Suspense fallback={null}>
+              <ApiClientPane tabId={activeTab.id} worktreeId={worktreeId} isVisible={isVisible} />
+            </Suspense>
+          </div>
+        )}
 
         {/* Why: terminal/browser/simulator/structured-chat panes render at the worktree level; tab activation only changes overlay visibility and never remounts a live surface. */}
       </div>

@@ -252,7 +252,8 @@ export {
   getGitLabWorkItemDetailsMock,
   updateGitLabMRReviewersMock,
   getIssueMock,
-  deleteWorktreeHistoryDirMock
+  deleteWorktreeHistoryDirMock,
+  deleteWorktreeApiClientDataMock
 } from './orca-runtime-test-mocks/setup.spec'
 
 // Preserve the instance-side types for fragments that use these constructors in annotations.

@@ -5,6 +5,7 @@ import { isClipboardTextByteLengthOverLimit } from '../../../../shared/clipboard
 
 export type TabCreateMenuOptionKind =
   | 'go-to-simulator'
+  | 'new-api-client'
   | 'new-browser'
   | 'new-markdown'
   | 'new-simulator'
@@ -24,6 +25,7 @@ export type TabCreateMenuOptionsContext = {
   hasNewBrowser: boolean
   hasNewMarkdown: boolean
   hasOpenMarkdown: boolean
+  hasApiClient: boolean
   hasSimulator: boolean
   simulatorIsGoTo: boolean
   terminalOnly: boolean
@@ -161,6 +163,22 @@ export function buildTabCreateMenuOptions(
         translate('auto.components.tab.bar.tab.create.menu.options.8a580f88cf', 'iphone'),
         translate('auto.components.tab.bar.tab.create.menu.options.7ecdc5ef08', 'ipad'),
         translate('auto.components.tab.bar.tab.create.menu.options.14965cc123', 'mobile')
+      ]
+    })
+  }
+
+  if (context.hasApiClient) {
+    const label = translate('apiClient.tab.newTab', 'New API Client')
+    options.push({
+      id: 'new-api-client',
+      kind: 'new-api-client',
+      label,
+      keywords: [
+        translate('apiClient.tab.keywordApi', 'api'),
+        translate('apiClient.tab.keywordApiClient', 'api client'),
+        translate('apiClient.tab.keywordPostman', 'postman'),
+        translate('apiClient.tab.keywordRequest', 'http request'),
+        translate('apiClient.tab.keywordRest', 'rest')
       ]
     })
   }

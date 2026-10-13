@@ -1,5 +1,6 @@
 import React from 'react'
-import { FilePlus, FileText, Globe, Smartphone, TerminalSquare } from 'lucide-react'
+import { FilePlus, FileText, Globe, Send, Smartphone, TerminalSquare } from 'lucide-react'
+import type { ApiClientAvailability } from '@/lib/api-client-availability'
 import { translate } from '@/i18n/i18n'
 import { DropdownMenuItem, DropdownMenuShortcut } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -19,6 +20,7 @@ export function TabBarStaticCreateMenu({
   managedBrowserCreationEnabled,
   mobileEmulatorCreationEnabled,
   workspaceHasSimulatorTab,
+  apiClientAvailability,
   showMobileEmulatorIntroCallout,
   props,
   windowsShellEntries,
@@ -37,6 +39,7 @@ export function TabBarStaticCreateMenu({
   managedBrowserCreationEnabled: boolean
   mobileEmulatorCreationEnabled: boolean
   workspaceHasSimulatorTab: boolean
+  apiClientAvailability: ApiClientAvailability
   showMobileEmulatorIntroCallout: boolean
   windowsShellEntries: WindowsShellMenuEntry[] | undefined
   defaultWindowsPowerShellImplementation: ReturnType<
@@ -56,6 +59,7 @@ export function TabBarStaticCreateMenu({
     onNewTerminalWithShell,
     onNewBrowserTab,
     onNewSimulatorTab,
+    onNewApiClientTab,
     onNewFileTab,
     onOpenFileTab
   } = props
@@ -144,6 +148,36 @@ export function TabBarStaticCreateMenu({
         </DropdownMenuItem>
       )
     ) : null
+  const newApiClientMenuItem =
+    !terminalOnly && apiClientAvailability !== 'hidden' && onNewApiClientTab ? (
+      apiClientAvailability === 'remote' ? (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            {/* Why a wrapper: a disabled item swallows pointer events, so it cannot anchor the hint. */}
+            <span className="block">
+              <DropdownMenuItem
+                disabled
+                className="gap-2 rounded-[7px] px-2 py-1.5 text-[12px] leading-5 font-medium"
+              >
+                <Send className="size-4 text-muted-foreground" />
+                {translate('apiClient.tab.newTab', 'New API Client')}
+              </DropdownMenuItem>
+            </span>
+          </TooltipTrigger>
+          <TooltipContent side="right" sideOffset={8} className="z-[80]">
+            {translate('apiClient.tab.localOnlyHint', 'Local worktrees only')}
+          </TooltipContent>
+        </Tooltip>
+      ) : (
+        <DropdownMenuItem
+          onSelect={onNewApiClientTab}
+          className="gap-2 rounded-[7px] px-2 py-1.5 text-[12px] leading-5 font-medium"
+        >
+          <Send className="size-4 text-muted-foreground" />
+          {translate('apiClient.tab.newTab', 'New API Client')}
+        </DropdownMenuItem>
+      )
+    ) : null
   const newMarkdownMenuItem =
     !terminalOnly && onNewFileTab ? (
       <DropdownMenuItem
@@ -184,6 +218,7 @@ export function TabBarStaticCreateMenu({
       {openMarkdownMenuItem}
       {defaultTerminalMenuItems}
       {newBrowserMenuItem}
+      {newApiClientMenuItem}
       {newSimulatorMenuItem}
       {mobileEmulatorIntroMenuBlock}
     </>
@@ -193,6 +228,7 @@ export function TabBarStaticCreateMenu({
       {newBrowserMenuItem}
       {newMarkdownMenuItem}
       {openMarkdownMenuItem}
+      {newApiClientMenuItem}
       {newSimulatorMenuItem}
       {mobileEmulatorIntroMenuBlock}
     </>

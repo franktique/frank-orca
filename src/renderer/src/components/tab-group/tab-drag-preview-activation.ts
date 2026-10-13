@@ -67,16 +67,14 @@ function previewActiveSurfacePatch(
       activeTabTypeByWorktree: nextActiveTabTypeByWorktree('browser')
     }
   }
-  if (unifiedTab.contentType === 'simulator') {
-    if (
-      state.activeTabType === 'simulator' &&
-      state.activeTabTypeByWorktree[worktreeId] === 'simulator'
-    ) {
+  if (unifiedTab.contentType === 'simulator' || unifiedTab.contentType === 'api-client') {
+    const tabType = unifiedTab.contentType
+    if (state.activeTabType === tabType && state.activeTabTypeByWorktree[worktreeId] === tabType) {
       return {}
     }
     return {
-      activeTabType: 'simulator',
-      activeTabTypeByWorktree: nextActiveTabTypeByWorktree('simulator')
+      activeTabType: tabType,
+      activeTabTypeByWorktree: nextActiveTabTypeByWorktree(tabType)
     }
   }
   if (

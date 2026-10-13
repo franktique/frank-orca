@@ -42,6 +42,13 @@ import {
   AiVaultPrepareSessionResumeParams,
   AiVaultSessionTitlesParams
 } from './ai-vault-params'
+import {
+  ApiClientEnvironmentsParams,
+  ApiClientListParams,
+  ApiClientResultParams,
+  ApiClientRunParams,
+  ApiClientShowParams
+} from './api-client-params'
 import { ArtifactsDeleteParams, ListOptions, SourceRequest, WriteRequest } from './artifacts-params'
 import {
   AutomationCreate,
@@ -598,6 +605,11 @@ export const RPC_PARAMS_BY_METHOD = {
   'aiVault.searchSessions': AiVaultSearchRequestSchema,
   'aiVault.searchStatus': AiVaultSearchStatusRequestSchema,
   'aiVault.setSearchEnabled': AiVaultSetSearchEnabledParamsSchema,
+  'apiClient.environments': ApiClientEnvironmentsParams,
+  'apiClient.list': ApiClientListParams,
+  'apiClient.result': ApiClientResultParams,
+  'apiClient.run': ApiClientRunParams,
+  'apiClient.show': ApiClientShowParams,
   'artifacts.delete': ArtifactsDeleteParams,
   'artifacts.getPublishedLink': SourceRequest,
   'artifacts.list': ListOptions,

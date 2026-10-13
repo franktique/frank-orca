@@ -6,6 +6,7 @@ import {
   closeLocalWatcherForWorktreePathMock,
   computeWorktreePathMock,
   deleteWorktreeHistoryDirMock,
+  deleteWorktreeApiClientDataMock,
   ensurePathWithinWorkspaceMock,
   findExistingWorktreeSymlinkPathsMock,
   forgetLocalWatcherRemovalSnapshotMock,
@@ -472,6 +473,7 @@ describe('OrcaRuntimeService', () => {
       })
     )
     expect(deleteWorktreeHistoryDirMock).toHaveBeenCalledWith(TEST_WORKTREE_ID)
+    expect(deleteWorktreeApiClientDataMock).toHaveBeenCalledWith(TEST_WORKTREE_ID)
     expect(result.warning).toBe(
       `orca.yaml archive hook skipped for ${TEST_WORKTREE_PATH}; pass --run-hooks to run it.`
     )

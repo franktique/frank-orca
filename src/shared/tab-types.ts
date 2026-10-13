@@ -1,5 +1,6 @@
 import type { AiVaultSessionTitle } from './ai-vault-session-title'
 import type { AgentType } from './agent-status-types'
+import type { ApiClientPersistedTab } from './api-client/api-client-types'
 import type { ExecutionHostId } from './execution-host'
 
 // ─── Tab Group Layout ───────────────────────────────────────────────
@@ -26,6 +27,7 @@ export type TabContentType =
   | 'agent-session'
   | 'browser'
   | 'simulator'
+  | 'api-client'
 
 export type WorkspaceVisibleTabType =
   | 'terminal'
@@ -33,6 +35,7 @@ export type WorkspaceVisibleTabType =
   | 'agent-session'
   | 'browser'
   | 'simulator'
+  | 'api-client'
 export type CtrlTabOrderMode = 'mru' | 'sequential'
 
 // Why: many-to-one — every editor-family kind collapses to 'editor'. Never invert it by equality;
@@ -42,7 +45,8 @@ export function toVisibleTabType(contentType: TabContentType): WorkspaceVisibleT
     contentType === 'agent-session' ||
     contentType === 'browser' ||
     contentType === 'terminal' ||
-    contentType === 'simulator'
+    contentType === 'simulator' ||
+    contentType === 'api-client'
   ) {
     return contentType
   }
@@ -79,6 +83,8 @@ export type Tab = {
   viewMode?: 'terminal' | 'chat'
   /** Timestamp when the tab was last focused / activated by the user. */
   lastFocusedAt?: number
+  /** Open request, runner scope and layout of an API Client tab; restored with the session. */
+  apiClient?: ApiClientPersistedTab
 }
 
 export type TabGroup = {

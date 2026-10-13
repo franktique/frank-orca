@@ -41,6 +41,13 @@ export type TabBarItem =
       data: Tab
     }
   | {
+      type: 'api-client'
+      id: string
+      unifiedTabId: string
+      isPinned: boolean
+      data: Tab
+    }
+  | {
       type: 'agent-session'
       id: string
       unifiedTabId: string
@@ -54,6 +61,9 @@ export function getTabDragLabel(item: TabBarItem, generatedTitlesEnabled: boolea
   }
   if (item.type === 'browser') {
     return getBrowserTabLabel(item.data)
+  }
+  if (item.type === 'api-client') {
+    return item.data.label || 'API Client'
   }
   if (item.type === 'simulator' || item.type === 'agent-session') {
     return item.data.label || 'Mobile Emulator'
@@ -182,6 +192,16 @@ export function buildOrderedTabItems({
       })
       continue
     }
+    if (simulatorTab?.contentType === 'api-client') {
+      items.push({
+        type: 'api-client',
+        id,
+        unifiedTabId: simulatorTab.id,
+        isPinned: simulatorTab.isPinned === true,
+        data: simulatorTab
+      })
+      continue
+    }
     const agentSession = agentSessionMap.get(id)
     if (agentSession) {
       items.push({
@@ -232,6 +252,10 @@ export function findActiveVisibleTabId(
     }
     if (item.type === 'simulator') {
       return active.activeTabType === 'simulator' && item.id === active.activeSimulatorTabId
+    }
+    if (item.type === 'api-client') {
+      // Why: the prop is named for simulators but carries the active unified-only tab id.
+      return active.activeTabType === 'api-client' && item.id === active.activeSimulatorTabId
     }
     if (item.type === 'agent-session') {
       // Reachable only from TabGroupPanel, which passes the structured tab's own id; the store's
