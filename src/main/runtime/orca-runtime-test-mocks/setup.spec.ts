@@ -189,7 +189,8 @@ const {
   getGitLabWorkItemDetailsMock,
   updateGitLabMRReviewersMock,
   getIssueMock,
-  deleteWorktreeHistoryDirMock
+  deleteWorktreeHistoryDirMock,
+  deleteWorktreeApiClientDataMock
 } = vi.hoisted(() => {
   // Why: SSH runtime tests register providers via the public dispatcher API, so the mock needs the same registry semantics as the real module.
   const sshGitProviders = new Map<string, unknown>()
@@ -300,6 +301,7 @@ const {
     getGitLabWorkItemDetailsMock: vi.fn() as TestMock,
     updateGitLabMRReviewersMock: vi.fn() as TestMock,
     getIssueMock: vi.fn() as TestMock,
+    deleteWorktreeApiClientDataMock: vi.fn<(...args: unknown[]) => unknown>(),
     deleteWorktreeHistoryDirMock: vi.fn() as TestMock
   }
 })
@@ -322,6 +324,10 @@ vi.mock('../repo-worktree-resolution-scan', () => ({
 
 vi.mock('../../terminal-history-deletion', () => ({
   deleteWorktreeHistoryDir: deleteWorktreeHistoryDirMock
+}))
+
+vi.mock('../../api-client/api-client-data-deletion', () => ({
+  deleteWorktreeApiClientData: deleteWorktreeApiClientDataMock
 }))
 
 vi.mock('../../providers/ssh-git-dispatch', () => ({
@@ -665,5 +671,6 @@ export {
   getGitLabWorkItemDetailsMock,
   updateGitLabMRReviewersMock,
   getIssueMock,
-  deleteWorktreeHistoryDirMock
+  deleteWorktreeHistoryDirMock,
+  deleteWorktreeApiClientDataMock
 }

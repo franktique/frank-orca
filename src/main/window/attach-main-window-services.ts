@@ -25,6 +25,7 @@ import { browserManager } from '../browser/browser-manager'
 import { hasSystemMediaAccess, requestSystemMediaAccess } from '../browser/browser-media-access'
 import type { OrcaRuntimeService, RuntimeWorktreeLifecycleEvent } from '../runtime/orca-runtime'
 import type { UpdateInstallMode } from '../updater'
+import { scheduleApiClientGc } from '../api-client/api-client-data-gc'
 import { scheduleHistoryGc } from '../terminal-history-gc'
 import { hydrateLocalPtyRegistryAtBoot } from '../memory/hydrate-local-pty-registry'
 import type { ClaudeRuntimeAuthPreparation } from '../claude-accounts/runtime-auth-service'
@@ -105,6 +106,7 @@ export function attachMainWindowServices(
   scheduleHistoryGc(async () => {
     return getKnownWorktreeIdsForHistoryGc(store)
   })
+  scheduleApiClientGc(async () => getKnownWorktreeIdsForHistoryGc(store))
   const localPtyProviderStartupReady = options?.awaitLocalPtyProviderStartup?.()
   if (localPtyProviderStartupReady) {
     void localPtyProviderStartupReady

@@ -1,11 +1,13 @@
 import type { SettingsSearchEntry } from './settings-search'
 import { getAdvancedNetworkSearchEntries } from './advanced-network-search'
+import { getApiClientSettingsSearchEntries } from './api-client-settings-search'
 import { createLocalizedCatalog } from '@/i18n/localized-catalog'
 import { translate } from '@/i18n/i18n'
 import { translateSearchKeyword } from './settings-search-keywords'
 
 export const getAdvancedPaneSearchEntries = createLocalizedCatalog((): SettingsSearchEntry[] => [
   ...getAdvancedNetworkSearchEntries(),
+  ...getApiClientSettingsSearchEntries(),
   {
     title: translate(
       'auto.components.settings.advanced.search.11eea3da72',

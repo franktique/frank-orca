@@ -2,6 +2,8 @@ import { Suspense } from 'react'
 import { lazyWithRetry as lazy } from '@/lib/lazy-with-retry'
 import type { ActiveRightSidebarTab } from '@/store/slices/editor'
 import { isPluginPanelTabKey } from '../../../../shared/plugins/plugin-manifest'
+import { useAppStore } from '@/store'
+import { selectApiClientSidebarWorktreeId } from '../api-client/sidebar/api-client-sidebar-selector'
 
 const FileExplorer = lazy(() => import('./FileExplorer'))
 const SourceControl = lazy(() => import('./SourceControl'))
@@ -11,6 +13,7 @@ const AiVaultPanel = lazy(() => import('./AiVaultPanel'))
 const FolderWorkspaceWorktreesPanel = lazy(() => import('./FolderWorkspaceWorktreesPanel'))
 const FolderWorkspacePrChecksPanel = lazy(() => import('./FolderWorkspacePrChecksPanel'))
 const PluginPanel = lazy(() => import('./PluginPanel'))
+const ApiClientSidebarPanel = lazy(() => import('../api-client/sidebar/ApiClientSidebarPanel'))
 
 type RightSidebarPanelContentProps = {
   effectiveTab: ActiveRightSidebarTab
@@ -21,6 +24,16 @@ export function RightSidebarPanelContent({
   effectiveTab,
   rightSidebarOpen
 }: RightSidebarPanelContentProps): React.JSX.Element {
+  const apiClientWorktreeId = useAppStore(selectApiClientSidebarWorktreeId)
+  if (apiClientWorktreeId) {
+    return (
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <Suspense fallback={null}>
+          <ApiClientSidebarPanel worktreeId={apiClientWorktreeId} />
+        </Suspense>
+      </div>
+    )
+  }
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       <Suspense fallback={null}>

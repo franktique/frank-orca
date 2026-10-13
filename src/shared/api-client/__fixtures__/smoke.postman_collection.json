@@ -1,0 +1,1921 @@
+{
+  "info": {
+    "_postman_id": "col-smoke-0000-4000-8000-000000000000",
+    "name": "Smoke",
+    "description": "Synthetic smoke collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "0"
+  },
+  "item": [
+    {
+      "id": "fld-0028-4000-8000-000000000000",
+      "name": "MAIN",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "scr-0029-4000-8000-000000000000",
+            "type": "text/javascript",
+            "exec": ["console.log(\"MAIN folder prerequest\");"]
+          }
+        }
+      ],
+      "item": [
+        {
+          "id": "fld-0003-4000-8000-000000000000",
+          "name": "G1",
+          "description": "Authentication group",
+          "variable": [
+            {
+              "key": "groupVar",
+              "value": "g1",
+              "type": "string"
+            }
+          ],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "scr-0004-4000-8000-000000000000",
+                "type": "text/javascript",
+                "exec": ["console.log(\"G1 folder prerequest\");"]
+              }
+            }
+          ],
+          "item": [
+            {
+              "id": "req-0002-4000-8000-000000000000",
+              "name": "G1 - login",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/token",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["token"],
+                  "query": []
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0001-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "pm.test(\"token returned\", function () {",
+                      "  pm.expect(json).to.have.property(\"token\");",
+                      "});",
+                      "pm.environment.set(\"token\", json.token);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0006-4000-8000-000000000000",
+              "name": "G1 - echo with token",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?who=me",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "who",
+                      "value": "me"
+                    }
+                  ]
+                },
+                "x-orca-request-extra": {
+                  "note": "preserve"
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0005-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"authorization header was sent\", function () {",
+                      "  const body = pm.response.json();",
+                      "  pm.expect(body.headers.authorization).to.be.a(\"string\");",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0009-4000-8000-000000000000",
+              "name": "G1 - create",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": []
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"item\",\n  \"tenant\": \"{{tenantId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "scr-0007-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": ["pm.variables.set(\"created\", \"yes\");"]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0008-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 3 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0011-4000-8000-000000000000",
+              "name": "G1 - legacy tests",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": []
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0010-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": ["tests[\"status is 200\"] = responseCode.code === 200;"]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fld-0019-4000-8000-000000000000",
+          "name": "G2",
+          "item": [
+            {
+              "id": "req-0021-4000-8000-000000000000",
+              "name": "G2 - urlencoded",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": []
+                },
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "a",
+                      "value": "1",
+                      "type": "text"
+                    },
+                    {
+                      "key": "b",
+                      "value": "{{tenantId}}",
+                      "type": "text",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0020-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 8 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0023-4000-8000-000000000000",
+              "name": "G2 - formdata",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": []
+                },
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "field",
+                      "value": "value",
+                      "type": "text"
+                    },
+                    {
+                      "key": "note",
+                      "value": "hello",
+                      "type": "text",
+                      "description": "free text"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0022-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 9 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "fld-0012-4000-8000-000000000000",
+              "name": "G2-1",
+              "item": [
+                {
+                  "id": "req-0014-4000-8000-000000000000",
+                  "name": "G2-1 - get",
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "X-Tenant",
+                        "value": "{{tenantId}}",
+                        "type": "text"
+                      },
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/echo",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["echo"],
+                      "query": []
+                    }
+                  },
+                  "response": [],
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "id": "scr-0013-4000-8000-000000000000",
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"request 5 returns 200\", function () {",
+                          "  pm.response.to.have.status(200);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "req-0016-4000-8000-000000000000",
+                  "name": "G2-1 - put",
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "X-Tenant",
+                        "value": "{{tenantId}}",
+                        "type": "text"
+                      },
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/echo",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["echo"],
+                      "query": []
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"nested\": true\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": [],
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "id": "scr-0015-4000-8000-000000000000",
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"request 6 returns 200\", function () {",
+                          "  pm.response.to.have.status(200);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "req-0018-4000-8000-000000000000",
+                  "name": "G2-1 - delete",
+                  "request": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "X-Tenant",
+                        "value": "{{tenantId}}",
+                        "type": "text"
+                      },
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/echo",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["echo"],
+                      "query": []
+                    }
+                  },
+                  "response": [],
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "id": "scr-0017-4000-8000-000000000000",
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"request 7 returns 200\", function () {",
+                          "  pm.response.to.have.status(200);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fld-0030-4000-8000-000000000000",
+          "name": "G3",
+          "item": [
+            {
+              "id": "req-0032-4000-8000-000000000000",
+              "name": "G3 - request 1",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G3",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G3"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0031-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 12 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0034-4000-8000-000000000000",
+              "name": "G3 - request 2",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G3",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G3"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"group\": \"G3\",\n  \"index\": 2\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0033-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 13 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0036-4000-8000-000000000000",
+              "name": "G3 - request 3",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G3",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G3"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0035-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 14 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fld-0037-4000-8000-000000000000",
+          "name": "G4",
+          "item": [
+            {
+              "id": "req-0040-4000-8000-000000000000",
+              "name": "G4 - request 1",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G4",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G4"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0039-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 15 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0042-4000-8000-000000000000",
+              "name": "G4 - request 2",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G4",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G4"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"group\": \"G4\",\n  \"index\": 2\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0041-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 16 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "fld-0043-4000-8000-000000000000",
+              "name": "G5",
+              "item": [
+                {
+                  "id": "req-0025-4000-8000-000000000000",
+                  "name": "G5 - insecure ssl",
+                  "protocolProfileBehavior": {
+                    "strictSSL": false,
+                    "followRedirects": false
+                  },
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "X-Tenant",
+                        "value": "{{tenantId}}",
+                        "type": "text"
+                      },
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/echo",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["echo"],
+                      "query": []
+                    }
+                  },
+                  "response": [],
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "id": "scr-0024-4000-8000-000000000000",
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"request 10 returns 200\", function () {",
+                          "  pm.response.to.have.status(200);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "req-0046-4000-8000-000000000000",
+                  "name": "G5 - request 1",
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "X-Tenant",
+                        "value": "{{tenantId}}",
+                        "type": "text"
+                      },
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/echo?group=G5",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["echo"],
+                      "query": [
+                        {
+                          "key": "group",
+                          "value": "G5"
+                        }
+                      ]
+                    }
+                  },
+                  "response": [],
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "id": "scr-0045-4000-8000-000000000000",
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"request 17 returns 200\", function () {",
+                          "  pm.response.to.have.status(200);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fld-0047-4000-8000-000000000000",
+          "name": "G6",
+          "item": [
+            {
+              "id": "req-0027-4000-8000-000000000000",
+              "name": "G6 - uses sendRequest",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": []
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0026-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.sendRequest(\"https://example.com\", function (err, res) {",
+                      "  pm.test(\"sendRequest ran\", function () { pm.expect(err).to.eql(null); });",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0050-4000-8000-000000000000",
+              "name": "G6 - request 1",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G6",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G6"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0049-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 18 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fld-0051-4000-8000-000000000000",
+      "name": "SECONDARY",
+      "item": [
+        {
+          "id": "fld-0052-4000-8000-000000000000",
+          "name": "G7",
+          "item": [
+            {
+              "id": "req-0054-4000-8000-000000000000",
+              "name": "G7 - request 1",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G7",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G7"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0053-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 19 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0056-4000-8000-000000000000",
+              "name": "G7 - request 2",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G7",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G7"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"group\": \"G7\",\n  \"index\": 2\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0055-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 20 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0058-4000-8000-000000000000",
+              "name": "G7 - request 3",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G7",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G7"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0057-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 21 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0060-4000-8000-000000000000",
+              "name": "G7 - request 4",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G7",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G7"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"group\": \"G7\",\n  \"index\": 4\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0059-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 22 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fld-0061-4000-8000-000000000000",
+          "name": "G8",
+          "item": [
+            {
+              "id": "req-0063-4000-8000-000000000000",
+              "name": "G8 - request 1",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G8",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G8"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0062-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 23 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0065-4000-8000-000000000000",
+              "name": "G8 - request 2",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G8",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G8"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"group\": \"G8\",\n  \"index\": 2\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0064-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 24 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0067-4000-8000-000000000000",
+              "name": "G8 - request 3",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G8",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G8"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0066-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 25 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0069-4000-8000-000000000000",
+              "name": "G8 - request 4",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G8",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G8"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"group\": \"G8\",\n  \"index\": 4\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0068-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 26 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0071-4000-8000-000000000000",
+              "name": "G8 - request 5",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G8",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G8"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0070-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 27 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fld-0072-4000-8000-000000000000",
+          "name": "G9",
+          "item": [
+            {
+              "id": "req-0074-4000-8000-000000000000",
+              "name": "G9 - request 1",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G9",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G9"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0073-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 28 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0076-4000-8000-000000000000",
+              "name": "G9 - request 2",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G9",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G9"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"group\": \"G9\",\n  \"index\": 2\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0075-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 29 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0078-4000-8000-000000000000",
+              "name": "G9 - request 3",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G9",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G9"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0077-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 30 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0080-4000-8000-000000000000",
+              "name": "G9 - request 4",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G9",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G9"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"group\": \"G9\",\n  \"index\": 4\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0079-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 31 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0082-4000-8000-000000000000",
+              "name": "G9 - request 5",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G9",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G9"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0081-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 32 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fld-0083-4000-8000-000000000000",
+          "name": "G10",
+          "item": [
+            {
+              "id": "req-0085-4000-8000-000000000000",
+              "name": "G10 - request 1",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G10",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G10"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0084-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 33 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0087-4000-8000-000000000000",
+              "name": "G10 - request 2",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G10",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G10"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"group\": \"G10\",\n  \"index\": 2\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0086-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 34 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0089-4000-8000-000000000000",
+              "name": "G10 - request 3",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G10",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G10"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0088-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 35 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0091-4000-8000-000000000000",
+              "name": "G10 - request 4",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G10",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G10"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"group\": \"G10\",\n  \"index\": 4\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0090-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 36 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "req-0093-4000-8000-000000000000",
+              "name": "G10 - request 5",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tenant",
+                    "value": "{{tenantId}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/echo?group=G10",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["echo"],
+                  "query": [
+                    {
+                      "key": "group",
+                      "value": "G10"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "scr-0092-4000-8000-000000000000",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"request 37 returns 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "id": "scr-0094-4000-8000-000000000000",
+        "type": "text/javascript",
+        "exec": ["console.log(\"collection prerequest\");"]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "id": "scr-0095-4000-8000-000000000000",
+        "type": "text/javascript",
+        "exec": ["console.log(\"collection test\");"]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "apiVersion",
+      "value": "v1",
+      "type": "string"
+    },
+    {
+      "key": "pageSize",
+      "value": "25",
+      "type": "string"
+    }
+  ],
+  "x-orca-unknown": {
+    "keep": ["me", 1, true]
+  }
+}

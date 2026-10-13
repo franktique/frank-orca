@@ -40,6 +40,7 @@ export function TerminalTitlebarTabs({
     handleNewBrowserTab,
     handleNewFile,
     handleNewSimulatorTab,
+    handleNewApiClientTab,
     handleNewTab,
     handleOpenEntry,
     handleTogglePaneExpand,
@@ -74,6 +75,7 @@ export function TerminalTitlebarTabs({
       onNewTerminalWithShell={handleNewTab}
       onNewBrowserTab={handleNewBrowserTab}
       onNewSimulatorTab={mobileEmulatorEnabled ? handleNewSimulatorTab : undefined}
+      onNewApiClientTab={handleNewApiClientTab}
       onOpenEntry={handleOpenEntry}
       onNewFileTab={handleNewFile}
       onSetCustomTitle={setTabCustomTitle}
@@ -86,7 +88,8 @@ export function TerminalTitlebarTabs({
       activeFileId={activeFileId}
       activeBrowserTabId={activeBrowserTabId}
       activeSimulatorTabId={
-        activeTabType === 'simulator' && renderedActiveWorktreeId
+        (activeTabType === 'simulator' || activeTabType === 'api-client') &&
+        renderedActiveWorktreeId
           ? (useAppStore.getState().getActiveTab(renderedActiveWorktreeId)?.id ?? null)
           : null
       }
@@ -98,6 +101,11 @@ export function TerminalTitlebarTabs({
         if (unifiedTab?.contentType === 'simulator') {
           setActiveTab(fileId)
           setActiveTabType('simulator')
+          return
+        }
+        if (unifiedTab?.contentType === 'api-client') {
+          useAppStore.getState().activateTab(fileId)
+          setActiveTabType('api-client')
           return
         }
         setActiveFile(fileId)

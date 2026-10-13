@@ -36,6 +36,16 @@ export function createTabsCloseActions(
         return null
       }
 
+      if (tab.contentType === 'api-client') {
+        // Why: unsaved edits need a Save/Discard decision before the tab disappears (FR-003a).
+        if (!opts?.discardApiClientDraft && state.apiClientDraftsByTab[tabId]) {
+          get().requestApiClientTabClose(tabId)
+          return null
+        }
+        get().discardApiClientDraft(tabId)
+        get().removeApiClientTabState(tabId)
+      }
+
       if (tab.contentType === 'terminal' && !opts?.terminalRetirementHandled) {
         const dedupedGroupOrder = dedupeTabOrder(group.tabOrder)
         const wasLastTab =

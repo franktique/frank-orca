@@ -13,6 +13,10 @@ const BUNDLED_MAIN_DEPENDENCIES = new Set([
   '@xterm/headless',
   '@xterm/addon-serialize',
   'tldts',
+  // Why: the script sandbox worker embeds the wasm; bundling keeps it independent of the
+  // resources/node_modules copy that follows app.asar on Windows.
+  'quickjs-emscripten',
+  '@jitl/quickjs-singlefile-cjs-release-sync',
   // Why: Windows NSIS deploys app.asar before external resources; bootstrap must
   // not race the later resources/node_modules copy.
   'zod'
@@ -246,6 +250,11 @@ export const electronViteConfig: UserConfig = {
           // corpora and read SQLite synchronously; a worker thread keeps that
           // off the main-process event loop.
           'usage-scan-worker-entry': resolve('src/main/usage/usage-scan-worker-entry.ts'),
+          // Why: Postman scripts are untrusted; QuickJS runs them on a worker thread so a runaway
+          // script can never occupy the main-process event loop.
+          'script-sandbox-worker-entry': resolve(
+            'src/main/api-client/script-sandbox/script-sandbox-worker-entry.ts'
+          ),
           // Why: forked with ELECTRON_RUN_AS_NODE so @parcel/watcher faults
           // can't take down the main process (issue #7547).
           'parcel-watcher-process-entry': resolve('src/main/ipc/parcel-watcher-process-entry.ts'),

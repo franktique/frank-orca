@@ -16,10 +16,7 @@ import {
   buildWindowsShellMenuEntries,
   type WindowsShellMenuEntry
 } from './tab-bar-windows-shell-options'
-import type {
-  getProjectRuntimeShellMenuMode,
-  resolveWindowsPowerShellImplementationSetting
-} from './use-tab-bar-runtime-model'
+import type { TabBarRuntimeModel } from './use-tab-bar-runtime-model'
 
 const NEW_TAB_MENU_TERMINAL_FOCUS_RETRY_MS = 50
 const NEW_TAB_MENU_TERMINAL_FOCUS_TIMEOUT_MS = 5000
@@ -48,6 +45,7 @@ export function useTabBarCreateMenuController({
   managedBrowserCreationEnabled,
   mobileEmulatorCreationEnabled,
   workspaceHasSimulatorTab,
+  hasApiClient,
   showWindowsShellMenu,
   projectRuntimeShellMenuMode,
   defaultWindowsShell,
@@ -58,6 +56,7 @@ export function useTabBarCreateMenuController({
   onNewTerminalWithShell,
   onNewBrowserTab,
   onNewSimulatorTab,
+  onNewApiClientTab,
   onNewFileTab,
   onOpenFileTab
 }: {
@@ -68,18 +67,18 @@ export function useTabBarCreateMenuController({
   managedBrowserCreationEnabled: boolean
   mobileEmulatorCreationEnabled: boolean
   workspaceHasSimulatorTab: boolean
+  hasApiClient: boolean
   showWindowsShellMenu: boolean
-  projectRuntimeShellMenuMode: ReturnType<typeof getProjectRuntimeShellMenuMode>
+  projectRuntimeShellMenuMode: TabBarRuntimeModel['projectRuntimeShellMenuMode']
   defaultWindowsShell: string
-  defaultWindowsPowerShellImplementation: ReturnType<
-    typeof resolveWindowsPowerShellImplementationSetting
-  >
+  defaultWindowsPowerShellImplementation: TabBarRuntimeModel['defaultWindowsPowerShellImplementation']
   windowsTerminalCapabilities: WindowsTerminalCapabilities
   agentLaunchOptions: TabAgentLaunchOption[]
   onNewTerminalTab: () => void
   onNewTerminalWithShell?: (shell: string) => void
   onNewBrowserTab: () => void
   onNewSimulatorTab?: () => void
+  onNewApiClientTab?: () => void
   onNewFileTab?: () => void
   onOpenFileTab?: () => void
 }): TabBarCreateMenuController {
@@ -89,19 +88,15 @@ export function useTabBarCreateMenuController({
   const pendingNewTabMenuFocusRef = useRef<(() => void) | null>(null)
   const pendingNewTabMenuFocusAnimationRef = useRef<number | null>(null)
   const pendingNewTabMenuFocusRetryRef = useRef<number | null>(null)
-  const clearPendingNewTabMenuFocusAnimation = (): void => {
-    if (pendingNewTabMenuFocusAnimationRef.current === null) {
-      return
+  const clearPendingNewTabMenuFocusTimers = (): void => {
+    if (pendingNewTabMenuFocusAnimationRef.current !== null) {
+      cancelAnimationFrame(pendingNewTabMenuFocusAnimationRef.current)
+      pendingNewTabMenuFocusAnimationRef.current = null
     }
-    cancelAnimationFrame(pendingNewTabMenuFocusAnimationRef.current)
-    pendingNewTabMenuFocusAnimationRef.current = null
-  }
-  const clearPendingNewTabMenuFocusRetry = (): void => {
-    if (pendingNewTabMenuFocusRetryRef.current === null) {
-      return
+    if (pendingNewTabMenuFocusRetryRef.current !== null) {
+      window.clearTimeout(pendingNewTabMenuFocusRetryRef.current)
+      pendingNewTabMenuFocusRetryRef.current = null
     }
-    window.clearTimeout(pendingNewTabMenuFocusRetryRef.current)
-    pendingNewTabMenuFocusRetryRef.current = null
   }
   const focusNewActiveTerminalWhenReady = (
     previousActiveTabId: string | null,
@@ -167,6 +162,7 @@ export function useTabBarCreateMenuController({
         hasNewBrowser: !terminalOnly && managedBrowserCreationEnabled,
         hasNewMarkdown: !terminalOnly && Boolean(onNewFileTab),
         hasOpenMarkdown: !terminalOnly && Boolean(onOpenFileTab),
+        hasApiClient,
         hasSimulator:
           !terminalOnly &&
           mobileEmulatorEnabled &&
@@ -175,6 +171,7 @@ export function useTabBarCreateMenuController({
         simulatorIsGoTo: workspaceHasSimulatorTab
       }),
     [
+      hasApiClient,
       mobileEmulatorEnabled,
       managedBrowserCreationEnabled,
       mobileEmulatorCreationEnabled,
@@ -214,6 +211,9 @@ export function useTabBarCreateMenuController({
       case 'open-markdown':
         onOpenFileTab?.()
         break
+      case 'new-api-client':
+        onNewApiClientTab?.()
+        break
       case 'new-simulator':
       case 'go-to-simulator':
         onNewSimulatorTab?.()
@@ -249,8 +249,7 @@ export function useTabBarCreateMenuController({
   const runPendingNewTabMenuFocusAfterClose = (): void => {
     const pendingFocus = pendingNewTabMenuFocusRef.current
     pendingNewTabMenuFocusRef.current = null
-    clearPendingNewTabMenuFocusAnimation()
-    clearPendingNewTabMenuFocusRetry()
+    clearPendingNewTabMenuFocusTimers()
     if (pendingFocus) {
       pendingNewTabMenuFocusAnimationRef.current = requestAnimationFrame(() => {
         pendingNewTabMenuFocusAnimationRef.current = null
@@ -267,8 +266,7 @@ export function useTabBarCreateMenuController({
         return
       }
       // Why: cancel the delayed focus handoff via this root ref cleanup, avoiding an otherwise cleanup-only React Effect.
-      clearPendingNewTabMenuFocusAnimation()
-      clearPendingNewTabMenuFocusRetry()
+      clearPendingNewTabMenuFocusTimers()
     }
   }
   const clearPendingNewTabMenuFocusOnUnmount = clearPendingNewTabMenuFocusOnUnmountRef.current

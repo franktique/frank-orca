@@ -17,6 +17,7 @@ describe('tab create menu options', () => {
     hasNewBrowser: true,
     hasNewMarkdown: true,
     hasOpenMarkdown: true,
+    hasApiClient: false,
     hasSimulator: true,
     simulatorIsGoTo: false
   })
@@ -35,6 +36,7 @@ describe('tab create menu options', () => {
       hasNewBrowser: true,
       hasNewMarkdown: true,
       hasOpenMarkdown: false,
+      hasApiClient: false,
       hasSimulator: true,
       simulatorIsGoTo: true
     })
@@ -59,6 +61,7 @@ describe('tab create menu options', () => {
       hasNewBrowser: false,
       hasNewMarkdown: true,
       hasOpenMarkdown: true,
+      hasApiClient: false,
       hasSimulator: false,
       simulatorIsGoTo: false
     })
@@ -78,6 +81,7 @@ describe('tab create menu options', () => {
       hasNewBrowser: false,
       hasNewMarkdown: false,
       hasOpenMarkdown: false,
+      hasApiClient: false,
       hasSimulator: false,
       simulatorIsGoTo: false,
       windowsShellEntries: [
@@ -126,5 +130,24 @@ describe('tab create menu options', () => {
 
     expect(isTabCreateMenuQueryTooLarge(oversizedQuery)).toBe(true)
     expect(findMatchingTabCreateMenuOptions(oversizedQuery, [option])).toEqual([])
+  })
+
+  it('offers a New API Client entry only when the workspace allows it', () => {
+    const base = {
+      terminalOnly: false,
+      hasNewBrowser: false,
+      hasNewMarkdown: false,
+      hasOpenMarkdown: false,
+      hasSimulator: false,
+      simulatorIsGoTo: false
+    }
+    const enabled = buildTabCreateMenuOptions({ ...base, hasApiClient: true })
+    const disabled = buildTabCreateMenuOptions({ ...base, hasApiClient: false })
+
+    expect(enabled.map((option) => option.kind)).toContain('new-api-client')
+    expect(disabled.map((option) => option.kind)).not.toContain('new-api-client')
+    expect(
+      findMatchingTabCreateMenuOptions('postman', enabled).map((option) => option.kind)
+    ).toEqual(['new-api-client'])
   })
 })

@@ -8,6 +8,7 @@ import {
   createWebRuntimeSessionTerminal,
   isWebRuntimeSessionActive
 } from '@/runtime/web-runtime-session'
+import { ensureApiClientTab } from '@/lib/ensure-api-client-tab'
 import { openMobileEmulatorTab } from '@/lib/open-mobile-emulator-tab'
 import { launchAgentInNewTab } from '@/lib/launch-agent-in-new-tab'
 import { buildDuplicatedBrowserTabOptions } from '@/lib/duplicate-browser-tab-options'
@@ -127,6 +128,13 @@ export function useTerminalCreateActions(controller: TerminalColdActivationContr
     }).catch(showClientCreationActionError)
   }, [activeWorktreeId])
 
+  const handleNewApiClientTab = useCallback(() => {
+    if (!activeWorktreeId) {
+      return
+    }
+    ensureApiClientTab(activeWorktreeId, { forceNew: true })
+  }, [activeWorktreeId])
+
   const handleNewBrowserTab = useCallback(() => {
     if (!activeWorktreeId) {
       return
@@ -228,6 +236,7 @@ export function useTerminalCreateActions(controller: TerminalColdActivationContr
     handleNewTab,
     handleNewAgentTab,
     handleNewSimulatorTab,
+    handleNewApiClientTab,
     handleNewBrowserTab,
     handleOpenEntry,
     handleDuplicateBrowserTab,

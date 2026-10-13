@@ -10,6 +10,7 @@ import {
   getSshGitProviderMock,
   getSshFilesystemProviderMock,
   deleteWorktreeHistoryDirMock,
+  deleteWorktreeApiClientDataMock,
   killAllProcessesForWorktreeMock
 } from './worktrees-test-module-mocks'
 import { handlers, mainWindow, setupWorktreeHandlers, store } from './worktrees-test-harness'
@@ -77,6 +78,9 @@ vi.mock('./worktree-logic', async (importOriginal) =>
   (await import('./worktrees-test-module-mocks')).worktreeLogicModuleMock(
     (await importOriginal()) as Record<string, unknown>
   )
+)
+vi.mock('../api-client/api-client-data-deletion', async () =>
+  (await import('./worktrees-test-module-mocks')).apiClientDataDeletionModuleMock()
 )
 vi.mock('../terminal-history-deletion', async () =>
   (await import('./worktrees-test-module-mocks')).terminalHistoryDeletionModuleMock()
@@ -146,6 +150,9 @@ describe('registerWorktreeHandlers', () => {
       'local'
     )
     expect(deleteWorktreeHistoryDirMock).toHaveBeenCalledWith(
+      'repo-1::/workspace/already-deleted-wt'
+    )
+    expect(deleteWorktreeApiClientDataMock).toHaveBeenCalledWith(
       'repo-1::/workspace/already-deleted-wt'
     )
     expect(mainWindow.webContents.send).toHaveBeenCalledWith('worktrees:changed', {

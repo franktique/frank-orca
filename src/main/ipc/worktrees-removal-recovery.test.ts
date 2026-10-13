@@ -15,6 +15,7 @@ import {
   runHookMock,
   gitExecFileAsyncMock,
   deleteWorktreeHistoryDirMock,
+  deleteWorktreeApiClientDataMock,
   advertisedUrlWatcherForgetWorktreeMock,
   pruneCleanupScanSnapshotMock,
   pruneSpaceAnalysisSnapshotMock,
@@ -92,6 +93,9 @@ vi.mock('./worktree-logic', async (importOriginal) =>
 )
 vi.mock('../terminal-history-deletion', async () =>
   (await import('./worktrees-test-module-mocks')).terminalHistoryDeletionModuleMock()
+)
+vi.mock('../api-client/api-client-data-deletion', async () =>
+  (await import('./worktrees-test-module-mocks')).apiClientDataDeletionModuleMock()
 )
 vi.mock('../ports/advertised-url-watcher', async () =>
   (await import('./worktrees-test-module-mocks')).advertisedUrlWatcherModuleMock()
@@ -544,6 +548,8 @@ describe('registerWorktreeHandlers', () => {
     expect(store.removeWorktreeMeta).toHaveBeenCalledWith(worktreeId, 'local')
     expect(advertisedUrlWatcherForgetWorktreeMock).toHaveBeenCalledWith(worktreeId)
     expect(deleteWorktreeHistoryDirMock).toHaveBeenCalledWith(worktreeId)
+    // Folder workspaces keep API Client data too, so removal deletes it with the workspace.
+    expect(deleteWorktreeApiClientDataMock).toHaveBeenCalledWith(worktreeId)
     expect(mainWindow.webContents.send).toHaveBeenCalledWith('worktrees:changed', {
       repoId: 'repo-folder'
     })

@@ -53,6 +53,7 @@ import { shellApi } from './api/shell-bridge'
 import { skillsApi } from './api/skills-bridge'
 import { petApi } from './api/pet-bridge'
 import { browserApi } from './api/browser-bridge'
+import { apiClientApi } from './api/api-client-bridge'
 import { emulatorApi } from './api/emulator-bridge'
 import { hooksApi } from './api/hooks-bridge'
 import { ephemeralVmApi } from './api/ephemeral-vm-bridge'
@@ -152,6 +153,7 @@ const api = {
   pet: petApi,
   browser: browserApi,
   emulator: emulatorApi,
+  apiClient: apiClientApi,
   hooks: hooksApi,
   ephemeralVm: ephemeralVmApi,
   cache: cacheApi,

@@ -83,6 +83,8 @@ export type TabsSlice = {
       preserveWorktreeSelection?: boolean
       recordInteraction?: boolean
       terminalRetirementHandled?: boolean
+      /** Close an API Client tab even though it has unsaved edits (the user chose Discard). */
+      discardApiClientDraft?: boolean
     }
   ) => { closedTabId: string; wasLastTab: boolean; worktreeId: string } | null
   reorderUnifiedTabs: (

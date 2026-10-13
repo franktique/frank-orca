@@ -79,6 +79,9 @@ export function activateCyclableTab(store: AppStoreState, next: TypeCyclableTab)
       store.activateTab?.(next.tabId)
     }
     store.setActiveTabType('simulator')
+  } else if (next.type === 'api-client') {
+    store.activateTab?.(next.tabId ?? next.id)
+    store.setActiveTabType('api-client')
   } else if (next.type === 'agent-session') {
     if (next.tabId) {
       store.activateTab?.(next.tabId)

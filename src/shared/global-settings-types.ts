@@ -436,6 +436,8 @@ export type GlobalSettings = {
   experimentalMobile: boolean
   /** Why: iOS Simulator is default-on for capable macOS hosts; this is the durable off switch (hides UI, blocks CLI attach). */
   mobileEmulatorEnabled?: boolean
+  /** API Client: verify TLS certificates (default on); a request can override it. */
+  apiClientSslVerification: boolean
   /** Preferred iOS Simulator UDID for UI auto-attach and agent CLI attach. */
   mobileEmulatorDefaultDeviceUdid?: string | null
   /** Explicit Android SDK root for when auto-discovery (ANDROID_HOME / default path) fails; null (default) auto-discovers. */

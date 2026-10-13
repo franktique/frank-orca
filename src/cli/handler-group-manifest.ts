@@ -137,6 +137,11 @@ export const HANDLER_GROUPS: readonly HandlerGroup[] = [
     load: async () => (await import('./handlers/orchestration.js')).ORCHESTRATION_HANDLERS
   },
   {
+    name: 'api-client',
+    keys: ['api list', 'api envs', 'api run', 'api result', 'api show'],
+    load: async () => (await import('./handlers/api-client.js')).API_CLIENT_HANDLERS
+  },
+  {
     name: 'emulator',
     keys: [
       'emulator list',

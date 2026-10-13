@@ -50,6 +50,10 @@ import { createNewIssueDraftSlice } from './new-issue-draft'
 import { createTaskCreationDraftsSlice } from './task-creation-drafts'
 import { createRemoteServerUpdatesSlice } from './remote-server-updates'
 import { createTerminalQuickCommandHostsSlice } from './terminal-quick-command-hosts'
+import { createApiClientSlice } from './api-client'
+import { createApiClientDraftSlice } from './api-client-drafts'
+import { createApiClientExecutionSlice } from './api-client-execution'
+import { createApiClientRunnerSlice } from './api-client-runner'
 import { createQuickNotesSlice } from './quick-notes'
 import { translate } from '@/i18n/i18n'
 
@@ -107,7 +111,11 @@ export function createTestStore() {
     ...createTaskCreationDraftsSlice(...a),
     ...createRemoteServerUpdatesSlice(...a),
     ...createTerminalQuickCommandHostsSlice(...a),
-    ...createQuickNotesSlice(...a)
+    ...createQuickNotesSlice(...a),
+    ...createApiClientSlice(...a),
+    ...createApiClientDraftSlice(...a),
+    ...createApiClientExecutionSlice(...a),
+    ...createApiClientRunnerSlice(...a)
   }))
 }
 

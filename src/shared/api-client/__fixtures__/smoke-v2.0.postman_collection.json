@@ -1,0 +1,49 @@
+{
+  "info": {
+    "_postman_id": "col-v20-0000-4000-8000-000000000000",
+    "name": "Legacy v2.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Folder",
+      "item": [
+        {
+          "name": "Get thing",
+          "request": {
+            "method": "get",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "http://localhost:3000/echo?x=1",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "abc",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Post thing",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"a\":1}"
+        },
+        "url": "http://localhost:3000/echo"
+      }
+    }
+  ]
+}

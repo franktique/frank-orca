@@ -40,6 +40,7 @@ import { registerSessionHandlers } from '../session'
 import { registerSettingsHandlers } from '../settings'
 import { registerDiagnosticsHandlers } from '../diagnostics'
 import { registerSkillsHandlers } from '../skills'
+import { registerApiClientHandlers } from '../api-client/api-client-ipc'
 import { registerSkillDeleteIpcHandlers } from '../skill-delete/handlers'
 import { registerWorkspaceSpaceHandlers } from '../workspace-space'
 import { registerWorkspacePortHandlers } from '../workspace-ports'
@@ -204,6 +205,7 @@ export function registerCoreHandlers(
   registerUIHandlers(store, { isDashboardPopoutRenderer })
   registerEmulatorFrameStreamHandlers()
   registerEmulatorVideoStreamHandlers()
+  registerApiClientHandlers(store)
   registerWorkspaceSpaceHandlers(store)
   registerWorkspacePortHandlers(store)
   registerLocalhostWorktreeLabelHandlers(store)

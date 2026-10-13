@@ -99,6 +99,11 @@ export function activateTabNumberShortcut(index: number): boolean {
     return true
   }
 
+  if (target.contentType === 'api-client') {
+    store.setActiveTabType('api-client')
+    return true
+  }
+
   store.setActiveFile(target.entityId)
   store.setActiveTabType('editor')
   return true

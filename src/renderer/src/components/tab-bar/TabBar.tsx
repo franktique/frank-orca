@@ -18,6 +18,7 @@ function TabBarInner(props: TabBarProps): React.JSX.Element {
     onNewTerminalWithShell,
     onNewBrowserTab,
     onNewSimulatorTab,
+    onNewApiClientTab,
     onNewFileTab,
     onOpenFileTab,
     onPinFile
@@ -31,6 +32,8 @@ function TabBarInner(props: TabBarProps): React.JSX.Element {
     managedBrowserCreationEnabled: runtime.managedBrowserCreationEnabled,
     mobileEmulatorCreationEnabled: runtime.mobileEmulatorCreationEnabled,
     workspaceHasSimulatorTab: runtime.workspaceHasSimulatorTab,
+    hasApiClient:
+      !terminalOnly && runtime.apiClientAvailability === 'available' && Boolean(onNewApiClientTab),
     showWindowsShellMenu: runtime.showWindowsShellMenu,
     projectRuntimeShellMenuMode: runtime.projectRuntimeShellMenuMode,
     defaultWindowsShell: runtime.defaultWindowsShell,
@@ -41,6 +44,7 @@ function TabBarInner(props: TabBarProps): React.JSX.Element {
     onNewTerminalWithShell,
     onNewBrowserTab,
     onNewSimulatorTab,
+    onNewApiClientTab,
     onNewFileTab,
     onOpenFileTab
   })

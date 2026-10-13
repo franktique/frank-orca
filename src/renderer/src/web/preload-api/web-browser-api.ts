@@ -98,6 +98,43 @@ export function createBrowserApi(): NonNullable<Partial<PreloadApi>['browser']> 
   } as unknown as NonNullable<Partial<PreloadApi>['browser']>
 }
 
+export function createApiClientApi(): NonNullable<Partial<PreloadApi>['apiClient']> {
+  const unavailable = (): Promise<{ ok: false; code: 'not-local'; message: string }> =>
+    Promise.resolve({
+      ok: false,
+      code: 'not-local',
+      message: translate('apiClient.web.unavailable', 'The API Client is unavailable on web.')
+    })
+  return {
+    getSnapshot: unavailable,
+    setActiveEnvironment: unavailable,
+    pickImportFile: () => Promise.resolve(null),
+    importFile: unavailable,
+    pickExportFile: () => Promise.resolve(null),
+    exportFile: unavailable,
+    treeOp: unavailable,
+    saveRequest: unavailable,
+    send: unavailable,
+    envOp: unavailable,
+    saveEnvironment: unavailable,
+    getLatestRun: unavailable,
+    startRun: unavailable,
+    stopRun: unavailable,
+    clearRun: unavailable,
+    onRunProgress: () => noopUnsubscribe,
+    onRunFinished: () => noopUnsubscribe,
+    onShow: () => noopUnsubscribe,
+    replyShow: () => undefined,
+    cancel: unavailable,
+    getLatestResult: unavailable,
+    getConsole: unavailable,
+    clearConsole: unavailable,
+    onExecutionFinished: () => noopUnsubscribe,
+    onConsoleAppended: () => noopUnsubscribe,
+    onChanged: () => noopUnsubscribe
+  }
+}
+
 export function createEmulatorApi(): NonNullable<Partial<PreloadApi>['emulator']> {
   return {
     onPaneFocus: () => noopUnsubscribe,
