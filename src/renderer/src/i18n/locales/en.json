@@ -16976,18 +16976,22 @@
           "errorAlreadyActive": "Element selection is already active.",
           "errorInjectionFailed": "Could not start element selection on this page."
         },
-        "recordGif": {
-          "discarded": "GIF recording discarded",
+        "recording": {
+          "discarded": "Recording discarded",
+          "formatMenu": "Recording format",
+          "formatMp4Hint": "Smallest file",
+          "formatUnsupported": "Not supported on this system",
           "pause": "Pause recording",
           "paused": "Recording paused",
-          "recording": "Recording GIF",
+          "recording": "Recording {{value0}}",
           "resume": "Resume recording",
-          "saveFailed": "Could not save the GIF",
-          "saved": "GIF saved to {{value0}}",
-          "saving": "Saving GIF…",
-          "start": "Record GIF",
+          "saveFailed": "Could not save the recording",
+          "saved": "Recording saved to {{value0}}",
+          "saving": "Saving recording…",
+          "start": "Record {{value0}}",
+          "startFailed": "Could not start recording",
           "status": "{{value0}} · {{value1}} / {{value2}} · {{value3}} frames",
-          "stop": "Stop and save GIF"
+          "stop": "Stop and save {{value0}}"
         }
       },
       "pluginCatalog": {

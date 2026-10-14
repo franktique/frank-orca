@@ -14547,18 +14547,22 @@
           "errorAlreadyActive": "La selección de elementos ya está activa.",
           "errorInjectionFailed": "No se pudo iniciar la selección de elementos en esta página."
         },
-        "recordGif": {
-          "discarded": "Grabación GIF descartada",
+        "recording": {
+          "discarded": "Grabación descartada",
+          "formatMenu": "Formato de grabación",
+          "formatMp4Hint": "Archivo más liviano",
+          "formatUnsupported": "No disponible en este sistema",
           "pause": "Pausar grabación",
           "paused": "Grabación en pausa",
-          "recording": "Grabando GIF",
+          "recording": "Grabando {{value0}}",
           "resume": "Reanudar grabación",
-          "saveFailed": "No se pudo guardar el GIF",
-          "saved": "GIF guardado en {{value0}}",
-          "saving": "Guardando GIF…",
-          "start": "Grabar GIF",
+          "saveFailed": "No se pudo guardar la grabación",
+          "saved": "Grabación guardada en {{value0}}",
+          "saving": "Guardando grabación…",
+          "start": "Grabar {{value0}}",
+          "startFailed": "No se pudo iniciar la grabación",
           "status": "{{value0}} · {{value1}} / {{value2}} · {{value3}} fotogramas",
-          "stop": "Detener y guardar GIF"
+          "stop": "Detener y guardar {{value0}}"
         }
       },
       "pluginCatalog": {

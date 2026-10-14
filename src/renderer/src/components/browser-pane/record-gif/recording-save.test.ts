@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 const toastMock = vi.hoisted(() => Object.assign(vi.fn(), { success: vi.fn(), error: vi.fn() }))
 vi.mock('sonner', () => ({ toast: toastMock }))
 
-import { bytesToBase64, gifRecordingFileName, saveGifRecording } from './gif-recording-save'
+import { bytesToBase64, recordingFileName, saveRecording } from './recording-save'
 
 function installFsApi(startResult: unknown) {
   const fs = {
@@ -18,7 +18,7 @@ function installFsApi(startResult: unknown) {
   return fs
 }
 
-describe('saveGifRecording', () => {
+describe('saveRecording', () => {
   beforeEach(() => vi.clearAllMocks())
   afterEach(() => vi.unstubAllGlobals())
 
@@ -26,7 +26,7 @@ describe('saveGifRecording', () => {
     const fs = installFsApi({ canceled: false, transferId: 't1', destinationPath: '/tmp/a.gif' })
     const encode = vi.fn().mockResolvedValue(new Uint8Array([71, 73, 70]))
 
-    await saveGifRecording(encode)
+    await saveRecording('gif', encode)
 
     expect(fs.startDownloadedFile).toHaveBeenCalledWith({
       suggestedName: expect.stringMatching(/^orca-recording-.*\.gif$/)
@@ -43,7 +43,7 @@ describe('saveGifRecording', () => {
     const fs = installFsApi({ canceled: true })
     const encode = vi.fn()
 
-    await saveGifRecording(encode)
+    await saveRecording('gif', encode)
 
     expect(encode).not.toHaveBeenCalled()
     expect(fs.appendDownloadedFileChunk).not.toHaveBeenCalled()
@@ -53,7 +53,7 @@ describe('saveGifRecording', () => {
   it('cancels the transfer and reports when encoding fails', async () => {
     const fs = installFsApi({ canceled: false, transferId: 't2', destinationPath: '/tmp/b.gif' })
 
-    await saveGifRecording(() => Promise.reject(new Error('boom')))
+    await saveRecording('gif', () => Promise.reject(new Error('boom')))
 
     expect(fs.cancelDownloadedFile).toHaveBeenCalledWith({ transferId: 't2' })
     expect(fs.finishDownloadedFile).not.toHaveBeenCalled()
@@ -63,9 +63,10 @@ describe('saveGifRecording', () => {
 
 describe('gif recording file helpers', () => {
   it('names the file with a filesystem-safe timestamp', () => {
-    expect(gifRecordingFileName(new Date('2026-10-13T09:08:07.123Z'))).toBe(
-      'orca-recording-2026-10-13-09-08-07.gif'
-    )
+    const now = new Date('2026-10-13T09:08:07.123Z')
+    expect(recordingFileName(now, 'gif')).toBe('orca-recording-2026-10-13-09-08-07.gif')
+    expect(recordingFileName(now, 'mp4')).toBe('orca-recording-2026-10-13-09-08-07.mp4')
+    expect(recordingFileName(now, 'webm')).toBe('orca-recording-2026-10-13-09-08-07.webm')
   })
 
   it('base64-encodes chunks larger than one fromCharCode slice', () => {

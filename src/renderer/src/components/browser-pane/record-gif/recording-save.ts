@@ -1,28 +1,32 @@
 import { toast } from 'sonner'
 import { translate } from '@/i18n/i18n'
+import type { RecordingFormat } from './recording-format'
 
 const SAVE_CHUNK_BYTES = 1024 * 1024
 
-export function gifRecordingFileName(now: Date): string {
+export function recordingFileName(now: Date, format: RecordingFormat): string {
   const stamp = now.toISOString().slice(0, 19).replace(/[:T]/g, '-')
-  return `orca-recording-${stamp}.gif`
+  return `orca-recording-${stamp}.${format}`
 }
 
 /**
- * Asks where to save first, then streams the encoded GIF in chunks so a long recording never
+ * Asks where to save first, then streams the encoded file in chunks so a long recording never
  * crosses IPC as one giant string. Cancelling the dialog discards the recording.
  */
-export async function saveGifRecording(encode: () => Promise<Uint8Array>): Promise<void> {
+export async function saveRecording(
+  format: RecordingFormat,
+  encode: () => Promise<Uint8Array>
+): Promise<void> {
   const fs = window.api.fs
   let target: Awaited<ReturnType<typeof fs.startDownloadedFile>>
   try {
-    target = await fs.startDownloadedFile({ suggestedName: gifRecordingFileName(new Date()) })
+    target = await fs.startDownloadedFile({ suggestedName: recordingFileName(new Date(), format) })
   } catch (error) {
     toastSaveFailure(error)
     return
   }
   if (target.canceled) {
-    toast(translate('auto.components.browser-pane.recordGif.discarded', 'GIF recording discarded'))
+    toast(translate('auto.components.browser-pane.recording.discarded', 'Recording discarded'))
     return
   }
   try {
@@ -36,7 +40,7 @@ export async function saveGifRecording(encode: () => Promise<Uint8Array>): Promi
     }
     const result = await fs.finishDownloadedFile({ transferId: target.transferId })
     toast.success(
-      translate('auto.components.browser-pane.recordGif.saved', 'GIF saved to {{value0}}', {
+      translate('auto.components.browser-pane.recording.saved', 'Recording saved to {{value0}}', {
         value0: result.destinationPath
       })
     )
@@ -57,7 +61,7 @@ export function bytesToBase64(bytes: Uint8Array): string {
 
 function toastSaveFailure(error: unknown): void {
   toast.error(
-    translate('auto.components.browser-pane.recordGif.saveFailed', 'Could not save the GIF'),
+    translate('auto.components.browser-pane.recording.saveFailed', 'Could not save the recording'),
     { description: error instanceof Error ? error.message : String(error) }
   )
 }

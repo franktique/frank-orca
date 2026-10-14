@@ -1,11 +1,11 @@
 /** Recorded time that excludes pauses, so the timer and frame delays match what the GIF plays back. */
-export type GifRecordingClock = {
+export type RecordingClock = {
   pause: (now: number) => void
   resume: (now: number) => void
   elapsed: (now: number) => number
 }
 
-export function createGifRecordingClock(startedAt: number): GifRecordingClock {
+export function createRecordingClock(startedAt: number): RecordingClock {
   let accumulatedMs = 0
   let runningSince: number | null = startedAt
   return {
@@ -25,7 +25,7 @@ export function createGifRecordingClock(startedAt: number): GifRecordingClock {
   }
 }
 
-export function formatGifRecordingElapsed(elapsedMs: number): string {
+export function formatRecordingElapsed(elapsedMs: number): string {
   const totalSeconds = Math.floor(Math.max(0, elapsedMs) / 1000)
   const minutes = Math.floor(totalSeconds / 60)
   const seconds = totalSeconds % 60

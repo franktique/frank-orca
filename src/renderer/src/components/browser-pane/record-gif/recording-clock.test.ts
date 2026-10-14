@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { createGifRecordingClock, formatGifRecordingElapsed } from './gif-recording-clock'
+import { createRecordingClock, formatRecordingElapsed } from './recording-clock'
 
-describe('createGifRecordingClock', () => {
+describe('createRecordingClock', () => {
   it('excludes paused time from elapsed', () => {
-    const clock = createGifRecordingClock(1000)
+    const clock = createRecordingClock(1000)
     expect(clock.elapsed(4000)).toBe(3000)
     clock.pause(4000)
     expect(clock.elapsed(9000)).toBe(3000)
@@ -12,7 +12,7 @@ describe('createGifRecordingClock', () => {
   })
 
   it('ignores repeated pause and resume calls', () => {
-    const clock = createGifRecordingClock(0)
+    const clock = createRecordingClock(0)
     clock.pause(1000)
     clock.pause(2000)
     clock.resume(3000)
@@ -21,11 +21,11 @@ describe('createGifRecordingClock', () => {
   })
 })
 
-describe('formatGifRecordingElapsed', () => {
+describe('formatRecordingElapsed', () => {
   it('formats whole seconds as m:ss', () => {
-    expect(formatGifRecordingElapsed(0)).toBe('0:00')
-    expect(formatGifRecordingElapsed(7999)).toBe('0:07')
-    expect(formatGifRecordingElapsed(83_000)).toBe('1:23')
-    expect(formatGifRecordingElapsed(180_000)).toBe('3:00')
+    expect(formatRecordingElapsed(0)).toBe('0:00')
+    expect(formatRecordingElapsed(7999)).toBe('0:07')
+    expect(formatRecordingElapsed(83_000)).toBe('1:23')
+    expect(formatRecordingElapsed(180_000)).toBe('3:00')
   })
 })

@@ -1,27 +1,27 @@
 import type { MarkupCaptureSource } from '../annotate/markup-base-image'
 
-// Why: GIF size grows with pixel count; 960px keeps text legible while keeping files shareable.
-const MAX_FRAME_EDGE = 960
-
 type DrawableFrame = { image: CanvasImageSource; width: number; height: number }
 
-export type GifFrameCapturer = {
-  /** Returns an opaque RGBA frame at the size fixed by the first capture, or null to skip a tick. */
-  capture: (source: MarkupCaptureSource) => Promise<ImageData | null>
+export type PageFrameCapturer = {
+  /**
+   * Draws the page opaquely onto one canvas whose size the first capture fixes, and returns its
+   * context; null skips the tick.
+   */
+  capture: (source: MarkupCaptureSource) => Promise<CanvasRenderingContext2D | null>
 }
 
-export function createGifFrameCapturer(): GifFrameCapturer {
+export function createPageFrameCapturer(maxFrameEdge: number): PageFrameCapturer {
   let context: CanvasRenderingContext2D | null = null
   return {
     capture: async (source) => {
-      const frame = await readDrawableFrame(source)
+      const frame = await readDrawableFrame(source, maxFrameEdge)
       if (!frame) {
         return null
       }
       // Why: a GIF has one canvas size, so the first frame fixes it and later frames
       // (after a pane resize) are letterboxed into it.
       if (!context) {
-        context = createFrameContext(fitWithin(frame.width, frame.height, MAX_FRAME_EDGE))
+        context = createFrameContext(fitWithin(frame.width, frame.height, maxFrameEdge))
       }
       const { width, height } = context.canvas
       const scale = Math.min(width / frame.width, height / frame.height)
@@ -36,7 +36,7 @@ export function createGifFrameCapturer(): GifFrameCapturer {
         drawWidth,
         drawHeight
       )
-      return context.getImageData(0, 0, width, height)
+      return context
     }
   }
 }
@@ -64,7 +64,10 @@ export function fitWithin(
   }
 }
 
-async function readDrawableFrame(source: MarkupCaptureSource): Promise<DrawableFrame | null> {
+async function readDrawableFrame(
+  source: MarkupCaptureSource,
+  maxFrameEdge: number
+): Promise<DrawableFrame | null> {
   if (source.kind === 'image') {
     const element = source.element
     const width = element.naturalWidth || element.width
@@ -79,7 +82,7 @@ async function readDrawableFrame(source: MarkupCaptureSource): Promise<DrawableF
     return null
   }
   const full = native.getSize()
-  const target = fitWithin(full.width, full.height, MAX_FRAME_EDGE)
+  const target = fitWithin(full.width, full.height, maxFrameEdge)
   // Why: downscale natively before copying pixels; a retina capture is ~4x the bytes we keep.
   const scaled = target.width < full.width ? native.resize(target) : native
   // Why toDataURL, not toBitmap(): toBitmap() crashes the sandboxed renderer (seen in e2e).

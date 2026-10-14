@@ -9,7 +9,7 @@ import type { BrowserPageDocLocation } from '../../../../../shared/browser-works
 import { RemoteRuntimeEgressIndicator } from '../assemble-chrome/browser-egress-indicator'
 import { MarkupDrawButton } from '../annotate/MarkupDrawButton'
 import type { MarkupModeController } from '../annotate/useMarkupMode'
-import { RecordGifControl } from '../record-gif/RecordGifControl'
+import { RecordPageControl } from '../record-gif/RecordPageControl'
 
 export function RemoteBrowserPageToolbar({
   runtimeEnvironmentId,
@@ -132,7 +132,7 @@ export function RemoteBrowserPageToolbar({
           )}
         </TooltipContent>
       </Tooltip>
-      <RecordGifControl
+      <RecordPageControl
         disabled={!frameUrl}
         getSource={() => (imageRef.current ? { kind: 'image', element: imageRef.current } : null)}
       />

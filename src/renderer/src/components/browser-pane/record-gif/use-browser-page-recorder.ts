@@ -1,39 +1,53 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
+import { translate } from '@/i18n/i18n'
 import type { MarkupCaptureSource } from '../annotate/markup-base-image'
-import { createGifEncodeWorkerClient, type GifEncodeWorkerClient } from './gif-encode-worker-client'
-import { createGifFrameCapturer, type GifFrameCapturer } from './gif-frame-capture'
-import { createGifRecordingClock, type GifRecordingClock } from './gif-recording-clock'
-import { saveGifRecording } from './gif-recording-save'
+import { createRecordingClock, type RecordingClock } from './recording-clock'
+import { createPageFrameCapturer, type PageFrameCapturer } from './page-frame-capture'
+import type { RecordingFormat } from './recording-format'
+import { saveRecording } from './recording-save'
+import { createRecordingSink, type RecordingSink } from './recording-sink'
 
-export type GifRecorderStatus = 'idle' | 'recording' | 'paused' | 'saving'
+export type PageRecorderStatus = 'idle' | 'recording' | 'paused' | 'saving'
 
-const FRAME_INTERVAL_MS = 100
+// Why per format: GIF size grows with every pixel and frame; video codecs keep both cheap, but each
+// frame is still PNG-encoded on the main thread, which bounds video size and rate (1920px stalled the UI).
+const CAPTURE_PROFILE: Record<RecordingFormat, { frameIntervalMs: number; maxFrameEdge: number }> =
+  {
+    gif: { frameIntervalMs: 100, maxFrameEdge: 960 },
+    mp4: { frameIntervalMs: 83, maxFrameEdge: 1280 },
+    webm: { frameIntervalMs: 83, maxFrameEdge: 1280 }
+  }
 const ELAPSED_TICK_MS = 250
-// Why: a cap keeps the encoded GIF (and the worker's memory) bounded if a recording is forgotten.
-export const MAX_GIF_RECORDING_MS = 3 * 60 * 1000
+// Why: a cap keeps the encoded file (and the encoder's memory) bounded if a recording is forgotten.
+export const MAX_PAGE_RECORDING_MS = 3 * 60 * 1000
 
 type RecordingSession = {
-  clock: GifRecordingClock
-  capturer: GifFrameCapturer
-  encoder: GifEncodeWorkerClient
+  format: RecordingFormat
+  clock: RecordingClock
+  capturer: PageFrameCapturer
+  sink: RecordingSink
   captureInFlight: boolean
   frameCount: number
 }
 
-export type BrowserGifRecorder = {
-  status: GifRecorderStatus
+export type BrowserPageRecorder = {
+  status: PageRecorderStatus
+  /** Format of the recording in progress; null while idle. */
+  format: RecordingFormat | null
   elapsedMs: number
   frameCount: number
-  start: () => void
+  start: (format: RecordingFormat) => void
   pause: () => void
   resume: () => void
   stop: () => Promise<void>
 }
 
-export function useBrowserGifRecorder(
+export function useBrowserPageRecorder(
   getSource: () => MarkupCaptureSource | null
-): BrowserGifRecorder {
-  const [status, setStatus] = useState<GifRecorderStatus>('idle')
+): BrowserPageRecorder {
+  const [status, setStatus] = useState<PageRecorderStatus>('idle')
+  const [format, setFormat] = useState<RecordingFormat | null>(null)
   const [elapsedMs, setElapsedMs] = useState(0)
   const [frameCount, setFrameCount] = useState(0)
   const sessionRef = useRef<RecordingSession | null>(null)
@@ -48,9 +62,9 @@ export function useBrowserGifRecorder(
     session.captureInFlight = true
     const atMs = session.clock.elapsed(performance.now())
     try {
-      const frame = await session.capturer.capture(source)
-      if (frame && sessionRef.current === session) {
-        session.encoder.addFrame(frame, atMs)
+      const context = await session.capturer.capture(source)
+      if (context && sessionRef.current === session) {
+        session.sink.addFrame(context, atMs)
         session.frameCount += 1
       }
     } catch {
@@ -60,17 +74,32 @@ export function useBrowserGifRecorder(
     }
   }, [])
 
-  const start = useCallback((): void => {
+  const start = useCallback((nextFormat: RecordingFormat): void => {
     if (sessionRef.current || !getSourceRef.current()) {
       return
     }
+    let sink: RecordingSink
+    try {
+      sink = createRecordingSink(nextFormat)
+    } catch (error) {
+      toast.error(
+        translate(
+          'auto.components.browser-pane.recording.startFailed',
+          'Could not start recording'
+        ),
+        { description: error instanceof Error ? error.message : String(error) }
+      )
+      return
+    }
     sessionRef.current = {
-      clock: createGifRecordingClock(performance.now()),
-      capturer: createGifFrameCapturer(),
-      encoder: createGifEncodeWorkerClient(),
+      format: nextFormat,
+      clock: createRecordingClock(performance.now()),
+      capturer: createPageFrameCapturer(CAPTURE_PROFILE[nextFormat].maxFrameEdge),
+      sink,
       captureInFlight: false,
       frameCount: 0
     }
+    setFormat(nextFormat)
     setElapsedMs(0)
     setFrameCount(0)
     setStatus('recording')
@@ -82,6 +111,7 @@ export function useBrowserGifRecorder(
       return
     }
     session.clock.pause(performance.now())
+    session.sink.pause()
     setElapsedMs(session.clock.elapsed(performance.now()))
     setStatus('paused')
   }, [status])
@@ -92,6 +122,7 @@ export function useBrowserGifRecorder(
       return
     }
     session.clock.resume(performance.now())
+    session.sink.resume()
     setStatus('recording')
   }, [status])
 
@@ -104,10 +135,11 @@ export function useBrowserGifRecorder(
     setStatus('saving')
     try {
       if (session.frameCount > 0) {
-        await saveGifRecording(() => session.encoder.finish())
+        await saveRecording(session.format, () => session.sink.finish())
       }
     } finally {
-      session.encoder.dispose()
+      session.sink.dispose()
+      setFormat(null)
       setElapsedMs(0)
       setFrameCount(0)
       setStatus('idle')
@@ -124,12 +156,15 @@ export function useBrowserGifRecorder(
       return
     }
     void captureFrame(session)
-    const frameTimer = setInterval(() => void captureFrame(session), FRAME_INTERVAL_MS)
+    const frameTimer = setInterval(
+      () => void captureFrame(session),
+      CAPTURE_PROFILE[session.format].frameIntervalMs
+    )
     const elapsedTimer = setInterval(() => {
       const elapsed = session.clock.elapsed(performance.now())
       setElapsedMs(elapsed)
       setFrameCount(session.frameCount)
-      if (elapsed >= MAX_GIF_RECORDING_MS) {
+      if (elapsed >= MAX_PAGE_RECORDING_MS) {
         void stopRef.current()
       }
     }, ELAPSED_TICK_MS)
@@ -142,11 +177,11 @@ export function useBrowserGifRecorder(
   // Why: an unmounted pane can't show the save outcome, so its recording is dropped.
   useEffect(
     () => () => {
-      sessionRef.current?.encoder.dispose()
+      sessionRef.current?.sink.dispose()
       sessionRef.current = null
     },
     []
   )
 
-  return { status, elapsedMs, frameCount, start, pause, resume, stop }
+  return { status, format, elapsedMs, frameCount, start, pause, resume, stop }
 }

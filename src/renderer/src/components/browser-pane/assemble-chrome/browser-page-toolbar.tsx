@@ -21,7 +21,7 @@ import {
 } from '@/lib/browser-page-conversion-history'
 import { convertBrowserPageToWorkspaceDoc } from '@/lib/file-preview'
 import type { GrabIntent } from '../describe-page/browser-page-types'
-import { RecordGifControl } from '../record-gif/RecordGifControl'
+import { RecordPageControl } from '../record-gif/RecordPageControl'
 
 /** Binds the shared browser chrome to a browsing page: an editable address bar and session tools. */
 export function BrowserPageToolbar({
@@ -177,7 +177,7 @@ export function BrowserPageToolbar({
         canShowDiscoveryHint: isActive
       }}
       recordControl={
-        <RecordGifControl
+        <RecordPageControl
           disabled={isBlankTab}
           getSource={() =>
             webviewRef.current ? { kind: 'webview', webview: webviewRef.current } : null
