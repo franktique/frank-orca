@@ -13,6 +13,7 @@ const MONTHLY_WINDOW_MINUTES = 43_200
 // Code reads (`copilot_internal/user`), so the field names mirror that API.
 type CopilotQuotaSnapshot = {
   entitlement?: number
+  has_quota?: boolean
   percent_remaining?: number
   quota_remaining?: number
   unlimited?: boolean
@@ -77,11 +78,18 @@ function parseResetMs(response: CopilotUserResponse): number | null {
   return Number.isFinite(ms) ? ms : null
 }
 
+// Why: a signed-in account without premium credits (e.g. a personal account
+// next to a Business one) reports percent_remaining 0, which must not read as 100% used.
+function hasPremiumQuota(response: CopilotUserResponse): boolean {
+  const snapshot = response.quota_snapshots?.premium_interactions
+  return Boolean(snapshot) && snapshot?.has_quota !== false && snapshot?.entitlement !== 0
+}
+
 function mapMonthlyUsage(response: CopilotUserResponse): RateLimitWindow | null {
   const snapshot = response.quota_snapshots?.premium_interactions
   // Why: unlimited or absent premium credits means "no monthly quota to show"
   // (like Grok's no-config billing response), not an error state.
-  if (!snapshot || snapshot.unlimited === true) {
+  if (!snapshot || snapshot.unlimited === true || !hasPremiumQuota(response)) {
     return null
   }
   const percentRemaining = snapshot.percent_remaining
@@ -151,12 +159,14 @@ export function readCopilotUsageCache(path: string): CopilotUsageCacheReadResult
   if (entries === null) {
     return { status: 'error', error: 'Copilot usage cache is invalid' }
   }
-  const freshest = entries.filter(hasResponse).sort((left, right) => {
+  const byFreshness = entries.filter(hasResponse).sort((left, right) => {
     const leftMs = left.retrievedAt ? Date.parse(left.retrievedAt) : Number.NaN
     const rightMs = right.retrievedAt ? Date.parse(right.retrievedAt) : Number.NaN
     // Why: entries without a parseable retrievedAt sink; NaN comparisons are false.
     return (Number.isFinite(rightMs) ? rightMs : 0) - (Number.isFinite(leftMs) ? leftMs : 0)
-  })[0]
+  })
+  // Why: the CLI caches every signed-in account; only quota-bearing ones should drive the chip.
+  const freshest = byFreshness.find((entry) => hasPremiumQuota(entry.response)) ?? byFreshness[0]
   if (!freshest) {
     return { status: 'missing' }
   }
