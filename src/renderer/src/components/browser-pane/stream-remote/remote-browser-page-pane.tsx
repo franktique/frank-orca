@@ -389,6 +389,7 @@ export function RemoteBrowserPagePane({
         busy={busy}
         loading={browserTab.loading}
         markup={markup}
+        imageRef={imageRef}
         frameUrl={frameUrl}
         isActive={isActive}
         onBack={() => void runRemoteNavigation('browser.back')}
