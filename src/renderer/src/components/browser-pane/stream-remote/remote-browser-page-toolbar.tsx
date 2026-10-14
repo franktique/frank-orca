@@ -9,6 +9,7 @@ import type { BrowserPageDocLocation } from '../../../../../shared/browser-works
 import { RemoteRuntimeEgressIndicator } from '../assemble-chrome/browser-egress-indicator'
 import { MarkupDrawButton } from '../annotate/MarkupDrawButton'
 import type { MarkupModeController } from '../annotate/useMarkupMode'
+import { RecordGifControl } from '../record-gif/RecordGifControl'
 
 export function RemoteBrowserPageToolbar({
   runtimeEnvironmentId,
@@ -22,6 +23,7 @@ export function RemoteBrowserPageToolbar({
   busy,
   loading,
   markup,
+  imageRef,
   frameUrl,
   isActive,
   onBack,
@@ -40,6 +42,7 @@ export function RemoteBrowserPageToolbar({
   busy: boolean
   loading: boolean
   markup: MarkupModeController
+  imageRef: React.RefObject<HTMLImageElement | null>
   frameUrl: string | null
   isActive: boolean
   onBack: () => void
@@ -129,6 +132,10 @@ export function RemoteBrowserPageToolbar({
           )}
         </TooltipContent>
       </Tooltip>
+      <RecordGifControl
+        disabled={!frameUrl}
+        getSource={() => (imageRef.current ? { kind: 'image', element: imageRef.current } : null)}
+      />
       <MarkupDrawButton
         onClick={() => (markup.isActive ? markup.cancel() : void markup.start())}
         disabled={!frameUrl}

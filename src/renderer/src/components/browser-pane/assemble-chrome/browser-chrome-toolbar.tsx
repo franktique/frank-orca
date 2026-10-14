@@ -55,6 +55,7 @@ export function BrowserChromeToolbar({
   importControl,
   elementTools,
   markup,
+  recordControl,
   shareControl,
   viewSource,
   openExternal,
@@ -69,6 +70,8 @@ export function BrowserChromeToolbar({
   importControl?: React.ReactNode
   elementTools: BrowserChromeElementTools | null
   markup: BrowserChromeMarkupTool
+  /** GIF recording of the page; null where there is no live page to record. */
+  recordControl?: React.ReactNode
   shareControl?: React.ReactNode
   viewSource: BrowserChromeToolAction | null
   openExternal: BrowserChromeToolAction | null
@@ -162,6 +165,8 @@ export function BrowserChromeToolbar({
           </Tooltip>
         </>
       ) : null}
+
+      {recordControl}
 
       <MarkupDrawButton
         onClick={markup.onToggle}

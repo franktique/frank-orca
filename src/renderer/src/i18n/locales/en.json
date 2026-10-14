@@ -16975,6 +16975,19 @@
           "errorNotAuthorized": "Browser access was denied.",
           "errorAlreadyActive": "Element selection is already active.",
           "errorInjectionFailed": "Could not start element selection on this page."
+        },
+        "recordGif": {
+          "discarded": "GIF recording discarded",
+          "pause": "Pause recording",
+          "paused": "Recording paused",
+          "recording": "Recording GIF",
+          "resume": "Resume recording",
+          "saveFailed": "Could not save the GIF",
+          "saved": "GIF saved to {{value0}}",
+          "saving": "Saving GIF…",
+          "start": "Record GIF",
+          "status": "{{value0}} · {{value1}} / {{value2}} · {{value3}} frames",
+          "stop": "Stop and save GIF"
         }
       },
       "pluginCatalog": {

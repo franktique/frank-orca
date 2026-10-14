@@ -14546,6 +14546,19 @@
           "errorNotAuthorized": "Se denegó el acceso al navegador.",
           "errorAlreadyActive": "La selección de elementos ya está activa.",
           "errorInjectionFailed": "No se pudo iniciar la selección de elementos en esta página."
+        },
+        "recordGif": {
+          "discarded": "Grabación GIF descartada",
+          "pause": "Pausar grabación",
+          "paused": "Grabación en pausa",
+          "recording": "Grabando GIF",
+          "resume": "Reanudar grabación",
+          "saveFailed": "No se pudo guardar el GIF",
+          "saved": "GIF guardado en {{value0}}",
+          "saving": "Guardando GIF…",
+          "start": "Grabar GIF",
+          "status": "{{value0}} · {{value1}} / {{value2}} · {{value3}} fotogramas",
+          "stop": "Detener y guardar GIF"
         }
       },
       "pluginCatalog": {

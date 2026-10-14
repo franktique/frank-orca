@@ -71,6 +71,47 @@ declare module 'monaco-editor/esm/vs/base/common/lifecycle.js' {
   }
 }
 
+// gifenc ships without type declarations; declare the subset the GIF recorder uses.
+declare module 'gifenc' {
+  type GifPalette = number[][]
+
+  type GifFrameOptions = {
+    palette?: GifPalette
+    /** Frame duration in milliseconds. */
+    delay?: number
+    /** -1 = play once, 0 = loop forever, >0 = loop count. */
+    repeat?: number
+    transparent?: boolean
+    transparentIndex?: number
+    dispose?: number
+  }
+
+  type GifEncoderInstance = {
+    writeFrame: (index: Uint8Array, width: number, height: number, opts?: GifFrameOptions) => void
+    finish: () => void
+    bytes: () => Uint8Array
+    bytesView: () => Uint8Array
+    reset: () => void
+  }
+
+  type GifPaletteFormat = 'rgb565' | 'rgb444' | 'rgba4444'
+
+  export function GIFEncoder(opts?: {
+    auto?: boolean
+    initialCapacity?: number
+  }): GifEncoderInstance
+  export function quantize(
+    rgba: Uint8Array | Uint8ClampedArray,
+    maxColors: number,
+    opts?: { format?: GifPaletteFormat; oneBitAlpha?: boolean | number }
+  ): GifPalette
+  export function applyPalette(
+    rgba: Uint8Array | Uint8ClampedArray,
+    palette: GifPalette,
+    format?: GifPaletteFormat
+  ): Uint8Array
+}
+
 declare global {
   var MonacoEnvironment:
     | {
