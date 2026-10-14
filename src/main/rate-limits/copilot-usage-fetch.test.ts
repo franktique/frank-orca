@@ -38,6 +38,16 @@ const BUSINESS_RESPONSE = {
   }
 }
 
+const NO_QUOTA = {
+  premium_interactions: {
+    entitlement: 0,
+    percent_remaining: 0,
+    quota_remaining: 0,
+    unlimited: false,
+    has_quota: false
+  }
+}
+
 describe('fetchCopilotRateLimits', () => {
   afterEach(() => {
     vi.resetModules()
@@ -86,6 +96,44 @@ describe('fetchCopilotRateLimits', () => {
     // stale entry would read 50.2% — so 90 proves the freshest one won.
     const result = await fetchWith(fileContents)
     expect(result.monthly?.usedPercent).toBe(90)
+  })
+
+  it('skips a fresher signed-in account that has no premium quota', async () => {
+    const fileContents = JSON.stringify({
+      copilotUserCache: {
+        'v1:business': {
+          retrievedAt: '2026-10-14T18:00:21.154Z',
+          response: {
+            ...BUSINESS_RESPONSE,
+            quota_snapshots: {
+              premium_interactions: {
+                entitlement: 6726,
+                percent_remaining: 99.6,
+                quota_remaining: 6705.1,
+                unlimited: false,
+                has_quota: true
+              }
+            }
+          }
+        },
+        'v1:personal': {
+          retrievedAt: '2026-10-14T18:00:23.175Z',
+          response: { ...BUSINESS_RESPONSE, copilot_plan: 'individual', quota_snapshots: NO_QUOTA }
+        }
+      }
+    })
+
+    const result = await fetchWith(fileContents)
+    expect(result.planType).toBe('business')
+    expect(result.monthly?.usedPercent).toBeCloseTo(0.4)
+    expect(result.monthly?.usageAmount?.used).toBeCloseTo(20.9)
+    expect(result.monthly?.usageAmount?.total).toBe(6726)
+  })
+
+  it('reports a no-quota account as unavailable instead of 100% used', async () => {
+    const result = await fetchWith(cacheFile({ ...BUSINESS_RESPONSE, quota_snapshots: NO_QUOTA }))
+    expect(result.status).toBe('unavailable')
+    expect(result.monthly).toBeUndefined()
   })
 
   it('treats an unlimited premium quota as unavailable, not an error', async () => {
