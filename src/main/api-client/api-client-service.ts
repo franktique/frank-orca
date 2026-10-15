@@ -14,10 +14,7 @@ import type {
 import { findNode } from '../../shared/api-client/collection-tree'
 import type { GlobalSettings } from '../../shared/global-settings-types'
 import { ApiClientConsoleBuffer } from './api-client-console-buffer'
-import {
-  assertLocalApiClientWorktree,
-  type ApiClientHostGuardStore
-} from './api-client-local-host-guard'
+import { assertLocalWorkspace, type WorkspaceHostGuardStore } from '../workspace-local-host-guard'
 import { ApiClientStore } from './api-client-store'
 import { electronFetchFor } from './api-client-electron-fetch'
 import { HttpRequestSender, type FetchFunction } from './http-request-sender'
@@ -45,7 +42,7 @@ export type ApiClientServiceEvent =
   | { channel: 'runFinished'; payload: { worktreeId: string; run: Run } }
 
 export type ApiClientServiceDeps = {
-  orcaStore: ApiClientHostGuardStore & {
+  orcaStore: WorkspaceHostGuardStore & {
     getSettings: () => Pick<GlobalSettings, 'apiClientSslVerification'>
   }
   store?: ApiClientStore
@@ -96,7 +93,7 @@ export class ApiClientService {
 
   /** Every entry point rejects non-local workspaces (FR-001a). */
   assertLocal(worktreeId: string): { ok: true } | ApiClientFailure {
-    return assertLocalApiClientWorktree(this.orcaStore, worktreeId)
+    return assertLocalWorkspace(this.orcaStore, worktreeId, 'The API Client')
   }
 
   executionDeps() {

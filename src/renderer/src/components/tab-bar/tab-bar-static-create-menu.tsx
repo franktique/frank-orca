@@ -1,6 +1,6 @@
 import React from 'react'
-import { FilePlus, FileText, Globe, Send, Smartphone, TerminalSquare } from 'lucide-react'
-import type { ApiClientAvailability } from '@/lib/api-client-availability'
+import { Database, FilePlus, FileText, Globe, Send, Smartphone, TerminalSquare } from 'lucide-react'
+import type { LocalWorkspaceTabAvailability } from '@/lib/local-workspace-tab-availability'
 import { translate } from '@/i18n/i18n'
 import { DropdownMenuItem, DropdownMenuShortcut } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -20,7 +20,7 @@ export function TabBarStaticCreateMenu({
   managedBrowserCreationEnabled,
   mobileEmulatorCreationEnabled,
   workspaceHasSimulatorTab,
-  apiClientAvailability,
+  localWorkspaceTabAvailability,
   showMobileEmulatorIntroCallout,
   props,
   windowsShellEntries,
@@ -39,7 +39,7 @@ export function TabBarStaticCreateMenu({
   managedBrowserCreationEnabled: boolean
   mobileEmulatorCreationEnabled: boolean
   workspaceHasSimulatorTab: boolean
-  apiClientAvailability: ApiClientAvailability
+  localWorkspaceTabAvailability: LocalWorkspaceTabAvailability
   showMobileEmulatorIntroCallout: boolean
   windowsShellEntries: WindowsShellMenuEntry[] | undefined
   defaultWindowsPowerShellImplementation: ReturnType<
@@ -60,6 +60,7 @@ export function TabBarStaticCreateMenu({
     onNewBrowserTab,
     onNewSimulatorTab,
     onNewApiClientTab,
+    onNewSqlTab,
     onNewFileTab,
     onOpenFileTab
   } = props
@@ -149,8 +150,8 @@ export function TabBarStaticCreateMenu({
       )
     ) : null
   const newApiClientMenuItem =
-    !terminalOnly && apiClientAvailability !== 'hidden' && onNewApiClientTab ? (
-      apiClientAvailability === 'remote' ? (
+    !terminalOnly && localWorkspaceTabAvailability !== 'hidden' && onNewApiClientTab ? (
+      localWorkspaceTabAvailability === 'remote' ? (
         <Tooltip>
           <TooltipTrigger asChild>
             {/* Why a wrapper: a disabled item swallows pointer events, so it cannot anchor the hint. */}
@@ -175,6 +176,36 @@ export function TabBarStaticCreateMenu({
         >
           <Send className="size-4 text-muted-foreground" />
           {translate('apiClient.tab.newTab', 'New API Client')}
+        </DropdownMenuItem>
+      )
+    ) : null
+  const newSqlMenuItem =
+    !terminalOnly && localWorkspaceTabAvailability !== 'hidden' && onNewSqlTab ? (
+      localWorkspaceTabAvailability === 'remote' ? (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            {/* Why a wrapper: a disabled item swallows pointer events, so it cannot anchor the hint. */}
+            <span className="block">
+              <DropdownMenuItem
+                disabled
+                className="gap-2 rounded-[7px] px-2 py-1.5 text-[12px] leading-5 font-medium"
+              >
+                <Database className="size-4 text-muted-foreground" />
+                {translate('sqlClient.tab.newTab', 'New SQL')}
+              </DropdownMenuItem>
+            </span>
+          </TooltipTrigger>
+          <TooltipContent side="right" sideOffset={8} className="z-[80]">
+            {translate('sqlClient.tab.localOnlyHint', 'Local worktrees only')}
+          </TooltipContent>
+        </Tooltip>
+      ) : (
+        <DropdownMenuItem
+          onSelect={onNewSqlTab}
+          className="gap-2 rounded-[7px] px-2 py-1.5 text-[12px] leading-5 font-medium"
+        >
+          <Database className="size-4 text-muted-foreground" />
+          {translate('sqlClient.tab.newTab', 'New SQL')}
         </DropdownMenuItem>
       )
     ) : null
@@ -219,6 +250,7 @@ export function TabBarStaticCreateMenu({
       {defaultTerminalMenuItems}
       {newBrowserMenuItem}
       {newApiClientMenuItem}
+      {newSqlMenuItem}
       {newSimulatorMenuItem}
       {mobileEmulatorIntroMenuBlock}
     </>
@@ -229,6 +261,7 @@ export function TabBarStaticCreateMenu({
       {newMarkdownMenuItem}
       {openMarkdownMenuItem}
       {newApiClientMenuItem}
+      {newSqlMenuItem}
       {newSimulatorMenuItem}
       {mobileEmulatorIntroMenuBlock}
     </>

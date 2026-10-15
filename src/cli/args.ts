@@ -144,6 +144,7 @@ export function supportsBrowserPageFlag(commandPath: string[]): boolean {
     [
       'account',
       'api',
+      'sql',
       'artifacts',
       'automations',
       'project',

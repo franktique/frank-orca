@@ -8,7 +8,7 @@ import type {
   PersistedEnvironment,
   PersistedEnvironmentVariable
 } from '../../shared/api-client/api-client-schemas'
-import { sealSecretValue, getSecretProtection } from './api-client-secret-codec'
+import { sealSecretValue, getSecretProtection } from '../secret-value-codec'
 import { failure, type ApiClientStore, type WorktreeApiState } from './api-client-store'
 import type { StoreTransaction } from './api-client-store-transaction'
 

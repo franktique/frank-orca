@@ -33,7 +33,8 @@ export function TerminalLegacyTerminalPanes({
         (activeTabType === 'editor' && worktreeFiles.length > 0) ||
         (activeTabType === 'browser' && worktreeBrowserTabs.length > 0) ||
         activeTabType === 'simulator' ||
-        activeTabType === 'api-client'
+        activeTabType === 'api-client' ||
+        activeTabType === 'sql'
           ? 'hidden'
           : ''
       }`}

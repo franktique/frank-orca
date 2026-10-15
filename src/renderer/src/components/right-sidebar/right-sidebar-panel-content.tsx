@@ -2,8 +2,10 @@ import { Suspense } from 'react'
 import { lazyWithRetry as lazy } from '@/lib/lazy-with-retry'
 import type { ActiveRightSidebarTab } from '@/store/slices/editor'
 import { isPluginPanelTabKey } from '../../../../shared/plugins/plugin-manifest'
+import { useShallow } from 'zustand/react/shallow'
 import { useAppStore } from '@/store'
 import { selectApiClientSidebarWorktreeId } from '../api-client/sidebar/api-client-sidebar-selector'
+import { selectSqlSidebarTarget } from './sql-sidebar-selector'
 
 const FileExplorer = lazy(() => import('./FileExplorer'))
 const SourceControl = lazy(() => import('./SourceControl'))
@@ -14,6 +16,7 @@ const FolderWorkspaceWorktreesPanel = lazy(() => import('./FolderWorkspaceWorktr
 const FolderWorkspacePrChecksPanel = lazy(() => import('./FolderWorkspacePrChecksPanel'))
 const PluginPanel = lazy(() => import('./PluginPanel'))
 const ApiClientSidebarPanel = lazy(() => import('../api-client/sidebar/ApiClientSidebarPanel'))
+const SqlSidebarPanel = lazy(() => import('../sql-client/sidebar/SqlSidebarPanel'))
 
 type RightSidebarPanelContentProps = {
   effectiveTab: ActiveRightSidebarTab
@@ -25,11 +28,21 @@ export function RightSidebarPanelContent({
   rightSidebarOpen
 }: RightSidebarPanelContentProps): React.JSX.Element {
   const apiClientWorktreeId = useAppStore(selectApiClientSidebarWorktreeId)
+  const sqlTarget = useAppStore(useShallow(selectSqlSidebarTarget))
   if (apiClientWorktreeId) {
     return (
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <Suspense fallback={null}>
           <ApiClientSidebarPanel worktreeId={apiClientWorktreeId} />
+        </Suspense>
+      </div>
+    )
+  }
+  if (sqlTarget) {
+    return (
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <Suspense fallback={null}>
+          <SqlSidebarPanel worktreeId={sqlTarget.worktreeId} tabId={sqlTarget.tabId} />
         </Suspense>
       </div>
     )

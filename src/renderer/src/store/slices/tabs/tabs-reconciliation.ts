@@ -125,6 +125,7 @@ export function projectWorktreeTabModelReconciliation(
     if (
       tab.contentType === 'simulator' ||
       tab.contentType === 'api-client' ||
+      tab.contentType === 'sql' ||
       tab.contentType === 'agent-session'
     ) {
       return true

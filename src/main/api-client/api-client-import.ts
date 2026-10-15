@@ -7,7 +7,7 @@ import {
 } from '../../shared/api-client/collection-tree'
 import { importPostmanJson } from '../../shared/api-client/postman-import'
 import { detectPostmanFileKind } from '../../shared/api-client/postman-schema'
-import { getSecretProtection } from './api-client-secret-codec'
+import { getSecretProtection } from '../secret-value-codec'
 import { failure, type ApiClientStore, type WorktreeApiState } from './api-client-store'
 import type { StoreTransaction } from './api-client-store-transaction'
 

@@ -45,6 +45,8 @@ import type { TaskCreationDraftsSlice } from './slices/task-creation-drafts'
 import type { RemoteServerUpdatesSlice } from './slices/remote-server-updates'
 import type { TerminalQuickCommandHostsSlice } from './slices/terminal-quick-command-hosts'
 import type { ApiClientSlice } from './slices/api-client'
+import type { SqlClientSlice } from './slices/sql-client'
+import type { SqlClientRunSlice } from './slices/sql-client-run'
 import type { ApiClientDraftSlice } from './slices/api-client-drafts'
 import type { ApiClientExecutionSlice } from './slices/api-client-execution'
 import type { ApiClientRunnerSlice } from './slices/api-client-runner'
@@ -98,4 +100,6 @@ export type AppState = RepoSlice &
   ApiClientSlice &
   ApiClientDraftSlice &
   ApiClientExecutionSlice &
-  ApiClientRunnerSlice
+  ApiClientRunnerSlice &
+  SqlClientSlice &
+  SqlClientRunSlice

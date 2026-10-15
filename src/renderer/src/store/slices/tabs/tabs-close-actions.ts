@@ -46,6 +46,12 @@ export function createTabsCloseActions(
         get().removeApiClientTabState(tabId)
       }
 
+      if (tab.contentType === 'sql') {
+        get().removeSqlTabState(tabId)
+        // Why fire-and-forget: the tab is already going away; the session just frees its backend.
+        void window.api.sqlClient?.closeTabSession({ worktreeId, tabId })
+      }
+
       if (tab.contentType === 'terminal' && !opts?.terminalRetirementHandled) {
         const dedupedGroupOrder = dedupeTabOrder(group.tabOrder)
         const wasLastTab =

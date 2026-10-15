@@ -67,7 +67,11 @@ function previewActiveSurfacePatch(
       activeTabTypeByWorktree: nextActiveTabTypeByWorktree('browser')
     }
   }
-  if (unifiedTab.contentType === 'simulator' || unifiedTab.contentType === 'api-client') {
+  if (
+    unifiedTab.contentType === 'simulator' ||
+    unifiedTab.contentType === 'api-client' ||
+    unifiedTab.contentType === 'sql'
+  ) {
     const tabType = unifiedTab.contentType
     if (state.activeTabType === tabType && state.activeTabTypeByWorktree[worktreeId] === tabType) {
       return {}

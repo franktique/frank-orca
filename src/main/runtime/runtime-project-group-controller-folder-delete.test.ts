@@ -1,4 +1,11 @@
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+const { deleteProjectSqlDataMock } = vi.hoisted(() => ({ deleteProjectSqlDataMock: vi.fn() }))
+
+vi.mock('../sql-client/sql-client-data-deletion', () => ({
+  deleteProjectSqlData: deleteProjectSqlDataMock
+}))
+
 import { RuntimeProjectGroupController } from './runtime-project-group-controller'
 import type { FolderWorkspace } from '../../shared/folder-workspace-types'
 
@@ -35,6 +42,16 @@ function createController(
 }
 
 describe('RuntimeProjectGroupController.deleteFolderWorkspace', () => {
+  beforeEach(() => deleteProjectSqlDataMock.mockReset())
+
+  it('deletes the folder workspace\u2019s SQL data with the workspace', async () => {
+    const deps = createController(() => null)
+
+    await deps.controller.deleteFolderWorkspace('ws-1')
+
+    expect(deleteProjectSqlDataMock).toHaveBeenCalledWith('folder-workspace:ws-1')
+  })
+
   it('tears down PTYs and runtime state before removing the catalog row', async () => {
     const deps = createController(() => 'ssh-1')
 

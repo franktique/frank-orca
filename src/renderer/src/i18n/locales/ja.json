@@ -15096,7 +15096,7 @@
       "working": "インポート中…"
     },
     "origin": {
-      "agent": "エージェント",
+      "agent": "Agent",
       "manual": "手動",
       "run": "実行"
     },
@@ -15247,6 +15247,160 @@
     },
     "web": {
       "unavailable": "API Client はウェブ版では利用できません。"
+    }
+  },
+  "sqlClient": {
+    "pane": {
+      "resizeSplit": "エディタと結果のサイズを変更",
+      "draftTooLarge": "このクエリは 1 MB を超えているため、タブを閉じるまでのみ保持されます。"
+    },
+    "sidebar": {
+      "connections": "接続",
+      "noConnections": "接続はまだありません。",
+      "schema": "スキーマ",
+      "savedQueries": "保存済みクエリ",
+      "noSavedQueries": "保存済みクエリはまだありません。",
+      "selectConnection": "接続を選択すると保存済みクエリが表示されます。",
+      "schemaNoConnection": "接続を選択するとスキーマを参照できます。"
+    },
+    "tab": {
+      "newTab": "新規 SQL",
+      "localOnlyHint": "ローカルのワークツリーのみ",
+      "keywordSql": "sql",
+      "keywordPostgres": "postgres",
+      "keywordDatabase": "データベース",
+      "keywordQuery": "クエリ",
+      "title": "SQL"
+    },
+    "status": {
+      "connected": "接続済み",
+      "connecting": "接続中",
+      "idle": "未接続"
+    },
+    "editor": {
+      "run": "クエリを実行",
+      "label": "SQL エディタ"
+    },
+    "footer": {
+      "rows": "{{count}} 行",
+      "affected": "{{count}} 行が影響を受けました",
+      "elapsed": "{{ms}} ms",
+      "rowCap": "1000 行に制限されています。変更するには LIMIT を追加してください",
+      "sizeLimit": "サイズ上限 (50 MB) に達しました。読み込み済みの行を表示しています"
+    },
+    "results": {
+      "empty": "{{shortcut}} または F5 でクエリを実行",
+      "running": "実行中… {{seconds}} 秒",
+      "commandDone": "{{command}} が完了しました",
+      "affected": "{{count}} 行が影響を受けました",
+      "cancelled": "クエリをキャンセルしました",
+      "sqlstate": "SQLSTATE",
+      "position": "位置",
+      "detail": "詳細",
+      "hint": "ヒント",
+      "failedStatement": "ステートメント {{number}} が失敗しました:",
+      "nothingApplied": "何も適用されませんでした。",
+      "alreadyRanOne": "ステートメント 1 は実行済みです。",
+      "alreadyRan": "ステートメント 1–{{count}} は実行済みです。"
+    },
+    "toolbar": {
+      "cancel": "キャンセル",
+      "connection": "接続",
+      "noConnection": "接続なし",
+      "new": "新規",
+      "run": "実行",
+      "runHint": "選択範囲またはすべてを実行",
+      "selectConnection": "実行するには接続を選択してください"
+    },
+    "grid": {
+      "copiedCell": "セルをコピーしました",
+      "copiedRange": "{{rows}} 行 {{columns}} 列をコピーしました",
+      "label": "クエリ結果",
+      "copyFailed": "コピーに失敗しました",
+      "null": "NULL"
+    },
+    "connection": {
+      "deleteTitle": "この接続を削除しますか？",
+      "deleteDescription": "「{{name}}」と、保存済みクエリ {{queries}} 件、コレクション {{collections}} 件が削除されます。開いている SQL タブのテキストは保持されます。",
+      "required": "必須",
+      "tooLong": "最大 {{max}} 文字",
+      "invalidPort": "1 から 65535 のポートを入力してください",
+      "testOk": "PostgreSQL {{version}} に接続しました",
+      "editTitle": "接続を編集",
+      "addTitle": "接続を追加",
+      "description": "PostgreSQL 接続。このプロジェクトのすべてのワークツリーで保存されます。",
+      "name": "名前",
+      "host": "ホスト",
+      "port": "ポート",
+      "user": "ユーザー",
+      "password": "パスワード",
+      "passwordUnchanged": "変更なし",
+      "needsReentry": "保存されたパスワードを読み取れません。もう一度入力してください。",
+      "noEncryption": "このコンピューターではパスワードを暗号化できないため、パスワードは Orca を終了するまでのみ保持されます。",
+      "database": "データベース",
+      "sslMode": "SSL モード",
+      "sslDisable": "無効",
+      "sslPrefer": "優先",
+      "sslRequire": "必須",
+      "test": "接続をテスト",
+      "disconnect": "切断",
+      "connect": "接続",
+      "edit": "編集",
+      "add": "接続を追加"
+    },
+    "common": {
+      "cancel": "キャンセル",
+      "delete": "削除",
+      "save": "保存"
+    },
+    "saved": {
+      "needConnection": "クエリを保存するには接続を選択してください",
+      "moveTitle": "コレクションに移動",
+      "collection": "コレクション",
+      "noCollection": "コレクションなし",
+      "move": "移動",
+      "deleteQueryTitle": "このクエリを削除しますか？",
+      "deleteQueryDescription": "「{{name}}」が削除されます。",
+      "deleteCollectionTitle": "このコレクションを削除しますか？",
+      "deleteCollectionEmpty": "「{{name}}」は空です。",
+      "deleteCollectionDescription": "「{{name}}」には保存済みクエリが {{count}} 件あります。コレクションなしで残すか、一緒に削除してください。",
+      "keepQueries": "クエリを残す",
+      "deleteQueriesToo": "クエリも削除",
+      "unsavedTitle": "未保存の変更",
+      "unsavedDescription": "現在のクエリに未保存の変更があります。別のクエリを開く前に保存しますか？",
+      "discard": "破棄",
+      "queryActions": "クエリの操作",
+      "rename": "名前を変更",
+      "moveTo": "コレクションに移動…",
+      "collectionActions": "コレクションの操作",
+      "newCollectionButton": "新しいコレクション",
+      "renameQueryTitle": "クエリの名前を変更",
+      "name": "名前",
+      "newCollectionTitle": "新しいコレクション",
+      "create": "作成",
+      "renameCollectionTitle": "コレクションの名前を変更",
+      "saveTitle": "クエリを保存",
+      "saveDescription": "選択した接続の下に保存されます。",
+      "newCollection": "新しいコレクション…",
+      "newCollectionName": "新しいコレクション名",
+      "unsaved": "未保存の変更",
+      "save": "保存",
+      "saveHint": "保存",
+      "saveAsHint": "新規として保存",
+      "conflict": "このクエリは別の場所で変更されました。再読み込みするか、新しいクエリとして保存してください。"
+    },
+    "schema": {
+      "table": "テーブル",
+      "view": "ビュー",
+      "materializedView": "マテリアライズドビュー",
+      "partitionedTable": "パーティション",
+      "foreignTable": "外部",
+      "notNull": "NOT NULL",
+      "copyName": "名前をコピー",
+      "noRelations": "テーブルまたはビューなし",
+      "connectFirst": "スキーマを参照するには接続してください。",
+      "refresh": "スキーマを更新",
+      "primaryKey": "PK"
     }
   }
 }

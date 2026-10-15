@@ -27,7 +27,8 @@ import {
   getApiClientWorktreePaths,
   type ApiClientWorktreePaths
 } from './api-client-storage-paths'
-import { decryptEnvironmentSecrets, getSecretProtection } from './api-client-secret-codec'
+import { decryptEnvironmentSecrets } from './api-client-secret-codec'
+import { getSecretProtection } from '../secret-value-codec'
 import {
   listJsonFileNames,
   readJsonFile,

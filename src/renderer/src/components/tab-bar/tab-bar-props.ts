@@ -23,6 +23,7 @@ export type TabBarProps = {
   onNewBrowserTab: () => void
   onNewSimulatorTab?: () => void
   onNewApiClientTab?: () => void
+  onNewSqlTab?: () => void
   onOpenEntry?: (args: TabCreateEntryArgs) => Promise<void>
   terminalOnly?: boolean
   showAgentLaunchItems?: boolean

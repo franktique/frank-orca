@@ -76,7 +76,8 @@ export function useTerminalBulkCloseActions(controller: TerminalCloseController)
           destroyWorkspaceWebviews(state.browserPagesByWorkspace, id)
         } else if (
           unifiedTab?.contentType === 'simulator' ||
-          unifiedTab?.contentType === 'api-client'
+          unifiedTab?.contentType === 'api-client' ||
+          unifiedTab?.contentType === 'sql'
         ) {
           state.closeUnifiedTab(unifiedTab.id)
         }

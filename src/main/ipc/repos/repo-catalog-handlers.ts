@@ -1,4 +1,6 @@
 import type { BrowserWindow } from 'electron'
+import { deleteProjectSqlData } from '../../sql-client/sql-client-data-deletion'
+import { sqlProjectKeyForRepo } from '../../sql-client/sql-project-key'
 import { ipcMain } from 'electron'
 import type { Store } from '../../persistence'
 import type { Project, ProjectUpdateArgs } from '../../../shared/project-types'
@@ -87,6 +89,7 @@ export function registerRepoCatalogHandlers(mainWindow: BrowserWindow, store: St
 
   ipcMain.handle('repos:remove', async (_event, args: { repoId: string }) => {
     store.removeProject(args.repoId)
+    deleteProjectSqlData(sqlProjectKeyForRepo(args.repoId))
     invalidateAuthorizedRootsCache()
     notifyReposChanged(mainWindow)
   })
@@ -100,6 +103,10 @@ export function registerRepoCatalogHandlers(mainWindow: BrowserWindow, store: St
         throw new Error(`Invalid host ID: ${args.hostId}`)
       }
       store.removeProjectForHost(args.repoId, hostId)
+      // Why: SQL data belongs to the project, so it survives while any host still has the repo.
+      if (!store.getRepos().some((entry) => entry.id === args.repoId)) {
+        deleteProjectSqlData(sqlProjectKeyForRepo(args.repoId))
+      }
       invalidateAuthorizedRootsCache()
       notifyReposChanged(mainWindow)
     }

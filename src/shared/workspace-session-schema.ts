@@ -38,6 +38,7 @@ import {
   workspaceVisibleTabTypeSchema
 } from './workspace-session-tab-type-schema'
 import { apiClientPersistedTabSchema } from './api-client/api-client-schemas'
+import { sqlPersistedTabSchema } from './sql-client/sql-client-schemas'
 import { salvagedField, salvagedOptional, salvagingArray, salvagingRecord } from './zod-salvage'
 
 // ─── Terminal pane layout (recursive) ───────────────────────────────
@@ -164,7 +165,8 @@ const tabSchema = z.object({
   // undefined → 'terminal' in the renderer.
   viewMode: z.enum(['terminal', 'chat']).catch('terminal').optional(),
   // Why .catch: a corrupt API Client view must cost only that tab's restored state, not the tab.
-  apiClient: apiClientPersistedTabSchema.optional().catch(undefined)
+  apiClient: apiClientPersistedTabSchema.optional().catch(undefined),
+  sql: sqlPersistedTabSchema.optional().catch(undefined)
 })
 
 const tabGroupSchema = z.object({

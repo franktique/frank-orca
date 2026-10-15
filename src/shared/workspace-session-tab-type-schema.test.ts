@@ -36,6 +36,38 @@ describe('workspace session tab content types', () => {
     }
   })
 
+  it('round-trips a sql tab with its persisted draft', () => {
+    const sqlTab = {
+      ...tab('s', 'sql'),
+      sql: {
+        draftText: 'select 1',
+        connectionId: 'c1',
+        savedQueryId: null,
+        savedQueryRevision: null,
+        splitRatio: 0.4
+      }
+    }
+    const result = parseWorkspaceSession(session([sqlTab]))
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      const parsed = result.value.unifiedTabs?.wt[0]
+      expect(parsed?.contentType).toBe('sql')
+      expect(parsed?.sql).toMatchObject({
+        draftText: 'select 1',
+        connectionId: 'c1',
+        splitRatio: 0.4
+      })
+    }
+  })
+
+  it('drops a corrupt sql payload but keeps the tab', () => {
+    const result = parseWorkspaceSession(session([{ ...tab('s', 'sql'), sql: { splitRatio: 9 } }]))
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.value.unifiedTabs?.wt[0]?.sql).toBeUndefined()
+    }
+  })
+
   it('drops a tab with an unknown content type without failing the session', () => {
     const result = parseWorkspaceSession(
       session([tab('a', 'terminal'), tab('b', 'future-tab-kind'), tab('c', 'api-client')])

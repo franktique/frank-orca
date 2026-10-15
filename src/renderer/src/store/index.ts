@@ -47,6 +47,8 @@ import { createTaskCreationDraftsSlice } from './slices/task-creation-drafts'
 import { createRemoteServerUpdatesSlice } from './slices/remote-server-updates'
 import { createTerminalQuickCommandHostsSlice } from './slices/terminal-quick-command-hosts'
 import { createApiClientSlice } from './slices/api-client'
+import { createSqlClientSlice } from './slices/sql-client'
+import { createSqlClientRunSlice } from './slices/sql-client-run'
 import { createApiClientDraftSlice } from './slices/api-client-drafts'
 import { createApiClientExecutionSlice } from './slices/api-client-execution'
 import { createApiClientRunnerSlice } from './slices/api-client-runner'
@@ -128,7 +130,9 @@ export const useAppStore = create<AppState>()(
         ...createApiClientSlice(...a),
         ...createApiClientDraftSlice(...a),
         ...createApiClientExecutionSlice(...a),
-        ...createApiClientRunnerSlice(...a)
+        ...createApiClientRunnerSlice(...a),
+        ...createSqlClientSlice(...a),
+        ...createSqlClientRunSlice(...a)
       }
     })
   )

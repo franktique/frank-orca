@@ -27,6 +27,7 @@ import { resolveClientHostedBrowserRowStripGroupId } from '../tab-bar/client-hos
 
 const EditorPanel = lazy(() => import('../editor/EditorPanel'))
 const ApiClientPane = lazy(() => import('../api-client/ApiClientPane'))
+const SqlPane = lazy(() => import('../sql-client/SqlPane'))
 const EMPTY_GROUPS: readonly TabGroup[] = []
 const EMPTY_CLIENT_HOSTED_ROWS: readonly ClientHostedBrowserRow[] = []
 
@@ -150,6 +151,7 @@ export default function TabGroupPanel({
       onNewBrowserTab={commands.newBrowserTab}
       onNewSimulatorTab={commands.newSimulatorTab}
       onNewApiClientTab={commands.newApiClientTab}
+      onNewSqlTab={commands.newSqlTab}
       onOpenEntry={commands.openEntry}
       onNewFileTab={commands.newFileTab}
       onSetCustomTitle={commands.setTabCustomTitle}
@@ -165,13 +167,16 @@ export default function TabGroupPanel({
         activeTab?.contentType === 'agent-session' ||
         activeTab?.contentType === 'browser' ||
         activeTab?.contentType === 'simulator' ||
-        activeTab?.contentType === 'api-client'
+        activeTab?.contentType === 'api-client' ||
+        activeTab?.contentType === 'sql'
           ? null
           : activeTab?.id
       }
       activeBrowserTabId={activeTab?.contentType === 'browser' ? activeTab.entityId : null}
       activeSimulatorTabId={
-        activeTab?.contentType === 'simulator' || activeTab?.contentType === 'api-client'
+        activeTab?.contentType === 'simulator' ||
+        activeTab?.contentType === 'api-client' ||
+        activeTab?.contentType === 'sql'
           ? activeTab.id
           : null
       }
@@ -186,7 +191,9 @@ export default function TabGroupPanel({
                 ? 'simulator'
                 : activeTab?.contentType === 'api-client'
                   ? 'api-client'
-                  : 'editor'
+                  : activeTab?.contentType === 'sql'
+                    ? 'sql'
+                    : 'editor'
       }
       onActivateFile={commands.activateEditor}
       onCloseFile={commands.closeItem}
@@ -363,7 +370,8 @@ export default function TabGroupPanel({
           activeTab.contentType !== 'agent-session' &&
           activeTab.contentType !== 'browser' &&
           activeTab.contentType !== 'simulator' &&
-          activeTab.contentType !== 'api-client' && (
+          activeTab.contentType !== 'api-client' &&
+          activeTab.contentType !== 'sql' && (
             <div className="absolute inset-0 flex min-h-0 min-w-0">
               {/* Why: split groups render editor content in a plain relative pane body, not the legacy Terminal.tsx flex column. */}
               <Suspense
@@ -390,6 +398,14 @@ export default function TabGroupPanel({
           <div className="absolute inset-0 flex min-h-0 min-w-0">
             <Suspense fallback={null}>
               <ApiClientPane tabId={activeTab.id} worktreeId={worktreeId} isVisible={isVisible} />
+            </Suspense>
+          </div>
+        )}
+
+        {activeTab?.contentType === 'sql' && (
+          <div className="absolute inset-0 flex min-h-0 min-w-0">
+            <Suspense fallback={null}>
+              <SqlPane tabId={activeTab.id} worktreeId={worktreeId} isVisible={isVisible} />
             </Suspense>
           </div>
         )}

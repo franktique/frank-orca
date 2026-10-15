@@ -33,6 +33,11 @@ export async function tearDownRemovedWorktreeRendererState(args: {
         recordInteraction: false
       })
     }
+    if (tab.contentType === 'sql') {
+      // Why: the wholesale tab wipe below skips closeUnifiedTab, which would free the draft and database session.
+      get().removeSqlTabState?.(tab.id)
+      void window.api.sqlClient?.closeTabSession({ worktreeId, tabId: tab.id })
+    }
   }
   // Why: renderer state follows the successful backend result, so blocked dirty deletes keep their terminals intact.
   // Why browsers first: unregister Chromium guests before other teardown can intercept them (avoids a browser-state race).
@@ -47,7 +52,10 @@ export async function tearDownRemovedWorktreeRendererState(args: {
     requiredExecutionHostId
       ? {
           hostScopedWorkspaces: [
-            { workspaceId: worktreeId, executionHostId: requiredExecutionHostId }
+            {
+              workspaceId: worktreeId,
+              executionHostId: requiredExecutionHostId
+            }
           ]
         }
       : { workspaceIds: [worktreeId] }

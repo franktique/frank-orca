@@ -35,6 +35,7 @@ import {
 import { CliInstaller } from '../cli/cli-installer'
 import { installLinuxBareOrcaDispatcher } from '../cli/linux-bare-orca-dispatcher'
 import { drainApiClientPendingDeletes } from '../api-client/api-client-data-deletion'
+import { drainSqlClientPendingDeletes } from '../sql-client/sql-client-data-deletion'
 import { scheduleAllPendingHistoryTreeRemovals } from '../terminal-history-deletion'
 import { triggerStartupNotificationRegistration } from '../ipc/startup-notification-registration'
 import { startDesktopPushService } from './main-process-push-startup'
@@ -211,6 +212,7 @@ async function launchServeMode(
   // armed from the main window — without this, a quit mid-removal leaks the tree until a desktop launch.
   scheduleAllPendingHistoryTreeRemovals()
   drainApiClientPendingDeletes()
+  drainSqlClientPendingDeletes()
   emitServeBrowserIdentityActionLine(getBrowserIdentityModeStatus())
   await printServeReady(serveOptions)
 }
