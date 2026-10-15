@@ -2,12 +2,19 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type * as GitRunner from '../git/runner'
 import type * as RepoModule from '../git/repo'
 
-const { reposMocks, moduleMocks } = await vi.hoisted(async () => {
+const { reposMocks, moduleMocks, deleteProjectSqlDataMock } = await vi.hoisted(async () => {
   const moduleMocks = await import('./repos-remote-test-harness')
-  return { reposMocks: moduleMocks.createReposIpcMocks(), moduleMocks }
+  return {
+    reposMocks: moduleMocks.createReposIpcMocks(),
+    moduleMocks,
+    deleteProjectSqlDataMock: vi.fn()
+  }
 })
 
 vi.mock('electron', () => moduleMocks.electronModuleMock(reposMocks))
+vi.mock('../sql-client/sql-client-data-deletion', () => ({
+  deleteProjectSqlData: deleteProjectSqlDataMock
+}))
 vi.mock('../git/repo', async (importOriginal) =>
   moduleMocks.gitRepoModuleMock(await importOriginal<typeof RepoModule>())
 )
@@ -344,6 +351,7 @@ describe('repos:add + repos:clone', () => {
     ).rejects.toThrow('Imported folder does not match the selected project identity.')
 
     expect(mockStore.removeProject).toHaveBeenCalledWith(added[0]?.id)
+    expect(deleteProjectSqlDataMock).toHaveBeenCalledWith(`repo:${String(added[0]?.id)}`)
     expect(invalidateAuthorizedRootsCacheMock).toHaveBeenCalled()
   })
 

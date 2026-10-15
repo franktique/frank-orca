@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  Database,
   FilePlus,
   FileText,
   GitCompare,
@@ -175,6 +176,8 @@ function getActionPresentation(
         <Smartphone className="size-3.5 shrink-0" aria-hidden="true" />
       ) : option.option.kind === 'new-api-client' ? (
         <Send className="size-3.5 shrink-0" aria-hidden="true" />
+      ) : option.option.kind === 'new-sql' ? (
+        <Database className="size-3.5 shrink-0" aria-hidden="true" />
       ) : (
         <TerminalSquare className="size-3.5 shrink-0" aria-hidden="true" />
       )

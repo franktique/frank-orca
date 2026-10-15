@@ -138,7 +138,9 @@ function deriveActiveSurface(
       browserTabId: browserFallback,
       fileId: activeUnified.entityId,
       type:
-        activeUnified.contentType === 'simulator' || activeUnified.contentType === 'api-client'
+        activeUnified.contentType === 'simulator' ||
+        activeUnified.contentType === 'api-client' ||
+        activeUnified.contentType === 'sql'
           ? activeUnified.contentType
           : 'editor'
     }

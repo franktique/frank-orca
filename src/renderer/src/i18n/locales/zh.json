@@ -15354,5 +15354,159 @@
     "web": {
       "unavailable": "API Client 在网页版中不可用。"
     }
+  },
+  "sqlClient": {
+    "pane": {
+      "resizeSplit": "调整编辑器和结果的大小",
+      "draftTooLarge": "此查询超过 1 MB，因此仅在关闭标签页前保留。"
+    },
+    "sidebar": {
+      "connections": "连接",
+      "noConnections": "暂无连接。",
+      "schema": "架构",
+      "savedQueries": "已保存的查询",
+      "noSavedQueries": "暂无已保存的查询。",
+      "selectConnection": "选择连接以查看其已保存的查询。",
+      "schemaNoConnection": "选择连接以浏览其架构。"
+    },
+    "tab": {
+      "newTab": "新建 SQL",
+      "localOnlyHint": "仅限本地工作树",
+      "keywordSql": "sql",
+      "keywordPostgres": "postgres",
+      "keywordDatabase": "数据库",
+      "keywordQuery": "查询",
+      "title": "SQL"
+    },
+    "status": {
+      "connected": "已连接",
+      "connecting": "正在连接",
+      "idle": "未连接"
+    },
+    "editor": {
+      "run": "运行查询",
+      "label": "SQL 编辑器"
+    },
+    "footer": {
+      "rows": "{{count}} 行",
+      "affected": "影响了 {{count}} 行",
+      "elapsed": "{{ms}} 毫秒",
+      "rowCap": "已限制为 1000 行 — 添加 LIMIT 可更改",
+      "sizeLimit": "已达到大小上限（50 MB）；显示目前已加载的行"
+    },
+    "results": {
+      "empty": "使用 {{shortcut}} 或 F5 运行查询",
+      "running": "正在运行… {{seconds}} 秒",
+      "commandDone": "{{command}} 已完成",
+      "affected": "影响了 {{count}} 行",
+      "cancelled": "查询已取消",
+      "sqlstate": "SQLSTATE",
+      "position": "位置",
+      "detail": "详情",
+      "hint": "提示",
+      "failedStatement": "第 {{number}} 条语句失败：",
+      "nothingApplied": "未应用任何更改。",
+      "alreadyRanOne": "第 1 条语句已执行。",
+      "alreadyRan": "第 1–{{count}} 条语句已执行。"
+    },
+    "toolbar": {
+      "cancel": "取消",
+      "connection": "连接",
+      "noConnection": "无连接",
+      "new": "新建",
+      "run": "运行",
+      "runHint": "运行所选内容或全部",
+      "selectConnection": "选择连接后才能运行"
+    },
+    "grid": {
+      "copiedCell": "已复制单元格",
+      "copiedRange": "已复制 {{rows}} 行 {{columns}} 列",
+      "label": "查询结果",
+      "copyFailed": "复制失败",
+      "null": "NULL"
+    },
+    "connection": {
+      "deleteTitle": "删除此连接？",
+      "deleteDescription": "将删除“{{name}}”及其 {{queries}} 个已保存的查询和 {{collections}} 个集合。已打开的 SQL 标签页会保留其文本。",
+      "required": "必填",
+      "tooLong": "最多 {{max}} 个字符",
+      "invalidPort": "请输入 1 到 65535 之间的端口",
+      "testOk": "已连接到 PostgreSQL {{version}}",
+      "editTitle": "编辑连接",
+      "addTitle": "添加连接",
+      "description": "PostgreSQL 连接，为此项目的所有工作树保存。",
+      "name": "名称",
+      "host": "主机",
+      "port": "端口",
+      "user": "用户",
+      "password": "密码",
+      "passwordUnchanged": "不变",
+      "needsReentry": "无法再读取已保存的密码，请重新输入。",
+      "noEncryption": "此电脑无法加密密码，因此密码仅在 Orca 退出前保留。",
+      "database": "数据库",
+      "sslMode": "SSL 模式",
+      "sslDisable": "禁用",
+      "sslPrefer": "优先",
+      "sslRequire": "必需",
+      "test": "测试连接",
+      "disconnect": "断开连接",
+      "connect": "连接",
+      "edit": "编辑",
+      "add": "添加连接"
+    },
+    "common": {
+      "cancel": "取消",
+      "delete": "删除",
+      "save": "保存"
+    },
+    "saved": {
+      "needConnection": "选择连接后才能保存查询",
+      "moveTitle": "移动到集合",
+      "collection": "集合",
+      "noCollection": "无集合",
+      "move": "移动",
+      "deleteQueryTitle": "删除此查询？",
+      "deleteQueryDescription": "将删除“{{name}}”。",
+      "deleteCollectionTitle": "删除此集合？",
+      "deleteCollectionEmpty": "“{{name}}”为空。",
+      "deleteCollectionDescription": "“{{name}}”包含 {{count}} 个已保存的查询。可保留为无集合，或一并删除。",
+      "keepQueries": "保留查询",
+      "deleteQueriesToo": "同时删除查询",
+      "unsavedTitle": "未保存的更改",
+      "unsavedDescription": "当前查询有未保存的更改。打开其他查询前要先保存吗？",
+      "discard": "放弃",
+      "queryActions": "查询操作",
+      "rename": "重命名",
+      "moveTo": "移动到集合…",
+      "collectionActions": "集合操作",
+      "newCollectionButton": "新建集合",
+      "renameQueryTitle": "重命名查询",
+      "name": "名称",
+      "newCollectionTitle": "新建集合",
+      "create": "创建",
+      "renameCollectionTitle": "重命名集合",
+      "saveTitle": "保存查询",
+      "saveDescription": "保存到所选连接下。",
+      "newCollection": "新建集合…",
+      "newCollectionName": "新集合名称",
+      "unsaved": "未保存的更改",
+      "save": "保存",
+      "saveHint": "保存",
+      "saveAsHint": "另存为新查询",
+      "conflict": "此查询已在别处被修改。请重新加载，或另存为新查询。"
+    },
+    "schema": {
+      "table": "表",
+      "view": "视图",
+      "materializedView": "物化视图",
+      "partitionedTable": "分区表",
+      "foreignTable": "外部表",
+      "notNull": "非空",
+      "copyName": "复制名称",
+      "noRelations": "没有表或视图",
+      "connectFirst": "连接后才能浏览架构。",
+      "refresh": "刷新架构",
+      "primaryKey": "PK"
+    }
   }
 }

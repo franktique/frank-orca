@@ -1,4 +1,4 @@
-import Editor from '@monaco-editor/react'
+import Editor, { type OnMount } from '@monaco-editor/react'
 import '@/lib/monaco-setup'
 import { useAppStore } from '@/store'
 
@@ -9,6 +9,9 @@ type ApiClientCodeEditorProps = {
   readOnly?: boolean
   /** Accessible name; Monaco renders a textarea without a visible label. */
   label: string
+  onMount?: OnMount
+  /** Overrides the shared options, e.g. the SQL editor's word wrap. */
+  options?: React.ComponentProps<typeof Editor>['options']
 }
 
 /** One Monaco surface for bodies, scripts and responses. Models are not shared between instances. */
@@ -17,7 +20,9 @@ export default function ApiClientCodeEditor({
   language,
   onChange,
   readOnly = false,
-  label
+  label,
+  onMount,
+  options
 }: ApiClientCodeEditorProps): React.JSX.Element {
   const isDark = useAppStore(
     (state) =>
@@ -35,6 +40,7 @@ export default function ApiClientCodeEditor({
         language={language}
         theme={isDark ? 'vs-dark' : 'vs'}
         onChange={(next) => onChange?.(next ?? '')}
+        onMount={onMount}
         options={{
           readOnly,
           minimap: { enabled: false },
@@ -43,7 +49,8 @@ export default function ApiClientCodeEditor({
           fontSize: 12,
           automaticLayout: true,
           renderLineHighlight: 'none',
-          tabSize: 2
+          tabSize: 2,
+          ...options
         }}
       />
     </div>

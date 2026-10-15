@@ -1,4 +1,6 @@
 import type { FolderWorkspace } from '../../shared/folder-workspace-types'
+import { deleteProjectSqlData } from '../sql-client/sql-client-data-deletion'
+import { sqlProjectKeyForFolderWorkspace } from '../sql-client/sql-project-key'
 import type { ProjectGroup } from '../../shared/project-group-types'
 import type { Repo } from '../../shared/repo-types'
 import type {
@@ -234,6 +236,7 @@ export class RuntimeProjectGroupController {
     }
     const deleted = store.removeFolderWorkspace(folderWorkspaceId)
     if (deleted) {
+      deleteProjectSqlData(sqlProjectKeyForFolderWorkspace(folderWorkspaceId))
       this.deps.notifyReposChanged()
     }
     return { deleted }

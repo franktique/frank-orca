@@ -1,5 +1,7 @@
 import { ensureSimulatorTab } from '@/lib/ensure-simulator-tab'
 import { openMobileEmulatorTab } from '@/lib/open-mobile-emulator-tab'
+import { ensureSqlTab } from '@/lib/ensure-sql-tab'
+import { loadSavedQueryIntoSqlTab } from '@/lib/sql-saved-query-loading'
 import {
   isManualSimulatorLaunchPending,
   rememberPrelaunchedSimulatorSession
@@ -12,12 +14,46 @@ import {
 import { translate } from '@/i18n/i18n'
 import { LOCAL_EXECUTION_HOST_ID } from '../../../../shared/execution-host'
 import { toast } from 'sonner'
+import { z } from 'zod'
 import { useAppStore } from '../../store'
+
+export const SQL_CLIENT_SHOW_EVENT = 'orca:sqlClient:show'
+
+const sqlClientShowDetailSchema = z.object({
+  worktreeId: z.string().min(1),
+  connectionId: z.string().optional(),
+  savedQueryId: z.string().optional()
+})
+
+/** `sqlClient:show` is renderer-to-renderer: ensure a SQL tab and optionally load a saved query. */
+function registerSqlClientShow(unsubs: (() => void)[]): void {
+  const listener = (event: Event): void => {
+    const parsed = sqlClientShowDetailSchema.safeParse(
+      event instanceof CustomEvent ? event.detail : null
+    )
+    if (!parsed.success) {
+      return
+    }
+    const { worktreeId, connectionId, savedQueryId } = parsed.data
+    const tabId = ensureSqlTab(worktreeId, { connectionId })
+    const store = useAppStore.getState()
+    const finish = (): void => {
+      if (savedQueryId) {
+        loadSavedQueryIntoSqlTab(tabId, savedQueryId)
+      }
+    }
+    // The saved query lives in the project snapshot, which may not be loaded yet.
+    void store.loadSqlSnapshot(worktreeId).then(finish)
+  }
+  window.addEventListener(SQL_CLIENT_SHOW_EVENT, listener)
+  unsubs.push(() => window.removeEventListener(SQL_CLIENT_SHOW_EVENT, listener))
+}
 
 export function registerContentCreationIpcBridge(
   unsubs: (() => void)[],
   isRuntimeEnvironmentActive: () => boolean
 ): void {
+  registerSqlClientShow(unsubs)
   unsubs.push(
     window.api.ui.onNewBrowserTab(() => {
       const store = useAppStore.getState()

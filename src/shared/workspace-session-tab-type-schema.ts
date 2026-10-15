@@ -9,7 +9,8 @@ export const tabContentTypeSchema = z.enum([
   'agent-session',
   'browser',
   'simulator',
-  'api-client'
+  'api-client',
+  'sql'
 ])
 
 export const workspaceVisibleTabTypeSchema = z.enum([
@@ -18,5 +19,6 @@ export const workspaceVisibleTabTypeSchema = z.enum([
   'agent-session',
   'browser',
   'simulator',
-  'api-client'
+  'api-client',
+  'sql'
 ])

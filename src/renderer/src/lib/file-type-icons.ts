@@ -3,6 +3,7 @@ import {
   FileCog,
   FileLock,
   FileTerminal,
+  Database,
   Send,
   Smartphone,
   type LucideIcon
@@ -50,6 +51,9 @@ export function getFileTypeIcon(filePath: string | undefined | null): LucideIcon
   }
   if (lowerName === 'api client') {
     return Send
+  }
+  if (lowerName === 'sql') {
+    return Database
   }
 
   if (lowerName === '.env' || lowerName.startsWith('.env.')) {

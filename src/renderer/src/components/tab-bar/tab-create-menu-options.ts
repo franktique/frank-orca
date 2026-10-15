@@ -6,6 +6,7 @@ import { isClipboardTextByteLengthOverLimit } from '../../../../shared/clipboard
 export type TabCreateMenuOptionKind =
   | 'go-to-simulator'
   | 'new-api-client'
+  | 'new-sql'
   | 'new-browser'
   | 'new-markdown'
   | 'new-simulator'
@@ -26,6 +27,7 @@ export type TabCreateMenuOptionsContext = {
   hasNewMarkdown: boolean
   hasOpenMarkdown: boolean
   hasApiClient: boolean
+  hasSql: boolean
   hasSimulator: boolean
   simulatorIsGoTo: boolean
   terminalOnly: boolean
@@ -179,6 +181,20 @@ export function buildTabCreateMenuOptions(
         translate('apiClient.tab.keywordPostman', 'postman'),
         translate('apiClient.tab.keywordRequest', 'http request'),
         translate('apiClient.tab.keywordRest', 'rest')
+      ]
+    })
+  }
+
+  if (context.hasSql) {
+    options.push({
+      id: 'new-sql',
+      kind: 'new-sql',
+      label: translate('sqlClient.tab.newTab', 'New SQL'),
+      keywords: [
+        translate('sqlClient.tab.keywordSql', 'sql'),
+        translate('sqlClient.tab.keywordPostgres', 'postgres'),
+        translate('sqlClient.tab.keywordDatabase', 'database'),
+        translate('sqlClient.tab.keywordQuery', 'query')
       ]
     })
   }

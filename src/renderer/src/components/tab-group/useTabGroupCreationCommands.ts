@@ -11,6 +11,7 @@ import {
 import { openTabBarEntry, type TabCreateEntryArgs } from '../tab-bar/tab-create-entry-action'
 import { openMobileEmulatorTab } from '@/lib/open-mobile-emulator-tab'
 import { ensureApiClientTab } from '@/lib/ensure-api-client-tab'
+import { ensureSqlTab } from '@/lib/ensure-sql-tab'
 import { ensureSimulatorTab, getSimulatorTabForWorktree } from '@/lib/ensure-simulator-tab'
 import { buildDuplicatedBrowserTabOptions } from '@/lib/duplicate-browser-tab-options'
 import { getRuntimeEnvironmentIdForWorktree } from '@/lib/worktree-runtime-owner'
@@ -84,6 +85,9 @@ export function useTabGroupCreationCommands({
     },
     newApiClientTab: () => {
       ensureApiClientTab(worktreeId, { forceNew: true, targetGroupId: groupId })
+    },
+    newSqlTab: () => {
+      ensureSqlTab(worktreeId, { targetGroupId: groupId })
     },
     newSimulatorTab: worktreeState.mobileEmulatorEnabled
       ? () => {

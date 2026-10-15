@@ -20,7 +20,7 @@ function visibleTypeForContentType(
   if (contentType === 'browser') {
     return 'browser'
   }
-  if (contentType === 'simulator' || contentType === 'api-client') {
+  if (contentType === 'simulator' || contentType === 'api-client' || contentType === 'sql') {
     return contentType
   }
   return contentType ? 'editor' : undefined

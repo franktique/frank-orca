@@ -9,6 +9,7 @@ import {
   isWebRuntimeSessionActive
 } from '@/runtime/web-runtime-session'
 import { ensureApiClientTab } from '@/lib/ensure-api-client-tab'
+import { ensureSqlTab } from '@/lib/ensure-sql-tab'
 import { openMobileEmulatorTab } from '@/lib/open-mobile-emulator-tab'
 import { launchAgentInNewTab } from '@/lib/launch-agent-in-new-tab'
 import { buildDuplicatedBrowserTabOptions } from '@/lib/duplicate-browser-tab-options'
@@ -135,6 +136,13 @@ export function useTerminalCreateActions(controller: TerminalColdActivationContr
     ensureApiClientTab(activeWorktreeId, { forceNew: true })
   }, [activeWorktreeId])
 
+  const handleNewSqlTab = useCallback(() => {
+    if (!activeWorktreeId) {
+      return
+    }
+    ensureSqlTab(activeWorktreeId)
+  }, [activeWorktreeId])
+
   const handleNewBrowserTab = useCallback(() => {
     if (!activeWorktreeId) {
       return
@@ -237,6 +245,7 @@ export function useTerminalCreateActions(controller: TerminalColdActivationContr
     handleNewAgentTab,
     handleNewSimulatorTab,
     handleNewApiClientTab,
+    handleNewSqlTab,
     handleNewBrowserTab,
     handleOpenEntry,
     handleDuplicateBrowserTab,

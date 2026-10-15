@@ -73,7 +73,9 @@ export function useTabBarItemProjection({
         .filter(
           (tab) =>
             tab.groupId === resolvedGroupId &&
-            (tab.contentType === 'simulator' || tab.contentType === 'api-client')
+            (tab.contentType === 'simulator' ||
+              tab.contentType === 'api-client' ||
+              tab.contentType === 'sql')
         )
         .map((tab) => tab.id),
     [unifiedTabs, resolvedGroupId]

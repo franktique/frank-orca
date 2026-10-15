@@ -61,7 +61,7 @@ export function renderTabBarSurface({
     managedBrowserCreationEnabled,
     mobileEmulatorCreationEnabled,
     workspaceHasSimulatorTab,
-    apiClientAvailability,
+    localWorkspaceTabAvailability,
     showMobileEmulatorIntroCallout,
     windowsTerminalCapabilities,
     defaultWindowsPowerShellImplementation,
@@ -254,7 +254,7 @@ export function renderTabBarSurface({
               managedBrowserCreationEnabled={managedBrowserCreationEnabled}
               mobileEmulatorCreationEnabled={mobileEmulatorCreationEnabled}
               workspaceHasSimulatorTab={workspaceHasSimulatorTab}
-              apiClientAvailability={apiClientAvailability}
+              localWorkspaceTabAvailability={localWorkspaceTabAvailability}
               showMobileEmulatorIntroCallout={showMobileEmulatorIntroCallout}
               windowsShellEntries={windowsShellEntries}
               defaultWindowsPowerShellImplementation={defaultWindowsPowerShellImplementation}

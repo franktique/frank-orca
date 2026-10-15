@@ -3,7 +3,7 @@ import type { AppState } from '../../store/types'
 import { reconcileTabOrder } from './reconcile-order'
 
 export type VisibleTabRef = {
-  type: 'terminal' | 'editor' | 'agent-session' | 'browser' | 'simulator' | 'api-client'
+  type: 'terminal' | 'editor' | 'agent-session' | 'browser' | 'simulator' | 'api-client' | 'sql'
   id: string
   tabId?: string
 }
@@ -53,6 +53,9 @@ export function getGroupVisibleTabOrder(
       // render them (mobile projection) pass an empty set.
       return simulatorTabIds.has(tab.id) ? { type: 'api-client', id: tab.id, tabId: tab.id } : null
     }
+    if (tab.contentType === 'sql') {
+      return simulatorTabIds.has(tab.id) ? { type: 'sql', id: tab.id, tabId: tab.id } : null
+    }
     if (tab.contentType === 'agent-session') {
       // Structured chat tabs are self-backed: the unified tab is the entity, so none can be stale.
       return { type: 'agent-session', id: tab.entityId, tabId: tab.id }
@@ -77,6 +80,7 @@ export function getGroupVisibleTabOrder(
       browser: new Set<string>(),
       simulator: new Set<string>(),
       'api-client': new Set<string>(),
+      sql: new Set<string>(),
       'agent-session': new Set<string>()
     }
     const result: VisibleTabRef[] = []
@@ -107,6 +111,7 @@ export function getGroupVisibleTabOrder(
   const browserIds: string[] = []
   const simulatorIds: string[] = []
   const apiClientIds: string[] = []
+  const sqlIds: string[] = []
   const agentSessionIds: string[] = []
   const idsByType = {
     terminal: terminalIds,
@@ -114,6 +119,7 @@ export function getGroupVisibleTabOrder(
     browser: browserIds,
     simulator: simulatorIds,
     'api-client': apiClientIds,
+    sql: sqlIds,
     'agent-session': agentSessionIds
   }
   for (const tab of [...declaredTabs, ...groupTabs]) {
@@ -132,7 +138,8 @@ export function getGroupVisibleTabOrder(
         browser: 2,
         simulator: 3,
         'api-client': 4,
-        'agent-session': 5
+        sql: 5,
+        'agent-session': 6
       } as const
       if (priority[ref.type] > priority[existing.type]) {
         continue
@@ -149,7 +156,7 @@ export function getGroupVisibleTabOrder(
     terminalIds,
     editorIds,
     browserIds,
-    [...simulatorIds, ...apiClientIds],
+    [...simulatorIds, ...apiClientIds, ...sqlIds],
     agentSessionIds
   ).flatMap((visibleId) => {
     const ref = refByVisibleId.get(visibleId)
@@ -193,7 +200,12 @@ export function getActiveTabNavOrder(
   const simulatorIds =
     ids.simulatorIds ??
     (state.unifiedTabsByWorktree[worktreeId] ?? [])
-      .filter((tab) => tab.contentType === 'simulator' || tab.contentType === 'api-client')
+      .filter(
+        (tab) =>
+          tab.contentType === 'simulator' ||
+          tab.contentType === 'api-client' ||
+          tab.contentType === 'sql'
+      )
       .map((tab) => tab.id)
   const agentSessionIds =
     ids.agentSessionIds ??
@@ -255,7 +267,9 @@ export function getActiveTabNavOrder(
       result.push(
         unifiedTab?.contentType === 'api-client'
           ? { type: 'api-client', id, tabId: id }
-          : { type: 'simulator', id }
+          : unifiedTab?.contentType === 'sql'
+            ? { type: 'sql', id, tabId: id }
+            : { type: 'simulator', id }
       )
     } else if (agentSessionIdSet.has(id)) {
       const tab = (state.unifiedTabsByWorktree[worktreeId] ?? []).find(

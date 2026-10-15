@@ -1,4 +1,4 @@
-import { getApiClientAvailability } from '@/lib/api-client-availability'
+import { getLocalWorkspaceTabAvailability } from '@/lib/local-workspace-tab-availability'
 import type { AppState } from '@/store/types'
 
 /**
@@ -8,7 +8,7 @@ import type { AppState } from '@/store/types'
  */
 export function selectApiClientSidebarWorktreeId(state: AppState): string | null {
   const worktreeId = state.activeWorktreeId
-  if (!worktreeId || getApiClientAvailability(state, worktreeId) !== 'available') {
+  if (!worktreeId || getLocalWorkspaceTabAvailability(state, worktreeId) !== 'available') {
     return null
   }
   return state.getActiveTab(worktreeId)?.contentType === 'api-client' ? worktreeId : null

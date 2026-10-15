@@ -48,6 +48,13 @@ export type TabBarItem =
       data: Tab
     }
   | {
+      type: 'sql'
+      id: string
+      unifiedTabId: string
+      isPinned: boolean
+      data: Tab
+    }
+  | {
       type: 'agent-session'
       id: string
       unifiedTabId: string
@@ -64,6 +71,9 @@ export function getTabDragLabel(item: TabBarItem, generatedTitlesEnabled: boolea
   }
   if (item.type === 'api-client') {
     return item.data.label || 'API Client'
+  }
+  if (item.type === 'sql') {
+    return item.data.label || 'SQL'
   }
   if (item.type === 'simulator' || item.type === 'agent-session') {
     return item.data.label || 'Mobile Emulator'
@@ -181,24 +191,20 @@ export function buildOrderedTabItems({
       })
       continue
     }
-    const simulatorTab = unifiedTabByVisibleId.get(id)
-    if (simulatorTab?.contentType === 'simulator') {
+    // Why one branch: simulator, API Client and SQL tabs are all unified-only, with no legacy record.
+    const unifiedOnlyTab = unifiedTabByVisibleId.get(id)
+    if (
+      unifiedOnlyTab &&
+      (unifiedOnlyTab.contentType === 'simulator' ||
+        unifiedOnlyTab.contentType === 'api-client' ||
+        unifiedOnlyTab.contentType === 'sql')
+    ) {
       items.push({
-        type: 'simulator',
+        type: unifiedOnlyTab.contentType,
         id,
-        unifiedTabId: simulatorTab.id,
-        isPinned: simulatorTab.isPinned === true,
-        data: simulatorTab
-      })
-      continue
-    }
-    if (simulatorTab?.contentType === 'api-client') {
-      items.push({
-        type: 'api-client',
-        id,
-        unifiedTabId: simulatorTab.id,
-        isPinned: simulatorTab.isPinned === true,
-        data: simulatorTab
+        unifiedTabId: unifiedOnlyTab.id,
+        isPinned: unifiedOnlyTab.isPinned === true,
+        data: unifiedOnlyTab
       })
       continue
     }
@@ -253,9 +259,9 @@ export function findActiveVisibleTabId(
     if (item.type === 'simulator') {
       return active.activeTabType === 'simulator' && item.id === active.activeSimulatorTabId
     }
-    if (item.type === 'api-client') {
+    if (item.type === 'api-client' || item.type === 'sql') {
       // Why: the prop is named for simulators but carries the active unified-only tab id.
-      return active.activeTabType === 'api-client' && item.id === active.activeSimulatorTabId
+      return active.activeTabType === item.type && item.id === active.activeSimulatorTabId
     }
     if (item.type === 'agent-session') {
       // Reachable only from TabGroupPanel, which passes the structured tab's own id; the store's

@@ -5,6 +5,18 @@
       "description": "The active workspace is hidden in the sidebar. Revealing it will adjust only the filters hiding it.",
       "confirm": "Adjust filters and reveal",
       "cancel": "Keep filters"
+    },
+    "hiddenItems": {
+      "showing": "Hidden items shown — click to hide",
+      "hidden": "Show hidden"
+    },
+    "worktreeVisibility": {
+      "show": "Show workspace",
+      "hide": "Hide workspace"
+    },
+    "projectVisibility": {
+      "show": "Show project",
+      "hide": "Hide project"
     }
   },
   "app": {
@@ -3824,7 +3836,8 @@
             "grokUsageMenu": "Grok Usage",
             "floatingTerminalNewActivity": "{{label}}, new activity",
             "codexSignInSuccess": "Signed in to Codex",
-            "codexSignInError": "Codex sign-in failed. Please try again."
+            "codexSignInError": "Codex sign-in failed. Please try again.",
+            "copilotUsageMenu": "Copilot Usage"
           },
           "StatusBarUsageEmptyCta": {
             "828c764a79": "Connect an account",
@@ -4010,7 +4023,8 @@
                 "apiKey": "MiniMax API key expired. Replace it in Settings.",
                 "cookie": "MiniMax session cookie expired. Replace it in Settings."
               }
-            }
+            },
+            "creditsLabel": "Credits"
           },
           "SshTargetStatusRow": {
             "sshHost": "SSH Host"
@@ -4101,7 +4115,8 @@
             "ariaLabelOne": "1 chat available to resume",
             "ariaLabel": "{{value0}} chats available to resume",
             "tooltip": "Open interrupted chats available to resume"
-          }
+          },
+          "usageAmountLabel": "{{value0}} / {{value1}}"
         }
       },
       "stats": {
@@ -5756,7 +5771,8 @@
           "groupRenameFailedDesc": "Orca could not confirm the new name with the group's host. Recheck the group after reconnecting.",
           "failedNestWorkspace": "Failed to nest workspace",
           "sidebarRowMissing": "Target no longer exists",
-          "failedUnnestWorkspace": "Failed to unnest workspace"
+          "failedUnnestWorkspace": "Failed to unnest workspace",
+          "toggleProjectVisibility": "{{value0}} visibility"
         },
         "WorktreeMetaDialog": {
           "3db0a2a593": "Cancel",
@@ -12640,7 +12656,11 @@
             "entryDiscardFailed": "Failed to discard “{{value0}}”",
             "entryDeleteFailed": "Failed to delete “{{value0}}”",
             "entryFailedInWorkspace": "{{value0}} in {{value1}}",
-            "diffCommentNotesCopyFailed": "Failed to copy notes"
+            "diffCommentNotesCopyFailed": "Failed to copy notes",
+            "reviewedCheckboxLabel": "{{value0}} {{value1}}",
+            "reviewedCheckboxMark": "Mark reviewed",
+            "reviewedCheckboxMarkForDeletion": "Mark for deletion",
+            "reviewedCheckboxClearMark": "Clear mark"
           },
           "SourceControlAgentActionDialog": {
             "8e856842d1": "Could not start the selected agent.",
@@ -18482,6 +18502,160 @@
     },
     "web": {
       "unavailable": "The API Client is unavailable on web."
+    }
+  },
+  "sqlClient": {
+    "pane": {
+      "resizeSplit": "Resize editor and results",
+      "draftTooLarge": "This query is over 1 MB, so it is kept only until the tab closes."
+    },
+    "sidebar": {
+      "connections": "Connections",
+      "noConnections": "No connections yet.",
+      "schema": "Schema",
+      "savedQueries": "Saved Queries",
+      "noSavedQueries": "No saved queries yet.",
+      "selectConnection": "Select a connection to see its saved queries.",
+      "schemaNoConnection": "Select a connection to browse its schema."
+    },
+    "tab": {
+      "newTab": "New SQL",
+      "localOnlyHint": "Local worktrees only",
+      "keywordSql": "sql",
+      "keywordPostgres": "postgres",
+      "keywordDatabase": "database",
+      "keywordQuery": "query",
+      "title": "SQL"
+    },
+    "status": {
+      "connected": "Connected",
+      "connecting": "Connecting",
+      "idle": "Not connected"
+    },
+    "editor": {
+      "run": "Run query",
+      "label": "SQL editor"
+    },
+    "footer": {
+      "rows": "{{count}} rows",
+      "affected": "{{count}} rows affected",
+      "elapsed": "{{ms}} ms",
+      "rowCap": "Limited to 1000 rows — add LIMIT to change",
+      "sizeLimit": "Size limit (50 MB) reached; showing rows loaded so far"
+    },
+    "results": {
+      "empty": "Run a query with {{shortcut}} or F5",
+      "running": "Running… {{seconds}} s",
+      "commandDone": "{{command}} completed",
+      "affected": "{{count}} rows affected",
+      "cancelled": "Query cancelled",
+      "sqlstate": "SQLSTATE",
+      "position": "Position",
+      "detail": "Detail",
+      "hint": "Hint",
+      "failedStatement": "Statement {{number}} failed:",
+      "nothingApplied": "Nothing was applied.",
+      "alreadyRanOne": "Statement 1 already ran.",
+      "alreadyRan": "Statements 1–{{count}} already ran."
+    },
+    "toolbar": {
+      "cancel": "Cancel",
+      "connection": "Connection",
+      "noConnection": "No connection",
+      "new": "New",
+      "run": "Run",
+      "runHint": "Run selection or all",
+      "selectConnection": "Select a connection to run"
+    },
+    "grid": {
+      "copiedCell": "Copied cell",
+      "copiedRange": "Copied {{rows}} rows and {{columns}} columns",
+      "label": "Query results",
+      "copyFailed": "Copy failed",
+      "null": "NULL"
+    },
+    "connection": {
+      "deleteTitle": "Delete this connection?",
+      "deleteDescription": "\"{{name}}\" and its {{queries}} saved queries and {{collections}} collections will be deleted. Open SQL tabs keep their text.",
+      "required": "Required",
+      "tooLong": "At most {{max}} characters",
+      "invalidPort": "Enter a port from 1 to 65535",
+      "testOk": "Connected to PostgreSQL {{version}}",
+      "editTitle": "Edit connection",
+      "addTitle": "Add connection",
+      "description": "PostgreSQL connection, saved for every worktree of this project.",
+      "name": "Name",
+      "host": "Host",
+      "port": "Port",
+      "user": "User",
+      "password": "Password",
+      "passwordUnchanged": "Unchanged",
+      "needsReentry": "The saved password can no longer be read. Enter it again.",
+      "noEncryption": "This computer cannot encrypt passwords, so the password is kept only until Orca quits.",
+      "database": "Database",
+      "sslMode": "SSL mode",
+      "sslDisable": "Disable",
+      "sslPrefer": "Prefer",
+      "sslRequire": "Require",
+      "test": "Test connection",
+      "disconnect": "Disconnect",
+      "connect": "Connect",
+      "edit": "Edit",
+      "add": "Add connection"
+    },
+    "common": {
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "save": "Save"
+    },
+    "saved": {
+      "needConnection": "Select a connection to save a query",
+      "moveTitle": "Move to collection",
+      "collection": "Collection",
+      "noCollection": "No collection",
+      "move": "Move",
+      "deleteQueryTitle": "Delete this query?",
+      "deleteQueryDescription": "\"{{name}}\" will be deleted.",
+      "deleteCollectionTitle": "Delete this collection?",
+      "deleteCollectionEmpty": "\"{{name}}\" is empty.",
+      "deleteCollectionDescription": "\"{{name}}\" holds {{count}} saved queries. Keep them without a collection, or delete them too.",
+      "keepQueries": "Keep queries",
+      "deleteQueriesToo": "Delete queries too",
+      "unsavedTitle": "Unsaved changes",
+      "unsavedDescription": "The current query has changes that are not saved. Save them before opening another query?",
+      "discard": "Discard",
+      "queryActions": "Query actions",
+      "rename": "Rename",
+      "moveTo": "Move to collection…",
+      "collectionActions": "Collection actions",
+      "newCollectionButton": "New collection",
+      "renameQueryTitle": "Rename query",
+      "name": "Name",
+      "newCollectionTitle": "New collection",
+      "create": "Create",
+      "renameCollectionTitle": "Rename collection",
+      "saveTitle": "Save query",
+      "saveDescription": "Saved under the selected connection.",
+      "newCollection": "New collection…",
+      "newCollectionName": "New collection name",
+      "unsaved": "Unsaved changes",
+      "save": "Save",
+      "saveHint": "Save",
+      "saveAsHint": "Save as new",
+      "conflict": "This query was changed elsewhere. Reload it, or save as a new query."
+    },
+    "schema": {
+      "table": "table",
+      "view": "view",
+      "materializedView": "mat. view",
+      "partitionedTable": "partitioned",
+      "foreignTable": "foreign",
+      "notNull": "not null",
+      "copyName": "Copy name",
+      "noRelations": "No tables or views",
+      "connectFirst": "Connect to browse the schema.",
+      "refresh": "Refresh schema",
+      "primaryKey": "PK"
     }
   }
 }

@@ -1,12 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import type { SecretStore } from '../../shared/secret-store'
 import type { Environment } from '../../shared/api-client/api-client-types'
-import {
-  decryptEnvironmentSecrets,
-  encryptEnvironmentSecrets,
-  getSecretProtection,
-  UNSEALED_CIPHER
-} from './api-client-secret-codec'
+import { decryptEnvironmentSecrets, encryptEnvironmentSecrets } from './api-client-secret-codec'
+import { getSecretProtection, UNSEALED_CIPHER } from '../secret-value-codec'
 
 function fakeStore(options: { available?: boolean; gap?: string | null } = {}): SecretStore {
   const available = options.available ?? true

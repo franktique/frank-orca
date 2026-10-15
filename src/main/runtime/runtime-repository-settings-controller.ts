@@ -1,4 +1,6 @@
 import { getRepoExecutionHostId } from '../../shared/execution-host'
+import { deleteProjectSqlData } from '../sql-client/sql-client-data-deletion'
+import { sqlProjectKeyForRepo } from '../sql-client/sql-project-key'
 import { isFolderRepo } from '../../shared/repo-kind'
 import type { Repo } from '../../shared/repo-types'
 import type { GhAccountBinding } from '../../shared/github/account-binding'
@@ -120,6 +122,7 @@ export class RuntimeRepositorySettingsController {
       store.removeProjectForHost(repo.id, hostId)
     } else {
       store.removeProject(repo.id)
+      deleteProjectSqlData(sqlProjectKeyForRepo(repo.id))
     }
     this.deps.forgetTerminalTopology(repo.id)
     this.deps.invalidateResolvedWorktrees()

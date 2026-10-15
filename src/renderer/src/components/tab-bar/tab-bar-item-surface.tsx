@@ -186,9 +186,14 @@ export function renderTabBarItems({
         />
       )
     }
-    if (item.type === 'simulator' || item.type === 'api-client') {
+    if (item.type === 'simulator' || item.type === 'api-client' || item.type === 'sql') {
       const simulatorLabel =
-        item.data.label || (item.type === 'api-client' ? 'API Client' : 'Mobile Emulator')
+        item.data.label ||
+        (item.type === 'api-client'
+          ? 'API Client'
+          : item.type === 'sql'
+            ? 'SQL'
+            : 'Mobile Emulator')
       const simulatorFile: OpenFile & { tabId: string } = {
         id: item.id,
         tabId: item.id,
