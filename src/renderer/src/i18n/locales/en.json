@@ -583,6 +583,9 @@
         "quick": {
           "notes": {
             "saveFailed": "Failed to save quick note"
+          },
+          "links": {
+            "saveFailed": "Failed to save quick link"
           }
         }
       }
@@ -17226,6 +17229,36 @@
           "copyQuickNote": {
             "copied": "\"{{value0}}\" copied",
             "failed": "Failed to copy note"
+          }
+        },
+        "links": {
+          "QuickLinksMenu": {
+            "label": "Quick links",
+            "searchPlaceholder": "Search quick links...",
+            "noMatch": "No links match",
+            "empty": "No links",
+            "add": "Link"
+          },
+          "TitlebarQuickLinksButton": {
+            "deleteTitle": "Delete \"{{value0}}\"?",
+            "deleteDescription": "This quick link will be removed from your saved list.",
+            "delete": "Delete"
+          },
+          "QuickLinkItem": {
+            "actions": "Quick link actions",
+            "edit": "Edit {{value0}}",
+            "remove": "Remove {{value0}}"
+          },
+          "QuickLinkDialog": {
+            "editTitle": "Edit Quick Link",
+            "addTitle": "Add Quick Link",
+            "description": "Saved links appear in the titlebar menu; pick one to open it in the Orca or system browser.",
+            "labelField": "Label",
+            "labelPlaceholder": "Team dashboard",
+            "urlField": "URL",
+            "invalidUrl": "Enter a valid http or https URL.",
+            "cancel": "Cancel",
+            "save": "Save"
           }
         }
       },

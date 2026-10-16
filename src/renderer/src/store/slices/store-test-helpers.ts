@@ -57,6 +57,7 @@ import { createApiClientRunnerSlice } from './api-client-runner'
 import { createSqlClientSlice } from './sql-client'
 import { createSqlClientRunSlice } from './sql-client-run'
 import { createQuickNotesSlice } from './quick-notes'
+import { createQuickLinksSlice } from './quick-links'
 import { translate } from '@/i18n/i18n'
 
 export const TEST_REPO = {
@@ -114,6 +115,7 @@ export function createTestStore() {
     ...createRemoteServerUpdatesSlice(...a),
     ...createTerminalQuickCommandHostsSlice(...a),
     ...createQuickNotesSlice(...a),
+    ...createQuickLinksSlice(...a),
     ...createApiClientSlice(...a),
     ...createApiClientDraftSlice(...a),
     ...createApiClientExecutionSlice(...a),

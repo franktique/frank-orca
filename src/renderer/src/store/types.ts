@@ -51,6 +51,7 @@ import type { ApiClientDraftSlice } from './slices/api-client-drafts'
 import type { ApiClientExecutionSlice } from './slices/api-client-execution'
 import type { ApiClientRunnerSlice } from './slices/api-client-runner'
 import type { QuickNotesSlice } from './slices/quick-notes'
+import type { QuickLinksSlice } from './slices/quick-links'
 
 export type AppState = RepoSlice &
   SparsePresetsSlice &
@@ -97,6 +98,7 @@ export type AppState = RepoSlice &
   RemoteServerUpdatesSlice &
   TerminalQuickCommandHostsSlice &
   QuickNotesSlice &
+  QuickLinksSlice &
   ApiClientSlice &
   ApiClientDraftSlice &
   ApiClientExecutionSlice &
