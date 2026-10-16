@@ -26,6 +26,8 @@ import type { CtrlTabOrderMode } from './tab-types'
 import type { TerminalColorOverrides } from './terminal-color-overrides'
 import type { TerminalQuickCommand } from './terminal-quick-command-types'
 import type { QuickNote } from './quick-note-types'
+import type { QuickLink } from './quick-link-types'
+import type { TelemetrySettings } from './telemetry-consent-types'
 import type { TuiAgent } from './tui-agent'
 import type {
   AgentDashboardMode,
@@ -164,6 +166,8 @@ export type GlobalSettings = {
   terminalQuickCommands?: TerminalQuickCommand[]
   /** Reusable plain-text snippets; picking one copies its body to the clipboard. Global scope only. */
   quickNotes?: QuickNote[]
+  /** Saved URLs in the titlebar menu; picking one asks Orca vs system browser. Global scope only. */
+  quickLinks?: QuickLink[]
   windowBackgroundBlur?: boolean
   /** Windows-only: close (X) hides to tray instead of quitting; the tray icon is always present regardless. */
   minimizeToTrayOnClose?: boolean
@@ -499,14 +503,7 @@ export type GlobalSettings = {
   gitlabProjects?: GitLabProjectSettings
   /** Anonymous product-telemetry state; optional until the one-shot Store.load() migration populates it.
    *  Holds only consent + identity, not volatile counters — those would amplify the debounced settings write. */
-  telemetry?: {
-    /** New users: true at install. Existing users: null until they resolve the first-launch banner. */
-    optedIn: boolean | null
-    /** Anonymous UUID v4. Generated on first run. Stable across launches; not surfaced in the UI. */
-    installId: string
-    /** Cohort marker: true for pre-existing profiles (gates the opt-in banner), false for fresh installs. */
-    existedBeforeTelemetryRelease: boolean
-  }
+  telemetry?: TelemetrySettings
   /** One-shot cohort marker for the tab-switch keybinding swap. 'pending' =
    *  pre-existing install (seed pins old chords, then flips to 'done'); 'done' = fresh install. */
   tabSwitchKeybindingSeed?: 'pending' | 'done'

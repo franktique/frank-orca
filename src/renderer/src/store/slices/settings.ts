@@ -11,6 +11,7 @@ import { assertRuntimeStatusCompatible } from '@/runtime/runtime-protocol-compat
 import type { RuntimeStatus } from '../../../../shared/runtime-types'
 import { normalizeTerminalQuickCommands } from '../../../../shared/terminal-quick-commands'
 import { normalizeQuickNotes } from '../../../../shared/quick-notes'
+import { normalizeQuickLinks } from '../../../../shared/quick-links'
 import { normalizeTerminalCustomThemes } from '../../../../shared/terminal-custom-themes'
 import { normalizeTaskProviderSettings } from '../../../../shared/task-providers'
 import { normalizeOpenInApplications } from '../../../../shared/open-in-applications'
@@ -79,6 +80,9 @@ function normalizeSettingsUpdates(
   }
   if ('quickNotes' in updates) {
     sanitizedUpdates.quickNotes = normalizeQuickNotes(updates.quickNotes)
+  }
+  if ('quickLinks' in updates) {
+    sanitizedUpdates.quickLinks = normalizeQuickLinks(updates.quickLinks)
   }
   if ('terminalCustomThemes' in updates) {
     sanitizedUpdates.terminalCustomThemes = normalizeTerminalCustomThemes(
