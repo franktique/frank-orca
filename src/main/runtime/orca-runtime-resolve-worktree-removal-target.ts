@@ -9,6 +9,7 @@ import { runtimeWorktreeIdsEqual } from './runtime-worktree-path-identity'
 import { hasWorktreeRemovalRepoOwnerOnOtherHost } from '../worktree-removal-repo-owner'
 import { advertisedUrlWatcher } from '../ports/advertised-url-watcher'
 import { deleteWorktreeApiClientData } from '../api-client/api-client-data-deletion'
+import { deleteWorkspaceExplanation } from '../agent-explanations/explanation-data-deletion'
 import { deleteWorktreeHistoryDir } from '../terminal-history-deletion'
 import { closeClientHostedBrowserPagesForWorktree } from './worktree-browser-client-page-close'
 import type { ForceDeleteWorktreeBranchResult } from '../../shared/worktree/create-types'
@@ -85,6 +86,7 @@ export class OrcaRuntimeWithResolveWorktreeRemovalTarget extends OrcaRuntimeWith
       advertisedUrlWatcher.forgetWorktree(worktreeId)
       deleteWorktreeHistoryDir(worktreeId)
       deleteWorktreeApiClientData(worktreeId)
+      deleteWorkspaceExplanation(worktreeId)
       this.closeHeadlessBrowserPagesForWorktree(worktreeId)
       closeClientHostedBrowserPagesForWorktree(this, worktreeId)
     }

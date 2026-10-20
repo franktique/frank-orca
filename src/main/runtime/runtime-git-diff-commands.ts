@@ -31,22 +31,36 @@ export class RuntimeGitDiffCommands {
     filePath: string,
     staged: boolean,
     compareAgainstHead?: boolean,
-    maxContentBytes?: number
+    maxContentBytes?: number,
+    leftOid?: string
   ): Promise<GitDiffResult> {
     const target = await this.host.resolveRuntimeGitTarget(worktreeSelector)
     const relativePath = normalizeRuntimeGitRelativePath(filePath)
     const provider = requireRuntimeGitProvider(target)
     if (provider) {
       return assertGitDiffWithinTransportBudget(
-        await provider.getDiff(target.worktree.path, relativePath, staged, compareAgainstHead),
+        await provider.getDiff(
+          target.worktree.path,
+          relativePath,
+          staged,
+          compareAgainstHead,
+          leftOid
+        ),
         maxContentBytes
       )
     }
     return assertGitDiffWithinTransportBudget(
-      await getDiff(target.worktree.path, relativePath, staged, compareAgainstHead, {
-        ...localGitOptionsForTarget(target),
-        admissionTier: 'interactive'
-      }),
+      await getDiff(
+        target.worktree.path,
+        relativePath,
+        staged,
+        compareAgainstHead,
+        {
+          ...localGitOptionsForTarget(target),
+          admissionTier: 'interactive'
+        },
+        leftOid
+      ),
       maxContentBytes
     )
   }

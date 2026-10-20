@@ -1,8 +1,15 @@
+import type { ComponentProps } from 'react'
 import { translate } from '@/i18n/i18n'
 import type { OpenFile } from '@/store/slices/editor'
-import type { GitDiffResult } from '../../../../shared/git-diff-compare-types'
+import type { DiffContent } from './editor-panel-content-types'
 import { getDiffContentSignature } from './diff-content-signature'
-import { DiffViewer, ImageDiffViewer, MarkdownPreview } from './editor-lazy-views'
+import {
+  DiffViewer,
+  ExplanationDiffFrame,
+  ImageDiffViewer,
+  MarkdownPreview
+} from './editor-lazy-views'
+import { ExplanationUnreadableFile } from './explanation-diff/ExplanationUnreadableFile'
 import { ExternalFileChangeBanner } from './ExternalFileChangeBanner'
 import type { useMarkdownDocuments } from './useMarkdownDocuments'
 
@@ -27,7 +34,7 @@ export function EditorDiffFileSurface({
   reloadContent
 }: {
   activeFile: OpenFile
-  diffContent: GitDiffResult | undefined
+  diffContent: DiffContent | undefined
   editBuffer: string | undefined
   resolvedLanguage: string
   sideBySide: boolean
@@ -51,7 +58,30 @@ export function EditorDiffFileSurface({
     )
   }
 
+  if (activeFile.diffSource === 'explanation' && diffContent.readFailed) {
+    return (
+      <ExplanationUnreadableFile
+        worktreeId={activeFile.worktreeId}
+        relativePath={activeFile.relativePath}
+      />
+    )
+  }
+
   const isEditable = activeFile.diffSource === 'unstaged'
+  if (diffContent.kind === 'binary' && activeFile.diffSource === 'explanation') {
+    // Why: binary files have no lines to mark, so their explanations are listed as cards.
+    return (
+      <ExplanationUnreadableFile
+        worktreeId={activeFile.worktreeId}
+        relativePath={activeFile.relativePath}
+        showDisconnectedNotice={false}
+      >
+        <div className="flex flex-1 items-center justify-center px-6 text-center text-sm text-muted-foreground">
+          {translate('auto.components.editor.EditorContent.78541e254e', 'Binary file changed')}
+        </div>
+      </ExplanationUnreadableFile>
+    )
+  }
   if (diffContent.kind === 'binary') {
     if (diffContent.isImage) {
       return (
@@ -138,7 +168,9 @@ export function EditorDiffFileSurface({
   const diffReloadNonce = activeFile.diffContentReloadNonce ?? 0
   const originalModelKey = `${diffViewStateKey}:original:${getDiffContentSignature(diffContent.originalContent)}`
   const modifiedModelKey = `${diffViewStateKey}:modified:${getDiffContentSignature(diffContent.modifiedContent)}:${diffReloadNonce}`
-  const diffViewer = (
+  const renderDiffViewer = (
+    extra: Pick<ComponentProps<typeof DiffViewer>, 'renderEditorOverlay' | 'onAddLineComment'> = {}
+  ): React.JSX.Element => (
     <DiffViewer
       // Why: content refreshes via modifiedModelKey; keying off content too would remount Monaco and flash on every save.
       key={`${viewStateScopeId}:${diffReloadNonce}`}
@@ -157,8 +189,25 @@ export function EditorDiffFileSurface({
       worktreeId={activeFile.worktreeId}
       onContentChange={isEditable ? onContentChange : undefined}
       onSave={isEditable ? (isMarkdown ? markdownDocuments.mdSave : onSave) : undefined}
+      renderEditorOverlay={extra.renderEditorOverlay}
+      onAddLineComment={extra.onAddLineComment}
     />
   )
+  const diffViewer =
+    activeFile.diffSource === 'explanation' && activeFile.explanationRef ? (
+      <ExplanationDiffFrame
+        worktreeId={activeFile.worktreeId}
+        relativePath={activeFile.relativePath}
+        originalContent={diffContent.originalContent}
+        modifiedContent={modifiedDiffContent}
+        sideBySide={sideBySide}
+        explanationRef={activeFile.explanationRef}
+      >
+        {renderDiffViewer}
+      </ExplanationDiffFrame>
+    ) : (
+      renderDiffViewer()
+    )
   if (activeFile.externalMutation !== 'changed') {
     return diffViewer
   }

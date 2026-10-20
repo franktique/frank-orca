@@ -46,6 +46,7 @@ export function ReviewNotesSendMenuContent({
   prompt,
   promptDelivery = 'submit-after-ready',
   launchSource = 'notes_send',
+  preferredTargetPaneKey,
   onPromptDelivered
 }: {
   worktreeId: string
@@ -53,7 +54,10 @@ export function ReviewNotesSendMenuContent({
   prompt: string
   promptDelivery?: 'auto-submit' | 'draft' | 'submit-after-ready'
   launchSource?: LaunchSource
-  onPromptDelivered?: () => void
+  /** Listed first when that pane is still a live agent (e.g. the agent that wrote an explanation). */
+  preferredTargetPaneKey?: string
+  /** The target is known only when the prompt went to an existing agent pane. */
+  onPromptDelivered?: (target?: { paneKey?: string; label: string }) => void
 }): React.JSX.Element {
   const hasPrompt = prompt.trim().length > 0
 
@@ -92,8 +96,8 @@ export function ReviewNotesSendMenuContent({
     worktreeId
   ])
   const orderedSendTargets = useMemo(
-    () => orderSendTargetsByWorktreeAgentRows(sendTargets, agentRows),
-    [agentRows, sendTargets]
+    () => orderSendTargetsByWorktreeAgentRows(sendTargets, agentRows, preferredTargetPaneKey),
+    [agentRows, preferredTargetPaneKey, sendTargets]
   )
 
   const runNotesSend = useCallback(
@@ -165,7 +169,10 @@ export function ReviewNotesSendMenuContent({
             noteTarget: { tabId: target.tabId, leafId: target.leafId }
           }),
         () => {
-          onPromptDelivered?.()
+          onPromptDelivered?.({
+            paneKey: target.paneKey,
+            label: formatAgentTypeLabel(target.agentType)
+          })
           // Why: mirror the sidebar send-target telemetry so dropdown-routed
           // follow-up notes show up identically on `agent_prompt_sent`.
           track('agent_prompt_sent', {
@@ -286,7 +293,8 @@ function AgentTargetMenuItem({
 
 function orderSendTargetsByWorktreeAgentRows(
   sendTargets: NotesSendAgentTarget[],
-  agentRows: DashboardAgentRowData[]
+  agentRows: DashboardAgentRowData[],
+  preferredPaneKey?: string
 ): OrderedSendTarget[] {
   const targetsByPaneKey = new Map(sendTargets.map((target) => [target.paneKey, target]))
   const usedPaneKeys = new Set<string>()
@@ -307,6 +315,12 @@ function orderSendTargetsByWorktreeAgentRows(
     }
   }
 
+  const preferredIndex = preferredPaneKey
+    ? ordered.findIndex((entry) => entry.target.paneKey === preferredPaneKey)
+    : -1
+  if (preferredIndex > 0) {
+    ordered.unshift(...ordered.splice(preferredIndex, 1))
+  }
   return ordered
 }
 

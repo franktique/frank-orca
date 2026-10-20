@@ -142,6 +142,11 @@ export const HANDLER_GROUPS: readonly HandlerGroup[] = [
     load: async () => (await import('./handlers/api-client.js')).API_CLIENT_HANDLERS
   },
   {
+    name: 'explanation',
+    keys: ['explain publish', 'explain show', 'explain clear', 'explain changes', 'explain schema'],
+    load: async () => (await import('./handlers/explanation.js')).EXPLANATION_HANDLERS
+  },
+  {
     name: 'sql-client',
     keys: ['sql connections', 'sql queries', 'sql run'],
     load: async () => (await import('./handlers/sql-client.js')).SQL_CLIENT_HANDLERS

@@ -20,6 +20,10 @@ import {
   killWorkspacePort,
   scanWorkspacePortProbes
 } from '../ports/workspace-port-ownership'
+import { readWorktreeMetaForHost } from '../persistence/host-qualified-worktree-meta'
+import type { ExecutionHostId } from '../../shared/execution-host'
+import type { WorktreeMeta } from '../../shared/worktree/meta-types'
+import type { RuntimeGitTarget } from './runtime-git-command-target'
 
 export class OrcaRuntimeWithListManagedWorktrees extends OrcaRuntimeWithRestoreStructuredAgentSessionTabsOnce {
   listManagedWorktrees(
@@ -141,6 +145,21 @@ export class OrcaRuntimeWithListManagedWorktrees extends OrcaRuntimeWithRestoreS
     worktreeSelector: string
   ): Promise<TerminalWorkspaceLaunchScope> {
     return await this.resolveTerminalWorkspaceLaunchScope(worktreeSelector)
+  }
+
+  /** The git routing record (execution host, repo, worktree) behind a selector, so callers
+   *  outside the class share the resolution every runtime git command uses. */
+  async showRuntimeGitTarget(worktreeSelector: string): Promise<RuntimeGitTarget> {
+    return await this.resolveRuntimeGitTarget(worktreeSelector)
+  }
+
+  /** The metadata row this runtime's execution host owns for a worktree; never another
+   *  host's row (`readWorktreeMetaForHost` keeps the no-locator-fallback rule). */
+  showManagedWorktreeMetaForHost(
+    worktreeId: string,
+    executionHostId: ExecutionHostId
+  ): WorktreeMeta | undefined {
+    return readWorktreeMetaForHost(this.requireStore(), worktreeId, executionHostId)
   }
 
   async scanWorkspacePorts(repoId?: string): Promise<WorkspacePortScanResult> {

@@ -54,6 +54,7 @@ import { skillsApi } from './api/skills-bridge'
 import { petApi } from './api/pet-bridge'
 import { browserApi } from './api/browser-bridge'
 import { apiClientApi } from './api/api-client-bridge'
+import { explanationsApi } from './api/explanations-bridge'
 import { sqlClientApi } from './api/sql-client-bridge'
 import { emulatorApi } from './api/emulator-bridge'
 import { hooksApi } from './api/hooks-bridge'
@@ -155,6 +156,7 @@ const api = {
   browser: browserApi,
   emulator: emulatorApi,
   apiClient: apiClientApi,
+  explanations: explanationsApi,
   sqlClient: sqlClientApi,
   hooks: hooksApi,
   ephemeralVm: ephemeralVmApi,

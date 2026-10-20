@@ -9,6 +9,7 @@ import { registerAgentStatusIpcBridge } from './agent-status-ipc-bridge'
 import { registerBrowserRequestIpcBridge } from './browser-request-ipc-bridge'
 import { registerBrowserStateIpcBridge } from './browser-state-ipc-bridge'
 import { registerApiClientIpcBridge } from './api-client-ipc-bridge'
+import { registerExplanationsIpcBridge } from './explanations-ipc-bridge'
 import { registerSqlClientIpcBridge } from './sql-client-ipc-bridge'
 import { registerContentCreationIpcBridge } from './content-creation-ipc-bridge'
 import { createDirectSshBridgeRuntime } from './direct-ssh-bridge-runtime'
@@ -123,6 +124,7 @@ export function installAppLifetimeIpcEvents(
   registerBrowserStateIpcBridge(unsubs, isRuntimeEnvironmentActive)
   registerContentCreationIpcBridge(unsubs, isRuntimeEnvironmentActive)
   registerApiClientIpcBridge(unsubs)
+  registerExplanationsIpcBridge(unsubs)
   registerSqlClientIpcBridge(unsubs)
   registerBrowserRequestIpcBridge(unsubs, isRuntimeEnvironmentActive)
   registerTabLifecycleIpcBridge(unsubs)

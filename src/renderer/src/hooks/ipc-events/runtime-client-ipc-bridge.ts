@@ -105,6 +105,10 @@ export function registerRuntimeClientIpcBridge(
       })
       return
     }
+    if (event.type === 'explanationsChanged') {
+      void useAppStore.getState().applyExplanationsChanged(event)
+      return
+    }
     if (event.type === 'sshStateChanged') {
       applyRuntimeEnvironmentSshStateChanged(environmentId, event.targetId, event.state, generation)
       return
@@ -154,6 +158,11 @@ export function registerRuntimeClientIpcBridge(
         },
         onError,
         () => {
+          // Why: explanation pushes emitted while the transport was down are lost.
+          const activeWorktreeId = useAppStore.getState().activeWorktreeId
+          if (activeWorktreeId) {
+            void useAppStore.getState().loadExplanation(activeWorktreeId)
+          }
           invalidateRuntimeClientEventReplay({
             getSshStateReference: () => useAppStore.getState().sshStateByEnvironment,
             refreshRuntimeStatus: () => {

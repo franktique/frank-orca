@@ -2,6 +2,10 @@ import { useCallback, type Dispatch, type MutableRefObject, type SetStateAction 
 import type { OpenFile } from '@/store/slices/editor'
 import { getConnectionIdForFile } from '@/lib/connection-context'
 import { useAppStore } from '@/store'
+import {
+  getRuntimeExplanationFileDiff,
+  isExplanationFailure
+} from '@/runtime/runtime-explanation-client'
 import { settingsForRuntimeOwner } from '@/runtime/runtime-rpc-client'
 import {
   getRuntimeGitBranchDiff,
@@ -40,7 +44,33 @@ function inFlightDiffKey(
     file.diffSource === 'commit' && file.commitCompare
       ? `${file.commitCompare.parentOid ?? 'empty-tree'}..${file.commitCompare.commitOid}::${file.branchOldPath ?? ''}`
       : ''
-  return `${connectionId ?? ''}::${file.diffSource ?? ''}::${compareAgainstHead ? 'head' : 'default'}::${file.filePath}::${branch}::${commit}`
+  const explanation =
+    file.diffSource === 'explanation' && file.explanationRef
+      ? `${file.explanationRef.mergeBase}::${file.branchOldPath ?? ''}`
+      : ''
+  return `${connectionId ?? ''}::${file.diffSource ?? ''}::${compareAgainstHead ? 'head' : 'default'}::${file.filePath}::${branch}::${commit}::${explanation}`
+}
+
+async function readExplanationDiff(
+  file: OpenFile,
+  settings: ReturnType<typeof settingsForRuntimeOwner>,
+  connectionId: string | undefined
+): Promise<DiffContent> {
+  if (!file.explanationRef) {
+    throw new Error('Missing explanation for diff tab.')
+  }
+  const result = await getRuntimeExplanationFileDiff(
+    { workspaceId: file.worktreeId, settings, connectionId },
+    {
+      path: file.relativePath,
+      oldPath: file.branchOldPath,
+      mergeBase: file.explanationRef.mergeBase
+    }
+  )
+  if (isExplanationFailure(result)) {
+    throw new Error(result.message)
+  }
+  return result
 }
 
 export function useEditorPanelDiffContentLoader({
@@ -92,56 +122,59 @@ export function useEditorPanelDiffContentLoader({
         }
         let pending = inFlightDiffReads.get(key)
         if (!pending) {
+          // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: every branch resolves to a GitDiffResult, which DiffContent only widens with optional fields.
           const promise = (
-            effectiveDiffSource === 'commit'
-              ? commitCompare
-                ? getRuntimeGitCommitDiff(
-                    {
-                      settings: fileSettings,
-                      worktreeId: file.worktreeId,
-                      worktreePath,
-                      connectionId
-                    },
-                    {
-                      commitOid: commitCompare.commitOid,
-                      parentOid: commitCompare.parentOid,
-                      filePath: file.relativePath,
-                      oldPath: file.branchOldPath
-                    }
-                  )
-                : Promise.reject(new Error('Missing commit comparison for diff tab.'))
-              : effectiveDiffSource === 'branch' && branchCompare
-                ? getRuntimeGitBranchDiff(
-                    {
-                      settings: fileSettings,
-                      worktreeId: file.worktreeId,
-                      worktreePath,
-                      connectionId
-                    },
-                    {
-                      compare: {
-                        baseRef: branchCompare.baseRef,
-                        baseOid: branchCompare.baseOid!,
-                        headOid: branchCompare.headOid!,
-                        mergeBase: branchCompare.mergeBase!
+            effectiveDiffSource === 'explanation'
+              ? readExplanationDiff(file, fileSettings, connectionId)
+              : effectiveDiffSource === 'commit'
+                ? commitCompare
+                  ? getRuntimeGitCommitDiff(
+                      {
+                        settings: fileSettings,
+                        worktreeId: file.worktreeId,
+                        worktreePath,
+                        connectionId
                       },
-                      filePath: file.relativePath,
-                      oldPath: file.branchOldPath
-                    }
-                  )
-                : getRuntimeGitDiff(
-                    {
-                      settings: fileSettings,
-                      worktreeId: file.worktreeId,
-                      worktreePath,
-                      connectionId
-                    },
-                    {
-                      filePath: file.relativePath,
-                      staged: effectiveDiffSource === 'staged',
-                      compareAgainstHead
-                    }
-                  )
+                      {
+                        commitOid: commitCompare.commitOid,
+                        parentOid: commitCompare.parentOid,
+                        filePath: file.relativePath,
+                        oldPath: file.branchOldPath
+                      }
+                    )
+                  : Promise.reject(new Error('Missing commit comparison for diff tab.'))
+                : effectiveDiffSource === 'branch' && branchCompare
+                  ? getRuntimeGitBranchDiff(
+                      {
+                        settings: fileSettings,
+                        worktreeId: file.worktreeId,
+                        worktreePath,
+                        connectionId
+                      },
+                      {
+                        compare: {
+                          baseRef: branchCompare.baseRef,
+                          baseOid: branchCompare.baseOid!,
+                          headOid: branchCompare.headOid!,
+                          mergeBase: branchCompare.mergeBase!
+                        },
+                        filePath: file.relativePath,
+                        oldPath: file.branchOldPath
+                      }
+                    )
+                  : getRuntimeGitDiff(
+                      {
+                        settings: fileSettings,
+                        worktreeId: file.worktreeId,
+                        worktreePath,
+                        connectionId
+                      },
+                      {
+                        filePath: file.relativePath,
+                        staged: effectiveDiffSource === 'staged',
+                        compareAgainstHead
+                      }
+                    )
           ) as Promise<DiffContent>
           pending = { externalEventGeneration: options?.externalEventGeneration, promise }
           inFlightDiffReads.set(key, pending)
@@ -167,7 +200,8 @@ export function useEditorPanelDiffContentLoader({
             originalContent: '',
             modifiedContent: `Error loading diff: ${String(err)}`,
             originalIsBinary: false,
-            modifiedIsBinary: false
+            modifiedIsBinary: false,
+            readFailed: true
           }
         }))
       } finally {

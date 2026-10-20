@@ -18,10 +18,19 @@ export type DiffSource =
   | 'staged'
   | 'branch'
   | 'commit'
+  | 'explanation'
   | 'combined-all'
   | 'combined-uncommitted'
   | 'combined-branch'
   | 'combined-commit'
+
+/** Which explanation a diff tab belongs to, and the merge base its left side reads. */
+export type ExplanationDiffRef = {
+  explanationId: string
+  mergeBase: string
+  /** One-shot: consumed when the diff opens so a later reopen does not re-jump. */
+  focusItemId?: string
+}
 
 export type BranchCompareSnapshot = Pick<
   GitBranchCompareSummary,
@@ -106,6 +115,7 @@ export type OpenFile = {
   diffSource?: DiffSource
   branchCompare?: BranchCompareSnapshot
   commitCompare?: CommitCompareSnapshot
+  explanationRef?: ExplanationDiffRef
   branchOldPath?: string
   combinedAlternate?: CombinedDiffAlternate
   combinedAreaFilter?: string // filter combined diff to a specific area (e.g. 'staged', 'unstaged', 'untracked')

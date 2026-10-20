@@ -248,6 +248,9 @@ export const AUTOMATION_CREATE_IDEMPOTENCY_RUNTIME_CAPABILITY =
   'automation.create-idempotency.v1' as const
 // Hosts without this capability have no notifications.registerPush RPC.
 export const NOTIFICATIONS_REMOTE_PUSH_RUNTIME_CAPABILITY = 'notifications.remote-push.v1' as const
+// Why: hosts without it answer explanation.* with method_not_found, so clients must
+// hide the Explanations tab and map 'explanations' to 'source-control' in ui.update.
+export const AGENT_EXPLANATIONS_RUNTIME_CAPABILITY = 'agent-explanations.v1' as const
 
 /**
  * `agent.launch` exists: one host-side method that decides structured-vs-terminal and creates the
@@ -387,6 +390,7 @@ export const RUNTIME_CAPABILITIES = [
   AUTOMATION_OWNER_FENCING_RUNTIME_CAPABILITY,
   AUTOMATION_CREATE_IDEMPOTENCY_RUNTIME_CAPABILITY,
   NOTIFICATIONS_REMOTE_PUSH_RUNTIME_CAPABILITY,
+  AGENT_EXPLANATIONS_RUNTIME_CAPABILITY,
   AGENT_LAUNCH_RUNTIME_CAPABILITY,
   AGENT_LAUNCH_REPLAY_RUNTIME_CAPABILITY,
   AGENT_LAUNCH_REPLAY_REQUIRED_RUNTIME_CAPABILITY

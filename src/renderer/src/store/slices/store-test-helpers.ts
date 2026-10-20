@@ -57,6 +57,7 @@ import { createApiClientRunnerSlice } from './api-client-runner'
 import { createSqlClientSlice } from './sql-client'
 import { createSqlClientRunSlice } from './sql-client-run'
 import { createQuickNotesSlice } from './quick-notes'
+import { createAgentExplanationsSlice } from './agent-explanations'
 import { createQuickLinksSlice } from './quick-links'
 import { translate } from '@/i18n/i18n'
 
@@ -120,6 +121,7 @@ export function createTestStore() {
     ...createApiClientDraftSlice(...a),
     ...createApiClientExecutionSlice(...a),
     ...createApiClientRunnerSlice(...a),
+    ...createAgentExplanationsSlice(...a),
     ...createSqlClientSlice(...a),
     ...createSqlClientRunSlice(...a)
   }))

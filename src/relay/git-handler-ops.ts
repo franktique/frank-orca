@@ -87,7 +87,8 @@ export async function computeDiff(
   worktreePath: string,
   filePath: string,
   staged: boolean,
-  compareAgainstHead = false
+  compareAgainstHead = false,
+  leftOid?: string
 ) {
   let originalContent = ''
   let modifiedContent = ''
@@ -106,9 +107,10 @@ export async function computeDiff(
       modifiedIsBinary = right.isBinary
       modifiedDeleted = right.missing
     } else {
-      const left = compareAgainstHead
-        ? await readBlobAtOid(git, worktreePath, 'HEAD', filePath)
-        : await readUnstagedLeft(git, worktreePath, filePath)
+      const left =
+        compareAgainstHead || leftOid
+          ? await readBlobAtOid(git, worktreePath, leftOid ?? 'HEAD', filePath)
+          : await readUnstagedLeft(git, worktreePath, filePath)
       originalContent = left.content
       originalIsBinary = left.isBinary
 

@@ -88,6 +88,9 @@ export function getEditorHeaderOpenFileState(
   if (file.diffSource === 'commit') {
     return { canOpen: false }
   }
+  if (file.diffSource === 'explanation') {
+    return { canOpen: !worktreeEntry || worktreeEntry.status !== 'deleted' }
+  }
 
   // Why: diff tabs can outlive the current Source Control snapshot. If the
   // live entry is missing, keep the action enabled instead of hiding a valid

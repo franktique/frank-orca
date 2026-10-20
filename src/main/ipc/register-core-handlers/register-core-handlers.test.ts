@@ -62,6 +62,7 @@ const {
   registerSkillsHandlersMock,
   registerSkillDeleteIpcHandlersMock,
   registerWorkspaceSpaceHandlersMock,
+  registerExplanationHandlersMock,
   registerWorkspacePortHandlersMock,
   registerLocalhostWorktreeLabelHandlersMock,
   registerNativeChatHandlersMock,
@@ -129,6 +130,7 @@ const {
   registerSkillsHandlersMock: vi.fn(),
   registerSkillDeleteIpcHandlersMock: vi.fn(),
   registerWorkspaceSpaceHandlersMock: vi.fn(),
+  registerExplanationHandlersMock: vi.fn(),
   registerWorkspacePortHandlersMock: vi.fn(),
   registerLocalhostWorktreeLabelHandlersMock: vi.fn(),
   registerNativeChatHandlersMock: vi.fn(),
@@ -233,6 +235,14 @@ vi.mock('../skills', () => ({
 
 vi.mock('../skill-delete/handlers', () => ({
   registerSkillDeleteIpcHandlers: registerSkillDeleteIpcHandlersMock
+}))
+
+vi.mock('../api-client/api-client-ipc', () => ({
+  registerApiClientHandlers: vi.fn()
+}))
+
+vi.mock('../agent-explanations/explanation-ipc', () => ({
+  registerExplanationHandlers: registerExplanationHandlersMock
 }))
 
 vi.mock('../workspace-space', () => ({
@@ -456,6 +466,7 @@ describe('registerCoreHandlers', () => {
     registerSkillsHandlersMock.mockReset()
     registerSkillDeleteIpcHandlersMock.mockReset()
     registerWorkspaceSpaceHandlersMock.mockReset()
+    registerExplanationHandlersMock.mockReset()
     registerWorkspacePortHandlersMock.mockReset()
     registerLocalhostWorktreeLabelHandlersMock.mockReset()
     registerNativeChatHandlersMock.mockReset()
@@ -544,6 +555,7 @@ describe('registerCoreHandlers', () => {
     expect(registerSkillsHandlersMock).toHaveBeenCalledWith(store, runtime)
     expect(registerSkillDeleteIpcHandlersMock).toHaveBeenCalledWith(store, runtime)
     expect(registerWorkspaceSpaceHandlersMock).toHaveBeenCalledWith(store)
+    expect(registerExplanationHandlersMock).toHaveBeenCalledWith(runtime)
     expect(registerWorkspacePortHandlersMock).toHaveBeenCalledWith(store)
     expect(registerLocalhostWorktreeLabelHandlersMock).toHaveBeenCalledWith(store)
     expect(registerTelemetryHandlersMock).toHaveBeenCalledWith(store)

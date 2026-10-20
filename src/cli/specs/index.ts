@@ -19,12 +19,14 @@ import { SKILL_COMMAND_SPECS } from './skills'
 import { API_CLIENT_COMMAND_SPECS } from './api-client'
 import { SQL_CLIENT_COMMAND_SPECS } from './sql-client'
 import { ARTIFACT_COMMAND_SPECS } from './artifacts'
+import { EXPLANATION_COMMAND_SPECS } from './explanation'
 import { SEARCH_COMMAND_SPECS } from './search'
 
 export const COMMAND_SPECS: CommandSpec[] = [
   ...CORE_COMMAND_SPECS,
   ...ARTIFACT_COMMAND_SPECS,
   ...API_CLIENT_COMMAND_SPECS,
+  ...EXPLANATION_COMMAND_SPECS,
   ...SQL_CLIENT_COMMAND_SPECS,
   ...ACCOUNT_COMMAND_SPECS,
   ...PROJECT_COMMAND_SPECS,

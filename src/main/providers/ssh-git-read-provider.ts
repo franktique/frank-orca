@@ -111,16 +111,20 @@ export class SshGitReadProvider {
     worktreePath: string,
     filePath: string,
     staged: boolean,
-    compareAgainstHead?: boolean
+    compareAgainstHead?: boolean,
+    leftOid?: string
   ): Promise<GitDiffResult> {
+    // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: the dedupe wrapper returns the factory's result type.
     return this.gitDiffReadDedupe.run(
-      stableInFlightKey(['diff', worktreePath, filePath, staged, compareAgainstHead]),
+      stableInFlightKey(['diff', worktreePath, filePath, staged, compareAgainstHead, leftOid]),
       async () =>
+        // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: the relay's git.diff reply is a GitDiffResult.
         (await requestGitStreamable(this.mux, 'git.diff', {
           worktreePath,
           filePath,
           staged,
-          compareAgainstHead
+          compareAgainstHead,
+          ...(leftOid ? { leftOid } : {})
         })) as GitDiffResult
     ) as Promise<GitDiffResult>
   }
