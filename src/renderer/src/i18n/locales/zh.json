@@ -11741,6 +11741,57 @@
             "mayBeSlower": "可能较慢",
             "slowest": "最慢",
             "unlimited": "无限制"
+          },
+          "explanations": {
+            "base": {
+              "uncommittedOnly": "仅未提交的更改"
+            },
+            "card": {
+              "close": "关闭说明",
+              "detachedHeading": "已脱离",
+              "detachedHint": "这些说明所指向的代码已更改或已不存在。",
+              "outdated": "已过时"
+            },
+            "clear": {
+              "action": "清除说明",
+              "confirm": "清除",
+              "description": "该说明以及你就此提出的问题将被删除。评审备注会保留。",
+              "title": "清除此说明？"
+            },
+            "empty": "此工作区没有说明。",
+            "file": {
+              "noLongerChanged": "未更改"
+            },
+            "header": {
+              "adjusted": "已调整 {{total}} 个锚点",
+              "agent": "由 {{agent}} 说明",
+              "disconnected": "主机已断开连接，显示的是最后保存的说明",
+              "replaced": "已被更新的说明取代"
+            },
+            "legend": {
+              "focus": "仅显示更改 {{letter}} 的文件"
+            },
+            "nav": {
+              "next": "下一条说明",
+              "position": "{{label}} · 第 {{current}} 条，共 {{total}} 条",
+              "previous": "上一条说明"
+            },
+            "questions": {
+              "ask": "提问",
+              "askAgain": "编辑后再次提问",
+              "delete": "删除问题",
+              "discard": "放弃",
+              "newAgent": "新的智能体",
+              "placeholder": "就此更改向智能体提问",
+              "scope": "此问题",
+              "send": "发送",
+              "sentTo": "已发送至 {{target}} · {{time}}",
+              "writeFirst": "请先输入问题",
+              "noExplanation": "没有可提问的说明。"
+            },
+            "tab": "说明",
+            "unexplained": "无说明",
+            "unsupported": "此 Orca 主机不支持智能体说明。"
           }
         }
       },

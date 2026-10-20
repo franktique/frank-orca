@@ -1,3 +1,5 @@
+import type { editor } from 'monaco-editor'
+import type { ReactNode } from 'react'
 import type { LargeDiffRenderLimit } from './large-diff-render-limit'
 
 export type DiffViewerProps = {
@@ -28,4 +30,6 @@ export type DiffViewerProps = {
   // Why: main-process limited diffs intentionally blank text bodies before IPC;
   // the fallback must not treat that placeholder as a saveable draft.
   largeDiffSaveContentAvailable?: boolean
+  // Why: lets a diff source (agent explanations) draw on the mounted editor without DiffViewer knowing it.
+  renderEditorOverlay?: (diffEditor: editor.IStandaloneDiffEditor) => ReactNode
 }

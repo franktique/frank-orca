@@ -41,6 +41,7 @@ import { registerSettingsHandlers } from '../settings'
 import { registerDiagnosticsHandlers } from '../diagnostics'
 import { registerSkillsHandlers } from '../skills'
 import { registerApiClientHandlers } from '../api-client/api-client-ipc'
+import { registerExplanationHandlers } from '../agent-explanations/explanation-ipc'
 import { registerSkillDeleteIpcHandlers } from '../skill-delete/handlers'
 import { registerWorkspaceSpaceHandlers } from '../workspace-space'
 import { registerWorkspacePortHandlers } from '../workspace-ports'
@@ -206,6 +207,7 @@ export function registerCoreHandlers(
   registerEmulatorFrameStreamHandlers()
   registerEmulatorVideoStreamHandlers()
   registerApiClientHandlers(store)
+  registerExplanationHandlers(runtime)
   registerWorkspaceSpaceHandlers(store)
   registerWorkspacePortHandlers(store)
   registerLocalhostWorktreeLabelHandlers(store)

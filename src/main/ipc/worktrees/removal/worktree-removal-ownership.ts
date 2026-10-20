@@ -10,6 +10,7 @@ import { getRepoIdFromWorktreeId } from '../../../../shared/worktree/id'
 import { advertisedUrlWatcher } from '../../../ports/advertised-url-watcher'
 import { localhostWorktreeLabelProxy } from '../../../localhost-worktree-label-proxy'
 import { deleteWorktreeApiClientData } from '../../../api-client/api-client-data-deletion'
+import { deleteWorkspaceExplanation } from '../../../agent-explanations/explanation-data-deletion'
 import { deleteWorktreeHistoryDir } from '../../../terminal-history-deletion'
 import { pruneWorktreePRRefreshAliases } from '../../../github/pr-refresh-coordinator'
 import { recordWorkspaceCleanupRemovalSnapshotPrune } from '../../../workspace-cleanup-removal-snapshot-prune'
@@ -97,6 +98,7 @@ export function removeWorktreeMetadataAndTransientState(
     deleteWorktreeHistoryDir(worktreeId)
     // Why: API Client collections live in userData keyed by the same path-derived id.
     deleteWorktreeApiClientData(worktreeId)
+    deleteWorkspaceExplanation(worktreeId)
     // Why: release the removed worktree's PR-refresh aliases so coalesced queue entries don't retain it all session (memory creep).
     pruneWorktreePRRefreshAliases(worktreeId)
   }

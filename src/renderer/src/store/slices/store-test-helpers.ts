@@ -55,6 +55,7 @@ import { createApiClientDraftSlice } from './api-client-drafts'
 import { createApiClientExecutionSlice } from './api-client-execution'
 import { createApiClientRunnerSlice } from './api-client-runner'
 import { createQuickNotesSlice } from './quick-notes'
+import { createAgentExplanationsSlice } from './agent-explanations'
 import { translate } from '@/i18n/i18n'
 
 export const TEST_REPO = {
@@ -115,7 +116,8 @@ export function createTestStore() {
     ...createApiClientSlice(...a),
     ...createApiClientDraftSlice(...a),
     ...createApiClientExecutionSlice(...a),
-    ...createApiClientRunnerSlice(...a)
+    ...createApiClientRunnerSlice(...a),
+    ...createAgentExplanationsSlice(...a)
   }))
 }
 

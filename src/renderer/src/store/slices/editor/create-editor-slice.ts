@@ -14,6 +14,7 @@ import { createRestoredEditorOwner } from './actions/restored-editor-owner'
 import { createRekeyOpenFilesAction } from './actions/rekey-open-files-action'
 import { createOpenUnstagedDiff } from './actions/open-unstaged-diff'
 import { createOpenHistoryDiff } from './actions/open-history-diff'
+import { createOpenExplanationDiff } from './actions/open-explanation-diff'
 import { createOpenCombinedDiff } from './actions/open-combined-diff'
 import { createOpenConflictFile } from './actions/open-conflict-file'
 import { createOpenConflictReview } from './actions/open-conflict-review'
@@ -43,6 +44,7 @@ export const createEditorSlice: StateCreator<AppState, [], [], EditorSlice> = (s
   ...createRekeyOpenFilesAction(set, get),
   ...createOpenUnstagedDiff(set, get),
   ...createOpenHistoryDiff(set, get),
+  ...createOpenExplanationDiff(set, get),
   ...createOpenCombinedDiff(set, get),
   ...createOpenConflictFile(set, get),
   ...createOpenConflictReview(set, get),

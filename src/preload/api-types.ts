@@ -23,6 +23,7 @@ import type { CrashReportsApi, FeedbackApi } from './api/crash-report-api'
 import type { DashboardApi, TerminalPreviewApi } from './api/dashboard-api'
 import type { DocPreviewApi } from './api/doc-preview-api'
 import type { ApiClientApi } from './api/api-client-api'
+import type { ExplanationsApi } from './api/explanations-api'
 import type { EmulatorApi } from './api/emulator-api'
 import type { EphemeralVmApi } from './api/ephemeral-vm-api'
 import type { ExportApi, FilesystemApi } from './api/filesystem-api'
@@ -120,6 +121,7 @@ export type PreloadApi = {
   browser: BrowserApi
   emulator: EmulatorApi
   apiClient: ApiClientApi
+  explanations: ExplanationsApi
   hooks: HooksApi
   ephemeralVm: EphemeralVmApi
   cache: WorkspaceSessionApi['cache']
@@ -160,6 +162,7 @@ export type { AutomationsApi, ExternalAutomationManagerResult } from './api/auto
 export type { AppApi } from './api/app-api'
 export type { BrowserApi, DetectedBrowserInfo, DetectedBrowserProfileInfo } from './api/browser-api'
 export type { ApiClientApi } from './api/api-client-api'
+export type { ExplanationsApi } from './api/explanations-api'
 export type { EmulatorApi } from './api/emulator-api'
 export type { ExportApi } from './api/filesystem-api'
 export type {

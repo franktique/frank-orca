@@ -62,6 +62,8 @@ export type FileContent = {
 export type DiffContent = GitDiffResult & {
   /** Superseded by an external change; still rendered until the lazy reload lands. */
   isStale?: boolean
+  /** The read itself failed (e.g. host unreachable); the text body is only an error message. */
+  readFailed?: boolean
 }
 
 export type InFlightContentRead<T> = {

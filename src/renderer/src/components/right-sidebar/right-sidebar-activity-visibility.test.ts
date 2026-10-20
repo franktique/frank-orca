@@ -27,6 +27,14 @@ const items: ActivityBarItem[] = [
     gitOnly: true
   },
   { id: 'ports', icon: Files, title: 'Ports', shortcut: '', sshOnly: true },
+  {
+    id: 'explanations',
+    icon: Files,
+    title: 'Explanations',
+    shortcut: '',
+    gitOnly: true,
+    requiresExplanation: true
+  },
   // Plugin panels carry no visibility flags, so they show in every context.
   {
     id: 'plugin:orca-samples.my-plugin/dashboard',
@@ -42,7 +50,8 @@ describe('getVisibleRightSidebarActivityItems', () => {
       getVisibleRightSidebarActivityItems(items, {
         isFolder: false,
         isFolderWorkspace: false,
-        isSshRepo: false
+        isSshRepo: false,
+        hasExplanation: false
       }).map((item) => item.id)
     ).toEqual(['explorer', 'source-control', 'plugin:orca-samples.my-plugin/dashboard'])
 
@@ -50,7 +59,8 @@ describe('getVisibleRightSidebarActivityItems', () => {
       getVisibleRightSidebarActivityItems(items, {
         isFolder: false,
         isFolderWorkspace: false,
-        isSshRepo: true
+        isSshRepo: true,
+        hasExplanation: false
       }).map((item) => item.id)
     ).toEqual(['explorer', 'source-control', 'ports', 'plugin:orca-samples.my-plugin/dashboard'])
   })
@@ -60,7 +70,8 @@ describe('getVisibleRightSidebarActivityItems', () => {
       getVisibleRightSidebarActivityItems(items, {
         isFolder: true,
         isFolderWorkspace: true,
-        isSshRepo: true
+        isSshRepo: true,
+        hasExplanation: false
       }).map((item) => item.id)
     ).toEqual([
       'explorer',
@@ -74,8 +85,21 @@ describe('getVisibleRightSidebarActivityItems', () => {
       getVisibleRightSidebarActivityItems(items, {
         isFolder: true,
         isFolderWorkspace: false,
-        isSshRepo: true
+        isSshRepo: true,
+        hasExplanation: false
       }).map((item) => item.id)
     ).toEqual(['explorer', 'ports', 'plugin:orca-samples.my-plugin/dashboard'])
+  })
+
+  it('shows Explanations only for git workspaces that have an explanation', () => {
+    const base = { isFolder: false, isFolderWorkspace: false, isSshRepo: false }
+    const ids = (hasExplanation: boolean, isFolder = false): string[] =>
+      getVisibleRightSidebarActivityItems(items, { ...base, isFolder, hasExplanation }).map(
+        (item) => item.id
+      )
+
+    expect(ids(false)).not.toContain('explanations')
+    expect(ids(true)).toContain('explanations')
+    expect(ids(true, true)).not.toContain('explanations')
   })
 })

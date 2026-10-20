@@ -450,6 +450,63 @@ describe('ReviewNotesSendMenuContent', () => {
     expect(collectText(items[1])).toContain('Claude')
   })
 
+  it('lists the preferred pane first and reports the target it delivered to', async () => {
+    const paneKeyA = makePaneKey(TAB_A, LEAF_A)
+    const paneKeyB = makePaneKey(TAB_B, LEAF_B)
+    setStore({
+      tabsByWorktree: { 'wt-1': [tab(TAB_A, { title: 'First' }), tab(TAB_B, { title: 'Second' })] },
+      terminalLayoutsByTabId: {
+        [TAB_A]: leafLayout(LEAF_A, 'pty-a'),
+        [TAB_B]: leafLayout(LEAF_B, 'pty-b')
+      }
+    })
+    harness.noteTargets = [
+      {
+        paneKey: paneKeyA,
+        tabId: TAB_A,
+        leafId: LEAF_A,
+        agentType: 'claude',
+        tabTitle: 'First',
+        status: 'eligible'
+      },
+      {
+        paneKey: paneKeyB,
+        tabId: TAB_B,
+        leafId: LEAF_B,
+        agentType: 'codex',
+        tabTitle: 'Second',
+        status: 'eligible'
+      }
+    ]
+    const onPromptDelivered = vi.fn()
+
+    const tree = render({ preferredTargetPaneKey: paneKeyB, onPromptDelivered })
+    const items = findAllByType(tree, 'DropdownMenuItem')
+    expect(collectText(items[0])).toContain('Codex')
+    expect(collectText(items[1])).toContain('Claude')
+
+    // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: test double only needs the members the code under test reads.
+    ;(items[0].props.onSelect as () => void)()
+    await flushMicrotasks()
+    expect(onPromptDelivered).toHaveBeenCalledWith({ paneKey: paneKeyB, label: 'Codex' })
+  })
+
+  it('keeps the default order when the preferred pane is not a live agent', () => {
+    const paneKeyA = makePaneKey(TAB_A, LEAF_A)
+    harness.noteTargets = [
+      {
+        paneKey: paneKeyA,
+        tabId: TAB_A,
+        leafId: LEAF_A,
+        agentType: 'claude',
+        tabTitle: 'First',
+        status: 'eligible'
+      }
+    ]
+    const tree = render({ preferredTargetPaneKey: 'gone-pane' })
+    expect(findAllByType(tree, 'DropdownMenuItem')).toHaveLength(1)
+  })
+
   it('does not target title-detected rows skipped by target derivation', async () => {
     const paneKey = makePaneKey(TAB_B, LEAF_B)
     harness.worktreeAgentRows = [

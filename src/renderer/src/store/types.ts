@@ -49,6 +49,7 @@ import type { ApiClientDraftSlice } from './slices/api-client-drafts'
 import type { ApiClientExecutionSlice } from './slices/api-client-execution'
 import type { ApiClientRunnerSlice } from './slices/api-client-runner'
 import type { QuickNotesSlice } from './slices/quick-notes'
+import type { AgentExplanationsSlice } from './slices/agent-explanations'
 
 export type AppState = RepoSlice &
   SparsePresetsSlice &
@@ -98,4 +99,5 @@ export type AppState = RepoSlice &
   ApiClientSlice &
   ApiClientDraftSlice &
   ApiClientExecutionSlice &
-  ApiClientRunnerSlice
+  ApiClientRunnerSlice &
+  AgentExplanationsSlice

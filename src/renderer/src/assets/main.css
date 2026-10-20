@@ -3106,3 +3106,45 @@ html.native-shell .app-layout {
     inset 0 1px 0 0 color-mix(in srgb, var(--foreground) 5%, transparent),
     0 10px 24px rgba(0, 0, 0, 0.18);
 }
+
+/* Why: agent-explanation markers and the highlighted anchor range live inside Monaco, so they
+   need plain CSS. Colors are mixed from existing tokens (--primary, --ring) — no new palette. */
+.orca-explanation-marker {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 16px;
+  min-width: 16px;
+  padding: 0 4px;
+  border: 1px solid color-mix(in srgb, var(--primary) 52%, var(--border));
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--primary) 14%, var(--editor-surface));
+  color: var(--foreground);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.orca-explanation-marker:hover,
+.orca-explanation-marker[data-active='true'] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.orca-explanation-marker[data-state='outdated'] {
+  border-style: dashed;
+  background: color-mix(in srgb, var(--muted) 70%, var(--editor-surface));
+  color: var(--muted-foreground);
+}
+
+.orca-explanation-marker:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.monaco-editor .orca-explanation-range {
+  background: color-mix(in srgb, var(--ring) 16%, transparent);
+}

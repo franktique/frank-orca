@@ -13620,6 +13620,57 @@
             "sourceMissing": "Transcript is no longer available",
             "metadataMatch": "Match in session metadata",
             "sourceActionsUnavailable": "The transcript source is unavailable."
+          },
+          "explanations": {
+            "base": {
+              "uncommittedOnly": "uncommitted changes only"
+            },
+            "card": {
+              "close": "Close explanation",
+              "detachedHeading": "Detached",
+              "detachedHint": "The code these explanations pointed at has changed or is gone.",
+              "outdated": "Outdated"
+            },
+            "clear": {
+              "action": "Clear explanation",
+              "confirm": "Clear",
+              "description": "The explanation and any questions you asked about it are removed. Review notes are kept.",
+              "title": "Clear this explanation?"
+            },
+            "empty": "No explanation for this workspace.",
+            "file": {
+              "noLongerChanged": "unchanged"
+            },
+            "header": {
+              "adjusted": "{{total}} anchors were adjusted",
+              "agent": "Explained by {{agent}}",
+              "disconnected": "Host disconnected — showing the last saved explanation",
+              "replaced": "Replaced by a newer explanation"
+            },
+            "legend": {
+              "focus": "Show only the files in change {{letter}}"
+            },
+            "nav": {
+              "next": "Next explanation",
+              "position": "{{label}} · {{current}} of {{total}}",
+              "previous": "Previous explanation"
+            },
+            "questions": {
+              "ask": "Ask a question",
+              "askAgain": "Edit and ask again",
+              "delete": "Delete question",
+              "discard": "Discard",
+              "newAgent": "a new agent",
+              "placeholder": "Ask the agent about this change",
+              "scope": "This question",
+              "send": "Send",
+              "sentTo": "Sent to {{target}} · {{time}}",
+              "writeFirst": "Write a question first",
+              "noExplanation": "There is no explanation to ask about."
+            },
+            "tab": "Explanations",
+            "unexplained": "Unexplained",
+            "unsupported": "This Orca host does not support agent explanations."
           }
         }
       },

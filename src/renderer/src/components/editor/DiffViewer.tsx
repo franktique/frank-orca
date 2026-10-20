@@ -51,7 +51,8 @@ export default function DiffViewer({
   onContentChange,
   onSave,
   largeDiffRenderLimit,
-  largeDiffSaveContentAvailable
+  largeDiffSaveContentAvailable,
+  renderEditorOverlay
 }: DiffViewerProps): React.JSX.Element {
   const settings = useAppStore((s) => s.settings)
   const editorFontZoomLevel = useAppStore((s) => s.editorFontZoomLevel)
@@ -76,6 +77,9 @@ export default function DiffViewer({
   const diffBodyRef = useRef<HTMLDivElement | null>(null)
   const lineNumberOptionsSubRef = useRef<{ dispose: () => void } | null>(null)
   const [modifiedEditor, setModifiedEditor] = useState<editor.ICodeEditor | null>(null)
+  const [mountedDiffEditor, setMountedDiffEditor] = useState<editor.IStandaloneDiffEditor | null>(
+    null
+  )
   const [popover, setPopover] = useState<{
     lineNumber: number
     startLine?: number
@@ -175,6 +179,7 @@ export default function DiffViewer({
       unregisterDiffEditor(fallenBackEditor)
     }
     setModifiedEditor(null)
+    setMountedDiffEditor(null)
     setPopover(null)
   }, [unregisterDiffEditor])
 
@@ -246,6 +251,7 @@ export default function DiffViewer({
       setupCopy(originalEditor, monaco, filePath, propsRef)
       setupCopy(modifiedEditor, monaco, filePath, propsRef)
       setModifiedEditor(modifiedEditor)
+      setMountedDiffEditor(diffEditor)
 
       // Why: restore full diff view state (not just scrollTop) so cursor/selection stay consistent across both panes.
       const savedViewState = diffViewStateCache.get(modelKey)
@@ -287,6 +293,7 @@ export default function DiffViewer({
         diffEditorRef.current = null
         unregisterDiffEditor(diffEditor)
         setModifiedEditor(null)
+        setMountedDiffEditor(null)
         setPopover(null)
       })
     },
@@ -381,6 +388,9 @@ export default function DiffViewer({
             }}
           />
         )}
+        {mountedDiffEditor && !renderLimit.limited
+          ? renderEditorOverlay?.(mountedDiffEditor)
+          : null}
       </div>
       {toastNode}
     </div>

@@ -1,9 +1,15 @@
-import { mkdir, mkdtemp, readdir, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readdir, rm, utimes, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { hashWorktreeId } from '../terminal-history-id'
-import { API_CLIENT_GC_MIN_AGE_MS, runApiClientGc } from './api-client-data-gc'
+import {
+  API_CLIENT_GC_MIN_AGE_MS,
+  cancelApiClientGc,
+  flushApiClientGcForTests,
+  runApiClientGc,
+  scheduleApiClientGc
+} from './api-client-data-gc'
 import {
   cancelApiClientRemovalRetriesForTests,
   flushApiClientDeletionsForTests
@@ -76,5 +82,39 @@ describe('runApiClientGc', () => {
     await runApiClientGc(new Set(['other']), { root, now: () => NOW })
     await flushApiClientDeletionsForTests(root)
     expect(await readdir(getApiClientPendingDeleteRoot(root))).toEqual([])
+  })
+})
+
+describe('scheduleApiClientGc', () => {
+  it('sweeps the agent-explanations root with the same live set', async () => {
+    vi.useFakeTimers()
+    let explanationRoot = ''
+    try {
+      explanationRoot = await mkdtemp(join(tmpdir(), 'api-client-gc-expl-'))
+      const gone = join(explanationRoot, `${hashWorktreeId('gone')}.json`)
+      await writeFile(gone, '{}')
+      const old = new Date(NOW - API_CLIENT_GC_MIN_AGE_MS - 1)
+      await utimes(gone, old, old)
+
+      scheduleApiClientGc(async () => new Set(['live']), {
+        apiClientRoot: root,
+        explanationRoot,
+        now: () => NOW
+      })
+      await vi.advanceTimersByTimeAsync(10_000)
+      await flushApiClientGcForTests()
+      // Why: the GC chain only tombstones; the tombstone removal itself is async.
+      await flushApiClientDeletionsForTests(explanationRoot)
+
+      // The tombstone dir stays behind, empty, like the api-client root's own.
+      expect(await readdir(explanationRoot)).toEqual(['.pending-delete'])
+      expect(await readdir(join(explanationRoot, '.pending-delete'))).toEqual([])
+    } finally {
+      cancelApiClientGc()
+      vi.useRealTimers()
+      if (explanationRoot) {
+        await rm(explanationRoot, { recursive: true, force: true })
+      }
+    }
   })
 })

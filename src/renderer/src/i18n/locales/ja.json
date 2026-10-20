@@ -11661,6 +11661,57 @@
             "mayBeSlower": "遅くなる可能性あり",
             "slowest": "最も低速",
             "unlimited": "無制限"
+          },
+          "explanations": {
+            "base": {
+              "uncommittedOnly": "未コミットの変更のみ"
+            },
+            "card": {
+              "close": "説明を閉じる",
+              "detachedHeading": "切り離し済み",
+              "detachedHint": "これらの説明が指していたコードは変更されたか、存在しなくなりました。",
+              "outdated": "古い"
+            },
+            "clear": {
+              "action": "説明を消去",
+              "confirm": "消去",
+              "description": "説明と、それについてした質問が削除されます。レビューノートは保持されます。",
+              "title": "この説明を消去しますか？"
+            },
+            "empty": "このワークスペースには説明がありません。",
+            "file": {
+              "noLongerChanged": "変更なし"
+            },
+            "header": {
+              "adjusted": "{{total}} 件のアンカーを調整しました",
+              "agent": "{{agent}} による説明",
+              "disconnected": "ホストが切断されました。最後に保存された説明を表示しています",
+              "replaced": "より新しい説明に置き換えられました"
+            },
+            "legend": {
+              "focus": "変更 {{letter}} のファイルのみ表示"
+            },
+            "nav": {
+              "next": "次の説明",
+              "position": "{{label}} · {{current}} / {{total}}",
+              "previous": "前の説明"
+            },
+            "questions": {
+              "ask": "質問する",
+              "askAgain": "編集して再度質問",
+              "delete": "質問を削除",
+              "discard": "破棄",
+              "newAgent": "新しいエージェント",
+              "placeholder": "この変更についてエージェントに質問",
+              "scope": "この質問",
+              "send": "送信",
+              "sentTo": "{{target}} に送信済み · {{time}}",
+              "writeFirst": "先に質問を入力してください",
+              "noExplanation": "質問できる説明がありません。"
+            },
+            "tab": "説明",
+            "unexplained": "説明なし",
+            "unsupported": "この Orca ホストはエージェントの説明に対応していません。"
           }
         }
       },

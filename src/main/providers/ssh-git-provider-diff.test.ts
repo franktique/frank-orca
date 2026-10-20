@@ -39,6 +39,30 @@ describe('SshGitProvider', () => {
     expect(result).toEqual(diffResult)
   })
 
+  it('getDiff forwards leftOid only when given', async () => {
+    mux.request.mockResolvedValue({ kind: 'text', originalContent: '', modifiedContent: '' })
+    const mergeBase = 'a'.repeat(40)
+
+    await provider.getDiff('/home/user/repo', 'src/a.ts', false, false, mergeBase)
+    expect(mux.request).toHaveBeenLastCalledWith('git.diff', {
+      worktreePath: '/home/user/repo',
+      filePath: 'src/a.ts',
+      staged: false,
+      compareAgainstHead: false,
+      leftOid: mergeBase,
+      __streamResponse: true
+    })
+
+    await provider.getDiff('/home/user/repo', 'src/a.ts', false, false)
+    expect(mux.request).toHaveBeenLastCalledWith('git.diff', {
+      worktreePath: '/home/user/repo',
+      filePath: 'src/a.ts',
+      staged: false,
+      compareAgainstHead: false,
+      __streamResponse: true
+    })
+  })
+
   it('getBranchDiff sends git.branchDiff request', async () => {
     const diffs = [{ kind: 'text', originalContent: '', modifiedContent: 'new' }]
     mux.request.mockResolvedValue(diffs)

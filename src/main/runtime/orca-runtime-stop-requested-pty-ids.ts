@@ -18,6 +18,7 @@ import type { AgentBrowserBridge } from '../browser/agent-browser-bridge'
 import type { BrowserBackend } from '../browser/browser-backend'
 import type { EmulatorBridge } from '../emulator/emulator-bridge'
 import { RuntimeResolvedWorktreeCache } from './runtime-resolved-worktree-cache'
+import { forwardExplanationStoreEvents } from '../agent-explanations/explanation-client-events'
 import { RuntimeWorktreeLineageController } from './runtime-worktree-lineage-controller'
 import { RuntimeAgentOrchestrationProjection } from './runtime-agent-orchestration-projection'
 import { RuntimeTerminalList } from './runtime-terminal-list'
@@ -58,6 +59,9 @@ export class OrcaRuntimeWithStopRequestedPtyIds extends OrcaRuntimeWithRuntimeId
       this.makeDecorativeTitleGateKey(rawTitle, normalizedTitle),
     onConsumerAvailabilityChanged: () => this.refreshTerminalSideEffectConsumerAvailability()
   })
+
+  // Why: explanations live in a process-lifetime store, so one subscription serves the runtime.
+  protected readonly explanationStoreSubscription = forwardExplanationStoreEvents(this.clientEvents)
 
   protected readonly nativeChatDraftResolutions = new RuntimeNativeChatDraftResolutions({
     resolveOwner: (handle) => this.resolveNativeChatLaunchDraftOwner(handle),

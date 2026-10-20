@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { getDefaultUIState } from '../../../../shared/constants'
+import { AGENT_EXPLANATIONS_RUNTIME_CAPABILITY } from '../../../../shared/protocol-version'
 import { omitPairingLocalUiFields } from '../../../../shared/pairing-local-ui-fields'
 import {
   MAX_QUICK_COMMAND_AGENT_PROMPT_LENGTH,
@@ -20,6 +21,26 @@ function makeRequest(method: string, params?: unknown): RpcRequest {
 }
 
 describe('client UI RPC methods', () => {
+  it('shows Source Control to clients without agent-explanations.v1', async () => {
+    const ui: PersistedUIState = { ...getDefaultUIState(), rightSidebarTab: 'explanations' }
+    const runtime = {
+      getRuntimeId: () => 'test-runtime',
+      getUIState: vi.fn(() => ui)
+    } as unknown as OrcaRuntimeService
+    const dispatcher = new RpcDispatcher({ runtime, methods: CLIENT_UI_METHODS })
+
+    const legacy = await dispatcher.dispatch(makeRequest('ui.get'))
+    const current = await dispatcher.dispatch(makeRequest('ui.get'), {
+      clientCapabilities: [AGENT_EXPLANATIONS_RUNTIME_CAPABILITY]
+    })
+
+    expect(legacy).toMatchObject({
+      ok: true,
+      result: { ui: { rightSidebarTab: 'source-control' } }
+    })
+    expect(current).toMatchObject({ ok: true, result: { ui: { rightSidebarTab: 'explanations' } } })
+  })
+
   it('returns the runtime host agent settings needed by mobile create flows', async () => {
     const settings = {
       worktreeVisibilityDefaults: { external: 'show' as const },

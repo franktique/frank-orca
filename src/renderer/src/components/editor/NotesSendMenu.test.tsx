@@ -337,6 +337,23 @@ describe('NotesSendMenu', () => {
     })
   })
 
+  it('passes the preferred pane through and forwards the delivered target', () => {
+    const onDelivered = vi.fn()
+    const tree = renderMenu({ preferredTargetPaneKey: 'pane-1', onDelivered })
+    const content = findByType(tree, 'ReviewNotesSendMenuContent')
+    expect(content.props.preferredTargetPaneKey).toBe('pane-1')
+
+    // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: test double only needs the members the code under test reads.
+    ;(content.props.onPromptDelivered as (target?: { paneKey?: string; label: string }) => void)({
+      paneKey: 'pane-1',
+      label: 'Claude'
+    })
+    expect(onDelivered).toHaveBeenCalledWith([{ id: 'note-1' }], {
+      paneKey: 'pane-1',
+      label: 'Claude'
+    })
+  })
+
   it('switches running-agent target mode when a different scope is focused', () => {
     const tree = renderMenu({
       defaultScopeId: 'file',

@@ -46,6 +46,9 @@ export type RuntimeClientEvent =
       startup?: WorktreeStartupLaunch
       defaultTabs?: WorktreeDefaultTabsLaunch
     }
+  // Why host-gated to `agent-explanations.v1` clients: mixed host/client versions are
+  // normal, and paired clients update independently (remote-wire-compatibility).
+  | { type: 'explanationsChanged'; workspaceId: string; revision: number }
 
 export type RuntimeClientEventStreamMessage =
   | ({ type: 'ready'; subscriptionId: string } & {

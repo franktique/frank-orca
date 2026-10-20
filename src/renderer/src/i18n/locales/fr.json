@@ -12818,6 +12818,57 @@
             "90cabf6cfc": "Empiler cette PR au-dessus de #{{value0}}",
             "ff81473a57": "Crée une GitHub Stack ou étend la stack existante du parent.",
             "29732f2fb0": "nouvelle PR"
+          },
+          "explanations": {
+            "base": {
+              "uncommittedOnly": "modifications non validées uniquement"
+            },
+            "card": {
+              "close": "Fermer l'explication",
+              "detachedHeading": "Détachées",
+              "detachedHint": "Le code visé par ces explications a changé ou n'existe plus.",
+              "outdated": "Obsolète"
+            },
+            "clear": {
+              "action": "Effacer l'explication",
+              "confirm": "Effacer",
+              "description": "L'explication et les questions que vous avez posées à son sujet sont supprimées. Les notes de revue sont conservées.",
+              "title": "Effacer cette explication ?"
+            },
+            "empty": "Aucune explication pour cet espace de travail.",
+            "file": {
+              "noLongerChanged": "inchangé"
+            },
+            "header": {
+              "adjusted": "{{total}} ancres ont été ajustées",
+              "agent": "Expliqué par {{agent}}",
+              "disconnected": "Hôte déconnecté : affichage de la dernière explication enregistrée",
+              "replaced": "Remplacée par une explication plus récente"
+            },
+            "legend": {
+              "focus": "Afficher uniquement les fichiers du changement {{letter}}"
+            },
+            "nav": {
+              "next": "Explication suivante",
+              "position": "{{label}} · {{current}} sur {{total}}",
+              "previous": "Explication précédente"
+            },
+            "questions": {
+              "ask": "Poser une question",
+              "askAgain": "Modifier et reposer la question",
+              "delete": "Supprimer la question",
+              "discard": "Abandonner",
+              "newAgent": "un nouvel agent",
+              "placeholder": "Interrogez l'agent sur ce changement",
+              "scope": "Cette question",
+              "send": "Envoyer",
+              "sentTo": "Envoyée à {{target}} · {{time}}",
+              "writeFirst": "Écrivez d'abord une question",
+              "noExplanation": "Il n'y a aucune explication sur laquelle poser une question."
+            },
+            "tab": "Explications",
+            "unexplained": "Non expliqué",
+            "unsupported": "Cet hôte Orca ne prend pas en charge les explications de l'agent."
           }
         }
       },

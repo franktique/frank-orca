@@ -28,13 +28,17 @@ import { buildSubmoduleInnerCommitRangeDiff, buildSubmodulePointerDiff } from '.
 
 /**
  * Get original and modified content for diffing a file.
+ *
+ * `leftOid` generalizes `compareAgainstHead: true` (left = HEAD) to left = any
+ * commit, e.g. the merge-base behind explanation diffs (unstaged only).
  */
 export async function getDiff(
   worktreePath: string,
   filePath: string,
   staged: boolean,
   compareAgainstHead = false,
-  options: GitRuntimeOptions = {}
+  options: GitRuntimeOptions = {},
+  leftOid?: string
 ): Promise<GitDiffResult> {
   const readKey = stableInFlightKey([
     'diff',
@@ -42,6 +46,7 @@ export async function getDiff(
     filePath,
     staged,
     compareAgainstHead,
+    leftOid ?? '',
     ...gitRuntimeOptionsKey(options)
   ])
   // Why: register the dedupe synchronously (before any await) so concurrent identical reads
@@ -53,7 +58,8 @@ export async function getDiff(
       filePath,
       staged,
       compareAgainstHead,
-      options
+      options,
+      leftOid
     )
   )
 }
@@ -72,7 +78,8 @@ async function loadDiffThroughSettledCache(
   filePath: string,
   staged: boolean,
   compareAgainstHead: boolean,
-  options: GitRuntimeOptions
+  options: GitRuntimeOptions,
+  leftOid?: string
 ): Promise<GitDiffResult> {
   // Why before the stamp read: the stamp is itself several awaited stats, and a mutation that
   // lands entirely inside that window would otherwise leave the fence covering only the git read.
@@ -83,7 +90,14 @@ async function loadDiffThroughSettledCache(
   if (cached) {
     return cached
   }
-  const loaded = await loadDiff(worktreePath, filePath, staged, compareAgainstHead, options)
+  const loaded = await loadDiff(
+    worktreePath,
+    filePath,
+    staged,
+    compareAgainstHead,
+    options,
+    leftOid
+  )
   if (loaded.reusable) {
     settledDiffCache.set(readKey, stamp, loaded.result, readGeneration)
   }
@@ -102,7 +116,8 @@ async function loadDiff(
   filePath: string,
   staged: boolean,
   compareAgainstHead: boolean,
-  options: GitRuntimeOptions
+  options: GitRuntimeOptions,
+  leftOid?: string
 ): Promise<LoadedDiff> {
   // Why: gitlink paths can't be read as blobs, so route submodule diffs explicitly (root → pointer, inner → recurse).
   const submodulePaths = await listSubmodulePaths(worktreePath, options)
@@ -178,8 +193,8 @@ async function loadDiff(
       // Git can run in the distro against a raw Linux worktree path while Node reads it through Win32.
       const hostWorktreePath = resolveWorktreeHostPath(worktreePath, options)
       const [leftBlob, workingTreeBlob] = await Promise.all([
-        compareAgainstHead
-          ? readGitBlobAtOidPath(worktreePath, 'HEAD', filePath, options)
+        compareAgainstHead || leftOid
+          ? readGitBlobAtOidPath(worktreePath, leftOid ?? 'HEAD', filePath, options)
           : readUnstagedLeftBlob(worktreePath, filePath, options),
         hostWorktreePath
           ? readWorkingTreeFile(path.join(hostWorktreePath, filePath))

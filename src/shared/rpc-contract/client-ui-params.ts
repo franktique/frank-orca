@@ -44,6 +44,7 @@ export const STATIC_RIGHT_SIDEBAR_TABS = [
   'workspaces',
   'pr-checks',
   'source-control',
+  'explanations',
   'checks',
   'ports'
 ] as const
