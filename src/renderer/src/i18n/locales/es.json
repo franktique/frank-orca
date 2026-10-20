@@ -15281,5 +15281,159 @@
     "web": {
       "unavailable": "El API Client no está disponible en la web."
     }
+  },
+  "sqlClient": {
+    "pane": {
+      "resizeSplit": "Cambiar tamaño del editor y los resultados",
+      "draftTooLarge": "Esta consulta supera 1 MB, por lo que solo se conserva hasta que se cierre la pestaña."
+    },
+    "sidebar": {
+      "connections": "Conexiones",
+      "noConnections": "Aún no hay conexiones.",
+      "schema": "Esquema",
+      "savedQueries": "Consultas guardadas",
+      "noSavedQueries": "Aún no hay consultas guardadas.",
+      "selectConnection": "Seleccione una conexión para ver sus consultas guardadas.",
+      "schemaNoConnection": "Seleccione una conexión para explorar su esquema."
+    },
+    "tab": {
+      "newTab": "Nuevo SQL",
+      "localOnlyHint": "Solo worktrees locales",
+      "keywordSql": "sql",
+      "keywordPostgres": "postgres",
+      "keywordDatabase": "base de datos",
+      "keywordQuery": "consulta",
+      "title": "SQL"
+    },
+    "status": {
+      "connected": "Conectado",
+      "connecting": "Conectando",
+      "idle": "Sin conexión"
+    },
+    "editor": {
+      "run": "Ejecutar consulta",
+      "label": "Editor SQL"
+    },
+    "footer": {
+      "rows": "{{count}} filas",
+      "affected": "{{count}} filas afectadas",
+      "elapsed": "{{ms}} ms",
+      "rowCap": "Limitado a 1000 filas: añada LIMIT para cambiarlo",
+      "sizeLimit": "Se alcanzó el límite de tamaño (50 MB); se muestran las filas cargadas hasta ahora"
+    },
+    "results": {
+      "empty": "Ejecute una consulta con {{shortcut}} o F5",
+      "running": "Ejecutando… {{seconds}} s",
+      "commandDone": "{{command}} completado",
+      "affected": "{{count}} filas afectadas",
+      "cancelled": "Consulta cancelada",
+      "sqlstate": "SQLSTATE",
+      "position": "Posición",
+      "detail": "Detalle",
+      "hint": "Sugerencia",
+      "failedStatement": "La instrucción {{number}} falló:",
+      "nothingApplied": "No se aplicó nada.",
+      "alreadyRanOne": "La instrucción 1 ya se ejecutó.",
+      "alreadyRan": "Las instrucciones 1–{{count}} ya se ejecutaron."
+    },
+    "toolbar": {
+      "cancel": "Cancelar",
+      "connection": "Conexión",
+      "noConnection": "Sin conexión",
+      "new": "Nuevo",
+      "run": "Ejecutar",
+      "runHint": "Ejecutar la selección o todo",
+      "selectConnection": "Seleccione una conexión para ejecutar"
+    },
+    "grid": {
+      "copiedCell": "Celda copiada",
+      "copiedRange": "Copiadas {{rows}} filas y {{columns}} columnas",
+      "label": "Resultados de la consulta",
+      "copyFailed": "No se pudo copiar",
+      "null": "NULL"
+    },
+    "connection": {
+      "deleteTitle": "¿Eliminar esta conexión?",
+      "deleteDescription": "Se eliminarán «{{name}}», sus {{queries}} consultas guardadas y {{collections}} colecciones. Las pestañas SQL abiertas conservan su texto.",
+      "required": "Obligatorio",
+      "tooLong": "Máximo {{max}} caracteres",
+      "invalidPort": "Introduzca un puerto de 1 a 65535",
+      "testOk": "Conectado a PostgreSQL {{version}}",
+      "editTitle": "Editar conexión",
+      "addTitle": "Añadir conexión",
+      "description": "Conexión PostgreSQL, guardada para todos los worktrees de este proyecto.",
+      "name": "Nombre",
+      "host": "Host",
+      "port": "Puerto",
+      "user": "Usuario",
+      "password": "Contraseña",
+      "passwordUnchanged": "Sin cambios",
+      "needsReentry": "La contraseña guardada ya no se puede leer. Introdúzcala de nuevo.",
+      "noEncryption": "Este equipo no puede cifrar contraseñas, por lo que la contraseña solo se conserva hasta que Orca se cierre.",
+      "database": "Base de datos",
+      "sslMode": "Modo SSL",
+      "sslDisable": "Desactivar",
+      "sslPrefer": "Preferir",
+      "sslRequire": "Requerir",
+      "test": "Probar conexión",
+      "disconnect": "Desconectar",
+      "connect": "Conectar",
+      "edit": "Editar",
+      "add": "Añadir conexión"
+    },
+    "common": {
+      "cancel": "Cancelar",
+      "delete": "Eliminar",
+      "save": "Guardar"
+    },
+    "saved": {
+      "needConnection": "Seleccione una conexión para guardar una consulta",
+      "moveTitle": "Mover a la colección",
+      "collection": "Colección",
+      "noCollection": "Sin colección",
+      "move": "Mover",
+      "deleteQueryTitle": "¿Eliminar esta consulta?",
+      "deleteQueryDescription": "Se eliminará «{{name}}».",
+      "deleteCollectionTitle": "¿Eliminar esta colección?",
+      "deleteCollectionEmpty": "«{{name}}» está vacía.",
+      "deleteCollectionDescription": "«{{name}}» contiene {{count}} consultas guardadas. Consérvelas sin colección o elimínelas también.",
+      "keepQueries": "Conservar consultas",
+      "deleteQueriesToo": "Eliminar también las consultas",
+      "unsavedTitle": "Cambios sin guardar",
+      "unsavedDescription": "La consulta actual tiene cambios sin guardar. ¿Guardarlos antes de abrir otra consulta?",
+      "discard": "Descartar",
+      "queryActions": "Acciones de la consulta",
+      "rename": "Renombrar",
+      "moveTo": "Mover a la colección…",
+      "collectionActions": "Acciones de la colección",
+      "newCollectionButton": "Nueva colección",
+      "renameQueryTitle": "Renombrar consulta",
+      "name": "Nombre",
+      "newCollectionTitle": "Nueva colección",
+      "create": "Crear",
+      "renameCollectionTitle": "Renombrar colección",
+      "saveTitle": "Guardar consulta",
+      "saveDescription": "Se guarda bajo la conexión seleccionada.",
+      "newCollection": "Nueva colección…",
+      "newCollectionName": "Nombre de la nueva colección",
+      "unsaved": "Cambios sin guardar",
+      "save": "Guardar",
+      "saveHint": "Guardar",
+      "saveAsHint": "Guardar como nueva",
+      "conflict": "Esta consulta se modificó en otro lugar. Vuelva a cargarla o guárdela como una consulta nueva."
+    },
+    "schema": {
+      "table": "tabla",
+      "view": "vista",
+      "materializedView": "vista mat.",
+      "partitionedTable": "particionada",
+      "foreignTable": "foránea",
+      "notNull": "no nulo",
+      "copyName": "Copiar nombre",
+      "noRelations": "Sin tablas ni vistas",
+      "connectFirst": "Conéctese para explorar el esquema.",
+      "refresh": "Actualizar esquema",
+      "primaryKey": "PK"
+    }
   }
 }

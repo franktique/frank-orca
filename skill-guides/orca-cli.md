@@ -246,4 +246,5 @@ This guide covers worktrees, terminals, and handoffs on its own. At a gate below
 | Creating, editing, running, or inspecting scheduled automations                                                 | `references/automations.md`      |
 | Publishing or revoking an artifact link, or publishing installed skills                                         | `references/publishing.md`       |
 | Listing, running, or inspecting API Client requests, collections, or environments                               | `references/api-client.md`       |
+| Listing or running SQL on the project's PostgreSQL connections, or listing saved SQL queries                    | `references/sql-client.md`       |
 | Mobile emulator taps, gestures, typing, buttons, camera, or permissions                                         | invoke the `orca-emulator` skill |

@@ -16824,5 +16824,159 @@
     "web": {
       "unavailable": "L'API Client n'est pas disponible sur le web."
     }
+  },
+  "sqlClient": {
+    "pane": {
+      "resizeSplit": "Redimensionner l’éditeur et les résultats",
+      "draftTooLarge": "Cette requête dépasse 1 Mo ; elle n’est conservée que jusqu’à la fermeture de l’onglet."
+    },
+    "sidebar": {
+      "connections": "Connexions",
+      "noConnections": "Aucune connexion pour le moment.",
+      "schema": "Schéma",
+      "savedQueries": "Requêtes enregistrées",
+      "noSavedQueries": "Aucune requête enregistrée pour le moment.",
+      "selectConnection": "Sélectionnez une connexion pour voir ses requêtes enregistrées.",
+      "schemaNoConnection": "Sélectionnez une connexion pour parcourir son schéma."
+    },
+    "tab": {
+      "newTab": "Nouveau SQL",
+      "localOnlyHint": "Worktrees locaux uniquement",
+      "keywordSql": "sql",
+      "keywordPostgres": "postgres",
+      "keywordDatabase": "base de données",
+      "keywordQuery": "requête",
+      "title": "SQL"
+    },
+    "status": {
+      "connected": "Connecté",
+      "connecting": "Connexion en cours",
+      "idle": "Non connecté"
+    },
+    "editor": {
+      "run": "Exécuter la requête",
+      "label": "Éditeur SQL"
+    },
+    "footer": {
+      "rows": "{{count}} lignes",
+      "affected": "{{count}} lignes affectées",
+      "elapsed": "{{ms}} ms",
+      "rowCap": "Limité à 1000 lignes — ajoutez LIMIT pour modifier",
+      "sizeLimit": "Limite de taille (50 Mo) atteinte ; affichage des lignes déjà chargées"
+    },
+    "results": {
+      "empty": "Exécutez une requête avec {{shortcut}} ou F5",
+      "running": "Exécution… {{seconds}} s",
+      "commandDone": "{{command}} terminé",
+      "affected": "{{count}} lignes affectées",
+      "cancelled": "Requête annulée",
+      "sqlstate": "SQLSTATE",
+      "position": "Position",
+      "detail": "Détail",
+      "hint": "Indice",
+      "failedStatement": "L’instruction {{number}} a échoué :",
+      "nothingApplied": "Rien n’a été appliqué.",
+      "alreadyRanOne": "L’instruction 1 a déjà été exécutée.",
+      "alreadyRan": "Les instructions 1–{{count}} ont déjà été exécutées."
+    },
+    "toolbar": {
+      "cancel": "Annuler",
+      "connection": "Connexion",
+      "noConnection": "Aucune connexion",
+      "new": "Nouveau",
+      "run": "Exécuter",
+      "runHint": "Exécuter la sélection ou tout",
+      "selectConnection": "Sélectionnez une connexion pour exécuter"
+    },
+    "grid": {
+      "copiedCell": "Cellule copiée",
+      "copiedRange": "{{rows}} lignes et {{columns}} colonnes copiées",
+      "label": "Résultats de la requête",
+      "copyFailed": "Échec de la copie",
+      "null": "NULL"
+    },
+    "connection": {
+      "deleteTitle": "Supprimer cette connexion ?",
+      "deleteDescription": "« {{name}} », ses {{queries}} requêtes enregistrées et ses {{collections}} collections seront supprimées. Les onglets SQL ouverts conservent leur texte.",
+      "required": "Obligatoire",
+      "tooLong": "{{max}} caractères maximum",
+      "invalidPort": "Saisissez un port de 1 à 65535",
+      "testOk": "Connecté à PostgreSQL {{version}}",
+      "editTitle": "Modifier la connexion",
+      "addTitle": "Ajouter une connexion",
+      "description": "Connexion PostgreSQL, enregistrée pour tous les worktrees de ce projet.",
+      "name": "Nom",
+      "host": "Hôte",
+      "port": "Port",
+      "user": "Utilisateur",
+      "password": "Mot de passe",
+      "passwordUnchanged": "Inchangé",
+      "needsReentry": "Le mot de passe enregistré n’est plus lisible. Saisissez-le à nouveau.",
+      "noEncryption": "Cet ordinateur ne peut pas chiffrer les mots de passe ; le mot de passe n’est conservé que jusqu’à la fermeture d’Orca.",
+      "database": "Base de données",
+      "sslMode": "Mode SSL",
+      "sslDisable": "Désactiver",
+      "sslPrefer": "Préférer",
+      "sslRequire": "Exiger",
+      "test": "Tester la connexion",
+      "disconnect": "Déconnecter",
+      "connect": "Connecter",
+      "edit": "Modifier",
+      "add": "Ajouter une connexion"
+    },
+    "common": {
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "save": "Enregistrer"
+    },
+    "saved": {
+      "needConnection": "Sélectionnez une connexion pour enregistrer une requête",
+      "moveTitle": "Déplacer vers la collection",
+      "collection": "Collection",
+      "noCollection": "Aucune collection",
+      "move": "Déplacer",
+      "deleteQueryTitle": "Supprimer cette requête ?",
+      "deleteQueryDescription": "« {{name}} » sera supprimée.",
+      "deleteCollectionTitle": "Supprimer cette collection ?",
+      "deleteCollectionEmpty": "« {{name}} » est vide.",
+      "deleteCollectionDescription": "« {{name}} » contient {{count}} requêtes enregistrées. Conservez-les sans collection ou supprimez-les aussi.",
+      "keepQueries": "Conserver les requêtes",
+      "deleteQueriesToo": "Supprimer aussi les requêtes",
+      "unsavedTitle": "Modifications non enregistrées",
+      "unsavedDescription": "La requête actuelle contient des modifications non enregistrées. Les enregistrer avant d’ouvrir une autre requête ?",
+      "discard": "Ignorer",
+      "queryActions": "Actions de la requête",
+      "rename": "Renommer",
+      "moveTo": "Déplacer vers la collection…",
+      "collectionActions": "Actions de la collection",
+      "newCollectionButton": "Nouvelle collection",
+      "renameQueryTitle": "Renommer la requête",
+      "name": "Nom",
+      "newCollectionTitle": "Nouvelle collection",
+      "create": "Créer",
+      "renameCollectionTitle": "Renommer la collection",
+      "saveTitle": "Enregistrer la requête",
+      "saveDescription": "Enregistrée sous la connexion sélectionnée.",
+      "newCollection": "Nouvelle collection…",
+      "newCollectionName": "Nom de la nouvelle collection",
+      "unsaved": "Modifications non enregistrées",
+      "save": "Enregistrer",
+      "saveHint": "Enregistrer",
+      "saveAsHint": "Enregistrer comme nouvelle",
+      "conflict": "Cette requête a été modifiée ailleurs. Rechargez-la ou enregistrez-la comme nouvelle requête."
+    },
+    "schema": {
+      "table": "table",
+      "view": "vue",
+      "materializedView": "vue mat.",
+      "partitionedTable": "partitionnée",
+      "foreignTable": "distante",
+      "notNull": "non nul",
+      "copyName": "Copier le nom",
+      "noRelations": "Aucune table ni vue",
+      "connectFirst": "Connectez-vous pour parcourir le schéma.",
+      "refresh": "Actualiser le schéma",
+      "primaryKey": "PK"
+    }
   }
 }

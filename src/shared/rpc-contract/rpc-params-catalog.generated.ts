@@ -478,6 +478,7 @@ import {
   DictationStart,
   SpeechModelAction
 } from './speech-params'
+import { SqlConnectionsParams, SqlQueriesParams, SqlRunParams } from './sql-client-params'
 import { SshTarget } from './ssh-params'
 import {
   AttachParams,
@@ -1136,6 +1137,9 @@ export const RPC_PARAMS_BY_METHOD = {
   'speech.models.delete': SpeechModelAction,
   'speech.models.download': SpeechModelAction,
   'speech.models.list': null,
+  'sql.connections': SqlConnectionsParams,
+  'sql.queries': SqlQueriesParams,
+  'sql.run': SqlRunParams,
   'ssh.connect': SshTarget,
   'ssh.getState': SshTarget,
   'ssh.listRemovedTargetLabels': null,

@@ -82,6 +82,9 @@ export function activateCyclableTab(store: AppStoreState, next: TypeCyclableTab)
   } else if (next.type === 'api-client') {
     store.activateTab?.(next.tabId ?? next.id)
     store.setActiveTabType('api-client')
+  } else if (next.type === 'sql') {
+    store.activateTab?.(next.tabId ?? next.id)
+    store.setActiveTabType('sql')
   } else if (next.type === 'agent-session') {
     if (next.tabId) {
       store.activateTab?.(next.tabId)

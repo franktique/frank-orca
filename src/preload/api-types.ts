@@ -24,6 +24,7 @@ import type { DashboardApi, TerminalPreviewApi } from './api/dashboard-api'
 import type { DocPreviewApi } from './api/doc-preview-api'
 import type { ApiClientApi } from './api/api-client-api'
 import type { ExplanationsApi } from './api/explanations-api'
+import type { SqlClientApi } from './api/sql-client-api'
 import type { EmulatorApi } from './api/emulator-api'
 import type { EphemeralVmApi } from './api/ephemeral-vm-api'
 import type { ExportApi, FilesystemApi } from './api/filesystem-api'
@@ -122,6 +123,7 @@ export type PreloadApi = {
   emulator: EmulatorApi
   apiClient: ApiClientApi
   explanations: ExplanationsApi
+  sqlClient: SqlClientApi
   hooks: HooksApi
   ephemeralVm: EphemeralVmApi
   cache: WorkspaceSessionApi['cache']
@@ -163,6 +165,7 @@ export type { AppApi } from './api/app-api'
 export type { BrowserApi, DetectedBrowserInfo, DetectedBrowserProfileInfo } from './api/browser-api'
 export type { ApiClientApi } from './api/api-client-api'
 export type { ExplanationsApi } from './api/explanations-api'
+export type { SqlClientApi } from './api/sql-client-api'
 export type { EmulatorApi } from './api/emulator-api'
 export type { ExportApi } from './api/filesystem-api'
 export type {

@@ -1,4 +1,6 @@
 import type { BrowserWindow } from 'electron'
+import { deleteProjectSqlData } from '../../sql-client/sql-client-data-deletion'
+import { sqlProjectKeyForRepo } from '../../sql-client/sql-project-key'
 import { ipcMain } from 'electron'
 import type { Store } from '../../persistence'
 import type { Repo } from '../../../shared/repo-types'
@@ -178,6 +180,7 @@ export function registerProjectHostSetupHandlers(mainWindow: BrowserWindow, stor
         // Why: an import that cannot be linked must not leave a new repo registration or authorization root behind.
         if (!result.alreadyExisted) {
           store.removeProject(result.repo.id)
+          deleteProjectSqlData(sqlProjectKeyForRepo(result.repo.id))
           invalidateAuthorizedRootsCache()
         }
         throw err

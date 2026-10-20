@@ -54,8 +54,11 @@ import { createApiClientSlice } from './api-client'
 import { createApiClientDraftSlice } from './api-client-drafts'
 import { createApiClientExecutionSlice } from './api-client-execution'
 import { createApiClientRunnerSlice } from './api-client-runner'
+import { createSqlClientSlice } from './sql-client'
+import { createSqlClientRunSlice } from './sql-client-run'
 import { createQuickNotesSlice } from './quick-notes'
 import { createAgentExplanationsSlice } from './agent-explanations'
+import { createQuickLinksSlice } from './quick-links'
 import { translate } from '@/i18n/i18n'
 
 export const TEST_REPO = {
@@ -113,11 +116,14 @@ export function createTestStore() {
     ...createRemoteServerUpdatesSlice(...a),
     ...createTerminalQuickCommandHostsSlice(...a),
     ...createQuickNotesSlice(...a),
+    ...createQuickLinksSlice(...a),
     ...createApiClientSlice(...a),
     ...createApiClientDraftSlice(...a),
     ...createApiClientExecutionSlice(...a),
     ...createApiClientRunnerSlice(...a),
-    ...createAgentExplanationsSlice(...a)
+    ...createAgentExplanationsSlice(...a),
+    ...createSqlClientSlice(...a),
+    ...createSqlClientRunSlice(...a)
   }))
 }
 

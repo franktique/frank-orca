@@ -91,8 +91,12 @@ export function selectFloatingVisibleTabCount(state: FloatingVisibleTabCountStat
       count += terminalIds.has(tab.entityId) ? 1 : 0
     } else if (tab.contentType === 'browser') {
       count += browserIds.has(tab.entityId) ? 1 : 0
-    } else if (tab.contentType === 'simulator' || tab.contentType === 'api-client') {
-      // Why: simulator/api-client unified tabs have no separate backing record; the tab
+    } else if (
+      tab.contentType === 'simulator' ||
+      tab.contentType === 'api-client' ||
+      tab.contentType === 'sql'
+    ) {
+      // Why: simulator/api-client/sql unified tabs have no separate backing record; the tab
       // itself is the visible floating workspace item.
       count += 1
     } else {

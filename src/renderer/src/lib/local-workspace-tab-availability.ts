@@ -7,16 +7,16 @@ import { getRuntimeEnvironmentIdForWorktree } from './worktree-runtime-owner'
 import { getActiveExecutionHostIdForWorktree } from './unified-tab-host-ownership'
 
 /**
- * `remote` stays visible but disabled (FR-001a): the data and the requests live on this
+ * `remote` stays visible but disabled (FR-001a): the data and the work live on this
  * machine, so SSH and remote-runtime workspaces cannot use it. `hidden` is a surface that
  * has no main process to talk to.
  */
-export type ApiClientAvailability = 'available' | 'remote' | 'hidden'
+export type LocalWorkspaceTabAvailability = 'available' | 'remote' | 'hidden'
 
-export function getApiClientAvailability(
+export function getLocalWorkspaceTabAvailability(
   state: AppState,
   worktreeId: string | null
-): ApiClientAvailability {
+): LocalWorkspaceTabAvailability {
   if (!worktreeId || worktreeId === FLOATING_TERMINAL_WORKTREE_ID || isPairedWebClientWindow()) {
     return 'hidden'
   }

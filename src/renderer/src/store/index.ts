@@ -47,11 +47,14 @@ import { createTaskCreationDraftsSlice } from './slices/task-creation-drafts'
 import { createRemoteServerUpdatesSlice } from './slices/remote-server-updates'
 import { createTerminalQuickCommandHostsSlice } from './slices/terminal-quick-command-hosts'
 import { createApiClientSlice } from './slices/api-client'
+import { createSqlClientSlice } from './slices/sql-client'
+import { createSqlClientRunSlice } from './slices/sql-client-run'
 import { createApiClientDraftSlice } from './slices/api-client-drafts'
 import { createApiClientExecutionSlice } from './slices/api-client-execution'
 import { createApiClientRunnerSlice } from './slices/api-client-runner'
 import { createQuickNotesSlice } from './slices/quick-notes'
 import { createAgentExplanationsSlice } from './slices/agent-explanations'
+import { createQuickLinksSlice } from './slices/quick-links'
 import { e2eConfig } from '@/lib/e2e-config'
 import type { createWebRuntimeSessionTerminal } from '@/runtime/web-runtime-session'
 import {
@@ -126,11 +129,14 @@ export const useAppStore = create<AppState>()(
         ...createRemoteServerUpdatesSlice(...a),
         ...createTerminalQuickCommandHostsSlice(...a),
         ...createQuickNotesSlice(...a),
+        ...createQuickLinksSlice(...a),
         ...createApiClientSlice(...a),
         ...createApiClientDraftSlice(...a),
         ...createApiClientExecutionSlice(...a),
         ...createApiClientRunnerSlice(...a),
-        ...createAgentExplanationsSlice(...a)
+        ...createAgentExplanationsSlice(...a),
+        ...createSqlClientSlice(...a),
+        ...createSqlClientRunSlice(...a)
       }
     })
   )

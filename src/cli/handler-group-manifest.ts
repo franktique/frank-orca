@@ -147,6 +147,11 @@ export const HANDLER_GROUPS: readonly HandlerGroup[] = [
     load: async () => (await import('./handlers/explanation.js')).EXPLANATION_HANDLERS
   },
   {
+    name: 'sql-client',
+    keys: ['sql connections', 'sql queries', 'sql run'],
+    load: async () => (await import('./handlers/sql-client.js')).SQL_CLIENT_HANDLERS
+  },
+  {
     name: 'emulator',
     keys: [
       'emulator list',

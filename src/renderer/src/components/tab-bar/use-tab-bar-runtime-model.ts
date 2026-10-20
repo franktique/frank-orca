@@ -31,7 +31,10 @@ import { DEFAULT_DISABLED_TUI_AGENTS } from '../../../../shared/tui-agent-select
 import { shouldShowWindowsShellMenu } from './windows-shell-menu-visibility'
 import { createUnifiedTabLookup } from './tab-bar-item-model'
 import { getClientCreationActionPolicy } from '@/lib/client-creation-action-policy'
-import { getApiClientAvailability, type ApiClientAvailability } from '@/lib/api-client-availability'
+import {
+  getLocalWorkspaceTabAvailability,
+  type LocalWorkspaceTabAvailability
+} from '@/lib/local-workspace-tab-availability'
 
 const isWindows = navigator.userAgent.includes('Windows')
 export const isMacOs = navigator.userAgent.includes('Mac')
@@ -88,7 +91,7 @@ export type TabBarRuntimeModel = {
   nativeChatTranscriptIsLocalReadable: boolean
   managedBrowserCreationEnabled: boolean
   mobileEmulatorCreationEnabled: boolean
-  apiClientAvailability: ApiClientAvailability
+  localWorkspaceTabAvailability: LocalWorkspaceTabAvailability
 } & TabBarAgentProjections
 
 export function useTabBarRuntimeModel({
@@ -249,7 +252,9 @@ export function useTabBarRuntimeModel({
       ] as const
     })
   )
-  const apiClientAvailability = useAppStore((state) => getApiClientAvailability(state, worktreeId))
+  const localWorkspaceTabAvailability = useAppStore((state) =>
+    getLocalWorkspaceTabAvailability(state, worktreeId)
+  )
   // Why: tab-wide launch/title hints are safe only before split; gate the view-mode toggle to the active leaf's agent.
   const toggleTabViewMode = useAppStore((s) => s.toggleTabViewMode)
   // Why: every retained TabBar observes the same hot maps; one feature-gated selector shares their projections.
@@ -288,6 +293,6 @@ export function useTabBarRuntimeModel({
     nativeChatTranscriptIsLocalReadable,
     managedBrowserCreationEnabled,
     mobileEmulatorCreationEnabled,
-    apiClientAvailability
+    localWorkspaceTabAvailability
   }
 }

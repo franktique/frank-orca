@@ -8,8 +8,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type * as ReposChangedNotificationModule from './repos/repos-changed-notification'
 
-const { handleMock, mockStore } = vi.hoisted(() => ({
+const { handleMock, mockStore, deleteProjectSqlDataMock } = vi.hoisted(() => ({
   handleMock: vi.fn(),
+  deleteProjectSqlDataMock: vi.fn(),
   mockStore: {
     getRepos: vi.fn().mockReturnValue([]),
     getRepo: vi.fn(),
@@ -35,6 +36,9 @@ vi.mock('../git/repo', () => ({
   filterBaseRefSearchOutput: vi.fn().mockReturnValue([])
 }))
 
+vi.mock('../sql-client/sql-client-data-deletion', () => ({
+  deleteProjectSqlData: deleteProjectSqlDataMock
+}))
 vi.mock('./registered-worktree-roots-cache', () => ({ invalidateAuthorizedRootsCache: vi.fn() }))
 vi.mock('../providers/ssh-git-dispatch', () => ({ getSshGitProvider: vi.fn() }))
 vi.mock('./ssh', () => ({ getActiveMultiplexer: vi.fn() }))
@@ -68,6 +72,8 @@ beforeEach(() => {
   mainWindow.webContents.send.mockReset()
   mockStore.removeProject.mockReset()
   mockStore.removeProjectForHost.mockReset()
+  mockStore.getRepos.mockReset().mockReturnValue([])
+  deleteProjectSqlDataMock.mockReset()
   mockStore.reorderRepos.mockReset().mockReturnValue(true)
 })
 
@@ -90,6 +96,31 @@ describe('repo IPC mutations notify paired clients', () => {
 
     expect(mockStore.removeProjectForHost).toHaveBeenCalledWith('repo-1', 'ssh:host-1')
     expect(notify).toHaveBeenCalledTimes(1)
+  })
+
+  it('deletes the project SQL data when a project is removed', async () => {
+    await registerHandlersWithNotifier(vi.fn())
+
+    await handlers.get('repos:remove')!(null, { repoId: 'repo-1' })
+
+    expect(deleteProjectSqlDataMock).toHaveBeenCalledWith('repo:repo-1')
+  })
+
+  it('keeps the SQL data while another host still has the repo', async () => {
+    mockStore.getRepos.mockReturnValue([{ id: 'repo-1' }])
+    await registerHandlersWithNotifier(vi.fn())
+
+    await handlers.get('repos:removeForHost')!(null, { repoId: 'repo-1', hostId: 'ssh:host-1' })
+
+    expect(deleteProjectSqlDataMock).not.toHaveBeenCalled()
+  })
+
+  it('deletes the SQL data once removeForHost drops the last host copy', async () => {
+    await registerHandlersWithNotifier(vi.fn())
+
+    await handlers.get('repos:removeForHost')!(null, { repoId: 'repo-1', hostId: 'ssh:host-1' })
+
+    expect(deleteProjectSqlDataMock).toHaveBeenCalledWith('repo:repo-1')
   })
 
   it('broadcasts for non-removal mutations too, via the shared helper', async () => {

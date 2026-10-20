@@ -22,6 +22,20 @@ jobs:
         shard: [1, 2, 3, 4, 5, 6, 7, 8]
         shard_total: [8]
 
+    # Why: sql-integration suites run against a real PostgreSQL and skip when this is unset.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: orca-test-pw
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -44,6 +58,7 @@ jobs:
         env:
           ORCA_BALANCE_UNIT_SHARDS: '1'
           ORCA_BACKGROUND_LAUNCH: '1'
+          ORCA_TEST_PG_URL: postgres://postgres:orca-test-pw@localhost:5432/postgres
         run: |
           export ORCA_SHARD_SOURCE_SHA="$(git rev-parse HEAD)"
           pnpm exec vitest run --config config/vitest.config.ts \

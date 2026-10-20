@@ -18,6 +18,7 @@ describe('tab create menu options', () => {
     hasNewMarkdown: true,
     hasOpenMarkdown: true,
     hasApiClient: false,
+    hasSql: false,
     hasSimulator: true,
     simulatorIsGoTo: false
   })
@@ -37,6 +38,7 @@ describe('tab create menu options', () => {
       hasNewMarkdown: true,
       hasOpenMarkdown: false,
       hasApiClient: false,
+      hasSql: false,
       hasSimulator: true,
       simulatorIsGoTo: true
     })
@@ -62,6 +64,7 @@ describe('tab create menu options', () => {
       hasNewMarkdown: true,
       hasOpenMarkdown: true,
       hasApiClient: false,
+      hasSql: false,
       hasSimulator: false,
       simulatorIsGoTo: false
     })
@@ -82,6 +85,7 @@ describe('tab create menu options', () => {
       hasNewMarkdown: false,
       hasOpenMarkdown: false,
       hasApiClient: false,
+      hasSql: false,
       hasSimulator: false,
       simulatorIsGoTo: false,
       windowsShellEntries: [
@@ -141,13 +145,34 @@ describe('tab create menu options', () => {
       hasSimulator: false,
       simulatorIsGoTo: false
     }
-    const enabled = buildTabCreateMenuOptions({ ...base, hasApiClient: true })
-    const disabled = buildTabCreateMenuOptions({ ...base, hasApiClient: false })
+    const enabled = buildTabCreateMenuOptions({ ...base, hasApiClient: true, hasSql: false })
+    const disabled = buildTabCreateMenuOptions({ ...base, hasApiClient: false, hasSql: false })
 
     expect(enabled.map((option) => option.kind)).toContain('new-api-client')
     expect(disabled.map((option) => option.kind)).not.toContain('new-api-client')
     expect(
       findMatchingTabCreateMenuOptions('postman', enabled).map((option) => option.kind)
     ).toEqual(['new-api-client'])
+  })
+
+  it('offers New SQL right after New API Client, only when the workspace allows it', () => {
+    const base = {
+      terminalOnly: false,
+      hasNewBrowser: false,
+      hasNewMarkdown: false,
+      hasOpenMarkdown: false,
+      hasSimulator: true,
+      simulatorIsGoTo: false,
+      hasApiClient: true
+    }
+    const enabled = buildTabCreateMenuOptions({ ...base, hasSql: true })
+    const disabled = buildTabCreateMenuOptions({ ...base, hasSql: false })
+
+    const kinds = enabled.map((option) => option.kind)
+    expect(kinds.indexOf('new-sql')).toBe(kinds.indexOf('new-api-client') + 1)
+    expect(disabled.map((option) => option.kind)).not.toContain('new-sql')
+    expect(findMatchingTabCreateMenuOptions('postgres', enabled).map((o) => o.kind)).toEqual([
+      'new-sql'
+    ])
   })
 })

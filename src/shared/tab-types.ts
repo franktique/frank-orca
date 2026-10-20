@@ -2,6 +2,7 @@ import type { AiVaultSessionTitle } from './ai-vault-session-title'
 import type { AgentType } from './agent-status-types'
 import type { ApiClientPersistedTab } from './api-client/api-client-types'
 import type { ExecutionHostId } from './execution-host'
+import type { SqlPersistedTab } from './sql-client/sql-client-types'
 
 // ─── Tab Group Layout ───────────────────────────────────────────────
 export type TabGroupSplitDirection = 'horizontal' | 'vertical'
@@ -28,6 +29,7 @@ export type TabContentType =
   | 'browser'
   | 'simulator'
   | 'api-client'
+  | 'sql'
 
 export type WorkspaceVisibleTabType =
   | 'terminal'
@@ -36,6 +38,7 @@ export type WorkspaceVisibleTabType =
   | 'browser'
   | 'simulator'
   | 'api-client'
+  | 'sql'
 export type CtrlTabOrderMode = 'mru' | 'sequential'
 
 // Why: many-to-one — every editor-family kind collapses to 'editor'. Never invert it by equality;
@@ -46,7 +49,8 @@ export function toVisibleTabType(contentType: TabContentType): WorkspaceVisibleT
     contentType === 'browser' ||
     contentType === 'terminal' ||
     contentType === 'simulator' ||
-    contentType === 'api-client'
+    contentType === 'api-client' ||
+    contentType === 'sql'
   ) {
     return contentType
   }
@@ -85,6 +89,8 @@ export type Tab = {
   lastFocusedAt?: number
   /** Open request, runner scope and layout of an API Client tab; restored with the session. */
   apiClient?: ApiClientPersistedTab
+  /** Draft, connection and split of a SQL tab; restored with the session. */
+  sql?: SqlPersistedTab
 }
 
 export type TabGroup = {

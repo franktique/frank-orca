@@ -14,6 +14,7 @@ import {
   canGoForwardWorktreeHistory
 } from '@/store/slices/worktree-nav-history'
 import { useShortcutLabel } from '../hooks/useShortcutLabel'
+import { TitlebarQuickLinksButton } from '@/components/quick-links/TitlebarQuickLinksButton'
 import { useAppStore } from '../store'
 import { hasCustomTitleBar, isMac } from './app-window-chrome'
 import type { AppChromeLayout } from './use-app-chrome-layout'
@@ -107,6 +108,7 @@ export function TitlebarLeftControls({ layout }: { layout: AppChromeLayout }): R
             </TooltipContent>
           </Tooltip>
         )}
+        {layout.showSidebar && <TitlebarQuickLinksButton />}
       </div>
       {/* Why: Back/Forward span worktree + page history, so show the cluster wherever the shortcut is live (hidden in Settings/non-stack views). */}
       {shouldShowWorktreeHistoryControls(layout.activeView) && (
