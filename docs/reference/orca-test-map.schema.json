@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "orcaTestMap": {
+      "type": "number",
+      "const": 1
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "request": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                },
+                "required": ["path"]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": ["id"]
+              }
+            ]
+          },
+          "before": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sql": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "precondition": {
+                  "default": false,
+                  "type": "boolean"
+                },
+                "changesData": {
+                  "default": false,
+                  "type": "boolean"
+                }
+              },
+              "required": ["sql"]
+            }
+          },
+          "after": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sql": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "precondition": {
+                  "default": false,
+                  "type": "boolean"
+                },
+                "changesData": {
+                  "default": false,
+                  "type": "boolean"
+                }
+              },
+              "required": ["sql"]
+            }
+          },
+          "stepId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string"
+          },
+          "phase": {
+            "type": "string",
+            "enum": ["preflight", "setup", "scenario", "cleanup"]
+          },
+          "expect": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 100,
+                    "maximum": 599
+                  },
+                  {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 100,
+                      "maximum": 599
+                    }
+                  }
+                ]
+              },
+              "errorCode": {
+                "type": "string"
+              },
+              "errorCodePath": {
+                "type": "string"
+              }
+            },
+            "required": ["status"]
+          },
+          "expectAll": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 100,
+                      "maximum": 599
+                    },
+                    {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": 100,
+                        "maximum": 599
+                      }
+                    }
+                  ]
+                },
+                "errorCode": {
+                  "type": "string"
+                },
+                "errorCodePath": {
+                  "type": "string"
+                }
+              },
+              "required": ["status"]
+            }
+          },
+          "captures": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "variable": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_][\\w.-]*$"
+                },
+                "from": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": ["variable", "from"]
+            }
+          },
+          "dependsOn": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "concurrentGroup": {
+            "type": "string",
+            "minLength": 1
+          },
+          "forEach": {
+            "type": "string",
+            "pattern": "^[A-Za-z_][\\w.-]*$"
+          }
+        },
+        "required": ["request"]
+      }
+    },
+    "guide": {
+      "type": "string"
+    },
+    "allowedHosts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "databaseConsole": {
+      "type": "object",
+      "properties": {
+        "editorSelector": {
+          "type": "string"
+        },
+        "runSelector": {
+          "type": "string"
+        },
+        "resultSelector": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": ["orcaTestMap", "entries"],
+  "title": "Orca test map (orcaTestMap: 1)"
+}

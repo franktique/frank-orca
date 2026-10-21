@@ -12,16 +12,16 @@ Reproduced the bug with the original code and confirmed the fix, using the real 
 
 ## Checks Performed
 
-| Check | Command / Action | Result | Notes |
-|-------|------------------|--------|-------|
-| Reproduction (pre-fix) | `fetchCopilotRateLimits()` from `HEAD`, bundled with esbuild in the scratchpad and run on the real `~/Library/Caches/copilot/copilot-user-cache.json` | pass (bug reproduces) | `plan: individual`, `usedPercent: 100`, no `usageAmount` |
-| Reproduction (post-fix) | Same harness with the working-tree `copilot-usage-fetch.ts` | pass | `plan: business`, `usedPercent: 0.4`, `usageAmount: 20.9 / 6726`, reset date unchanged |
-| New / updated tests | `pnpm test src/main/rate-limits/copilot-usage-fetch.test.ts` (run during fix, then again in the suite below) | pass | 9/9. The 2 new tests fail against `HEAD` (checked during `/speckit-bug-fix`) |
-| Regression suite | `pnpm test src/main/rate-limits src/renderer/src/components/status-bar` | pass | 103 files, 893 tests |
-| Type-check | `pnpm tc:node` | pass | exit 0 |
-| Lint / quality gate | `pnpm run check:code-quality:changed` | pass | 0 new findings on 2 changed files |
-| Format | `oxfmt --check` on both changed files | pass | |
-| Live status bar in Orca | Launch Orca and look at the Copilot chip | not-run | No Electron UI validation skill in this workspace. The renderer is unchanged and only formats the `monthly` window checked above |
+| Check                   | Command / Action                                                                                                                                      | Result                | Notes                                                                                                                            |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Reproduction (pre-fix)  | `fetchCopilotRateLimits()` from `HEAD`, bundled with esbuild in the scratchpad and run on the real `~/Library/Caches/copilot/copilot-user-cache.json` | pass (bug reproduces) | `plan: individual`, `usedPercent: 100`, no `usageAmount`                                                                         |
+| Reproduction (post-fix) | Same harness with the working-tree `copilot-usage-fetch.ts`                                                                                           | pass                  | `plan: business`, `usedPercent: 0.4`, `usageAmount: 20.9 / 6726`, reset date unchanged                                           |
+| New / updated tests     | `pnpm test src/main/rate-limits/copilot-usage-fetch.test.ts` (run during fix, then again in the suite below)                                          | pass                  | 9/9. The 2 new tests fail against `HEAD` (checked during `/speckit-bug-fix`)                                                     |
+| Regression suite        | `pnpm test src/main/rate-limits src/renderer/src/components/status-bar`                                                                               | pass                  | 103 files, 893 tests                                                                                                             |
+| Type-check              | `pnpm tc:node`                                                                                                                                        | pass                  | exit 0                                                                                                                           |
+| Lint / quality gate     | `pnpm run check:code-quality:changed`                                                                                                                 | pass                  | 0 new findings on 2 changed files                                                                                                |
+| Format                  | `oxfmt --check` on both changed files                                                                                                                 | pass                  |                                                                                                                                  |
+| Live status bar in Orca | Launch Orca and look at the Copilot chip                                                                                                              | not-run               | No Electron UI validation skill in this workspace. The renderer is unchanged and only formats the `monthly` window checked above |
 
 ## Output Excerpts
 

@@ -22,6 +22,7 @@ import type { CliApi } from './api/cli-install-api'
 import type { CrashReportsApi, FeedbackApi } from './api/crash-report-api'
 import type { DashboardApi, TerminalPreviewApi } from './api/dashboard-api'
 import type { DocPreviewApi } from './api/doc-preview-api'
+import type { TestRunApi } from './api/test-run-api'
 import type { ApiClientApi } from './api/api-client-api'
 import type { SqlClientApi } from './api/sql-client-api'
 import type { EmulatorApi } from './api/emulator-api'
@@ -121,6 +122,7 @@ export type PreloadApi = {
   browser: BrowserApi
   emulator: EmulatorApi
   apiClient: ApiClientApi
+  testRun: TestRunApi
   sqlClient: SqlClientApi
   hooks: HooksApi
   ephemeralVm: EphemeralVmApi

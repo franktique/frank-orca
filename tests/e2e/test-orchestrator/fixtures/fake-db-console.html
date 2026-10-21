@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Fake DB console</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 16px;
+      }
+      textarea {
+        width: 100%;
+        height: 80px;
+      }
+      [hidden] {
+        display: none;
+      }
+      .error-banner {
+        background: #fdd;
+        padding: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Switches (query string): signin=1, error=1, paginate=1, token=<value>, canvas=1 -->
+    <form id="signin" hidden>
+      <input type="text" name="user" aria-label="User" />
+      <input type="password" name="password" aria-label="Password" />
+      <button type="button">Sign in</button>
+    </form>
+    <div id="console">
+      <textarea id="editor" aria-label="Query editor"></textarea>
+      <button id="run" type="button">Run</button>
+      <div id="error-banner" class="error-banner" role="alert" hidden></div>
+      <div id="results">
+        <table id="result-table"></table>
+        <canvas id="result-canvas" width="240" height="60" hidden></canvas>
+      </div>
+      <nav id="pagination" aria-label="Pagination" hidden><button type="button">Next</button></nav>
+    </div>
+    <script>
+      const params = new URLSearchParams(location.search)
+      const $ = (id) => document.getElementById(id)
+      const show = (el, on) => {
+        el.hidden = !on
+      }
+      show($('signin'), params.has('signin'))
+      show($('console'), !params.has('signin'))
+
+      function render(query) {
+        const rows = [
+          ['id', 'name'],
+          ['1', 'alpha'],
+          ['2', 'beta']
+        ]
+        rows.push(['query', query])
+        if (params.has('canvas')) {
+          // The token is drawn only on the canvas, which cannot be inspected or blurred; the
+          // table still renders so the run sees the query finish.
+          const canvas = $('result-canvas')
+          show(canvas, true)
+          const ctx = canvas.getContext('2d')
+          if (ctx) {
+            const drawn = params.get('token') ? [...rows, ['token', params.get('token')]] : rows
+            drawn.forEach((r, i) => ctx.fillText(r.join(' | '), 4, 12 + i * 12))
+          }
+        } else if (params.get('token')) {
+          rows.push(['token', params.get('token')])
+        }
+        $('result-table').innerHTML = rows
+          .map(
+            (r, i) =>
+              '<tr>' +
+              r
+                .map((c) => (i === 0 ? '<th>' : '<td>') + c.replace(/</g, '&lt;') + '</td>')
+                .join('') +
+              '</tr>'
+          )
+          .join('')
+        show($('pagination'), params.has('paginate'))
+      }
+
+      $('run').addEventListener('click', () => {
+        const query = $('editor').value
+        setTimeout(() => {
+          if (params.has('error')) {
+            $('error-banner').textContent = 'ERROR: relation does not exist'
+            show($('error-banner'), true)
+            return
+          }
+          show($('error-banner'), false)
+          render(query)
+        }, 50)
+      })
+    </script>
+  </body>
+</html>

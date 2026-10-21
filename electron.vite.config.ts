@@ -224,6 +224,7 @@ export const electronViteConfig: UserConfig = {
           // Why: sandboxed webview preloads cannot load Rollup helper chunks.
           'browser-window-close-preload': resolve('src/preload/browser-window-close.ts'),
           'doc-preview-link-preload': resolve('src/preload/doc-preview-link.ts'),
+          'evidence-snapshot-preload': resolve('src/preload/evidence-snapshot-preload.ts'),
           'daemon-entry': resolve('src/main/daemon/daemon-entry.ts'),
           'plugin-host-entry': resolve('src/main/plugins/plugin-host-entry.ts'),
           'computer-sidecar': resolve('src/main/computer/sidecar-entry.ts'),
@@ -338,6 +339,7 @@ export const electronViteConfig: UserConfig = {
         input: {
           index: resolve('src/renderer/index.html'),
           popout: resolve('src/renderer/popout.html'),
+          'evidence-snapshot': resolve('src/renderer/evidence-snapshot.html'),
           web: resolve('src/renderer/web-index.html')
         }
       }

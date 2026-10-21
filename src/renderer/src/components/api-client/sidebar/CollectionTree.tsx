@@ -1,11 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
+import { useShallow } from 'zustand/react/shallow'
 import { useAppStore } from '@/store'
+import { testRunKey } from '@/store/slices/api-client-test-run'
 import { translate } from '@/i18n/i18n'
 import type { Collection } from '../../../../../shared/api-client/api-client-types'
 import { ConfirmDeleteDialog, MoveToDialog } from './CollectionTreeDialogs'
 import CollectionTreeRow from './CollectionTreeRow'
-import type { RowAction } from './collection-tree-menu'
+import TestMapDialogs from './TestMapDialogs'
+import { buildRequestMarkers, countBrokenLinks } from './test-map-markers'
+import { useApiClientTestMapActions } from './use-api-client-test-map-actions'
+import type { RowAction, TestMapMenuState } from './collection-tree-menu'
 import { buildTreeRows, type TreeRow } from './collection-tree-rows'
 import { useApiClientTreeActions } from './use-api-client-tree-actions'
 
@@ -35,6 +40,24 @@ export default function CollectionTree({
     const view = tabId ? state.apiClientTabsById[tabId]?.view : undefined
     return view?.kind === 'request' ? view.requestId : null
   })
+  const testMapActions = useApiClientTestMapActions(worktreeId)
+  const loadTestMap = useAppStore((state) => state.loadApiClientTestMap)
+  const testMaps = useAppStore(
+    useShallow((state) =>
+      collections.map((c) => state.apiClientTestRunByTarget[testRunKey(worktreeId, c.id)]?.testMap)
+    )
+  )
+  const uncleaned = useAppStore(
+    useShallow((state) =>
+      collections.map(
+        (c) =>
+          (state.apiClientTestRunByTarget[testRunKey(worktreeId, c.id)]?.run?.cleanup.notCleaned
+            .length ?? 0) > 0
+      )
+    )
+  )
+  // Why: the test-run API is absent when the API Client is unavailable (SSH).
+  const testMapAvailable = Boolean(window.api.testRun)
   const [expanded, setExpanded] = useState<ReadonlySet<string>>(new Set())
   const [renamingId, setRenamingId] = useState<string | null>(null)
   const [moving, setMoving] = useState<{ collectionId: string; nodeId: string } | null>(null)
@@ -46,6 +69,30 @@ export default function CollectionTree({
       setRenamingId(renameRequestId)
     }
   }, [renameRequestId])
+
+  useEffect(() => {
+    if (!testMapAvailable) {
+      return
+    }
+    for (const collection of collections) {
+      void loadTestMap(worktreeId, collection.id)
+    }
+  }, [collections, loadTestMap, testMapAvailable, worktreeId])
+
+  const testMapByCollection = useMemo(
+    () => new Map(collections.map((c, index) => [c.id, testMaps[index] ?? null])),
+    [collections, testMaps]
+  )
+  const markersByCollection = useMemo(
+    () => new Map([...testMapByCollection].map(([id, map]) => [id, buildRequestMarkers(map)])),
+    [testMapByCollection]
+  )
+
+  const hasUncleanedFor = (collectionId: string): boolean =>
+    uncleaned[collections.findIndex((c) => c.id === collectionId)] ?? false
+
+  const menuStateFor = (collectionId: string): TestMapMenuState =>
+    !testMapAvailable ? 'unavailable' : testMapByCollection.get(collectionId) ? 'loaded' : 'none'
 
   const rows = useMemo(
     () => buildTreeRows(collections, expanded, query),
@@ -120,8 +167,24 @@ export default function CollectionTree({
           })
         }
         break
+      // Why: the setup screen offers "Run cleanup only" for the stored ledger.
+      case 'run-cleanup-only':
+      case 'run-as-test':
+        if (tabId) {
+          setView(tabId, { kind: 'test-run', collectionId: row.collectionId })
+        }
+        break
       case 'export':
         onExportCollection?.(row.collectionId)
+        break
+      case 'load-test-map':
+        void testMapActions.load(row.collectionId)
+        break
+      case 'export-test-map':
+        void testMapActions.exportMap(row.collectionId)
+        break
+      case 'remove-test-map':
+        testMapActions.askRemove(row.collectionId, row.name)
         break
     }
   }
@@ -159,6 +222,18 @@ export default function CollectionTree({
                   row={row}
                   selected={row.kind === 'request' && row.id === selectedRequestId}
                   renaming={renamingId === row.id}
+                  testMapState={menuStateFor(row.collectionId)}
+                  hasUncleanedCaptures={hasUncleanedFor(row.collectionId)}
+                  testMapMarker={
+                    row.kind === 'request'
+                      ? markersByCollection.get(row.collectionId)?.get(row.id)
+                      : undefined
+                  }
+                  brokenLinkCount={
+                    row.kind === 'collection'
+                      ? countBrokenLinks(testMapByCollection.get(row.id) ?? null)
+                      : 0
+                  }
                   onToggle={toggle}
                   onOpen={open}
                   onAction={onAction}
@@ -170,6 +245,12 @@ export default function CollectionTree({
           })}
         </div>
       </div>
+      <TestMapDialogs
+        state={testMapActions.state}
+        onConfirmReplace={() => void testMapActions.confirmReplace()}
+        onConfirmRemove={() => void testMapActions.confirmRemove()}
+        onClose={testMapActions.close}
+      />
       {deleting ? (
         <ConfirmDeleteDialog
           name={deleting.name}

@@ -52,6 +52,7 @@ import { createSqlClientRunSlice } from './slices/sql-client-run'
 import { createApiClientDraftSlice } from './slices/api-client-drafts'
 import { createApiClientExecutionSlice } from './slices/api-client-execution'
 import { createApiClientRunnerSlice } from './slices/api-client-runner'
+import { createApiClientTestRunSlice } from './slices/api-client-test-run'
 import { createQuickNotesSlice } from './slices/quick-notes'
 import { createQuickLinksSlice } from './slices/quick-links'
 import { e2eConfig } from '@/lib/e2e-config'
@@ -133,6 +134,7 @@ export const useAppStore = create<AppState>()(
         ...createApiClientDraftSlice(...a),
         ...createApiClientExecutionSlice(...a),
         ...createApiClientRunnerSlice(...a),
+        ...createApiClientTestRunSlice(...a),
         ...createSqlClientSlice(...a),
         ...createSqlClientRunSlice(...a)
       }

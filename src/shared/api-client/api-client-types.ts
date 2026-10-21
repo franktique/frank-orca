@@ -328,6 +328,7 @@ export type ApiClientPersistedView =
   | { kind: 'request'; requestId: ApiNodeId }
   | { kind: 'environment'; environmentId: ApiNodeId }
   | { kind: 'runner'; scope: RunScope }
+  | { kind: 'test-run'; collectionId: ApiNodeId }
 
 /** What an API Client tab keeps across restarts: what it shows and how it is laid out. */
 export type ApiClientPersistedTab = {

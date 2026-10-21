@@ -21,15 +21,15 @@ The three stages communicate through three Markdown files in a single per-bug di
 
 ## Commands
 
-| Command | Description | Output |
-|---------|-------------|--------|
+| Command              | Description                                                     | Output                               |
+| -------------------- | --------------------------------------------------------------- | ------------------------------------ |
 | `speckit.bug.assess` | Triages a bug report (pasted text or URL) against the codebase. | `.specify/bugs/<slug>/assessment.md` |
-| `speckit.bug.fix` | Applies the remediation from the assessment. | `.specify/bugs/<slug>/fix.md` |
-| `speckit.bug.test` | Validates the fix and records the verification report. | `.specify/bugs/<slug>/test.md` |
+| `speckit.bug.fix`    | Applies the remediation from the assessment.                    | `.specify/bugs/<slug>/fix.md`        |
+| `speckit.bug.test`   | Validates the fix and records the verification report.          | `.specify/bugs/<slug>/test.md`       |
 
 ## Slug Conventions
 
-A *slug* is the per-bug directory name under `.specify/bugs/`. It is the only handle the three commands share.
+A _slug_ is the per-bug directory name under `.specify/bugs/`. It is the only handle the three commands share.
 
 - **User-provided**: any shape the user wants, normalized to lowercase kebab-case (e.g. `login-timeout`, `cve-2026-001`, `oauth-redirect-500`). The slug is preserved verbatim after normalization — no timestamps or numbers are appended automatically.
 - **Asked for**: in interactive use, `speckit.bug.assess` asks for a slug when none is supplied, suggesting a kebab-case default derived from the bug summary.

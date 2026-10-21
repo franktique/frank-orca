@@ -20,10 +20,10 @@ The status-bar Copilot chip shows 100% used in the new billing period. The real 
 
 Reproduced against the real cache file on this machine, `~/Library/Caches/copilot/copilot-user-cache.json` (retrieved 2026-10-14T18:00Z). It holds **two** account entries:
 
-| entry | retrievedAt | plan | premium_interactions |
-|---|---|---|---|
-| `v1:c8f…` | 18:00:21.154Z | business | entitlement 6726, quota_remaining 6705.1, percent_remaining 99.6, has_quota true |
-| `v1:bce…` | 18:00:23.175Z | individual | entitlement 0, quota_remaining 0, **percent_remaining 0**, **has_quota false** |
+| entry     | retrievedAt   | plan       | premium_interactions                                                             |
+| --------- | ------------- | ---------- | -------------------------------------------------------------------------------- |
+| `v1:c8f…` | 18:00:21.154Z | business   | entitlement 6726, quota_remaining 6705.1, percent_remaining 99.6, has_quota true |
+| `v1:bce…` | 18:00:23.175Z | individual | entitlement 0, quota_remaining 0, **percent_remaining 0**, **has_quota false**   |
 
 1. Log in to the Copilot CLI with two GitHub accounts: one with Copilot Business, and one personal account with no premium quota.
 2. Run `copilot`. It refreshes both entries, and the individual one is written about 2s later.
@@ -44,19 +44,23 @@ Reproduced against the real cache file on this machine, `~/Library/Caches/copilo
 ## Proposed Remediation
 
 **Preferred**: make the reader pick an account that actually has a premium quota.
+
 1. Add a helper such as `hasUsablePremiumQuota(response)`. It returns true when the `premium_interactions` snapshot exists and either `unlimited === true`, or `has_quota !== false` with `entitlement > 0`.
 2. In `readCopilotUsageCache`, sort by `retrievedAt` as today, then choose the freshest entry that passes the helper. If none pass, fall back to the freshest entry overall, so a no-quota-only setup still shows the existing "did not report a credits quota" state.
 3. In `mapMonthlyUsage`, return `null` when `has_quota === false` or `entitlement === 0`. A no-quota account must never show as 100% used, even if it is the only entry. Add `has_quota?: boolean` to `CopilotQuotaSnapshot`.
 
 **Alternatives**:
+
 - Prefer the account the Copilot CLI is currently logged in as, read from `~/.copilot/config.json`. This is more "correct" for users with two quota-bearing accounts, but it adds a second file and format to depend on. That format is undocumented and cross-platform paths are unverified. It could be a follow-up.
 - Show every account, or the one with the highest usage. This needs UI changes, which is out of scope for a bug fix.
 
 **Files likely to change**:
+
 - `src/main/rate-limits/copilot-usage-fetch.ts`
 - `src/main/rate-limits/copilot-usage-fetch.test.ts`
 
 **Tests to add or update**:
+
 - Two entries where the freshest is a no-quota account (`has_quota: false`, entitlement 0, percent_remaining 0) and the older one is Business. Expect usedPercent ≈ 0.4 and usageAmount `{ used: 20.9, total: 6726 }`.
 - Only a no-quota entry. Expect `status: 'unavailable'`, not 100%.
 - Keep the existing "freshest wins" test, valid when both entries have a quota.

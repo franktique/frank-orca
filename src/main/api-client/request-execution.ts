@@ -4,11 +4,13 @@ import type {
   ApiRequest,
   Collection,
   ConsoleEntry,
+  EnvironmentVariable,
   ExecutionOrigin,
   LatestResult,
   ResolvedRequest,
   LogLine,
-  TestResult
+  TestResult,
+  Variable
 } from '../../shared/api-client/api-client-types'
 import { findNode } from '../../shared/api-client/collection-tree'
 import { isAuthSupported, resolveEffectiveAuth } from '../../shared/api-client/request-auth'
@@ -34,6 +36,7 @@ import {
   type WorkingVariables
 } from './request-execution-scripts'
 import { commitVariableWrites, diffWorkingVariables } from './request-execution-variables'
+import type { VariableWrites } from './script-sandbox/script-sandbox-types'
 import type { ScriptRunner } from './script-sandbox/script-sandbox-client'
 
 export type RequestExecutionDeps = {
@@ -60,6 +63,13 @@ export type ExecuteRequestInput = {
   signal?: AbortSignal
   /** Collection and folder settings captured earlier; used instead of looking the request up. */
   scope?: { collection: Collection; folders: ApiFolder[] }
+  /** Run-scoped variables used instead of the stored environment and collection variables. */
+  variableOverlay?: { environment: EnvironmentVariable[]; collection: Variable[] }
+  /** Receives the script's variable writes instead of them being saved to the store. */
+  variableSink?: (writes: {
+    environment: VariableWrites
+    collection: VariableWrites
+  }) => Promise<void>
 }
 
 export type ExecuteRequestResult =
@@ -117,8 +127,10 @@ export async function executeRequest(
   const iterationCount = input.iterationCount ?? 1
 
   const initial: WorkingVariables = {
-    environment: environment ? environment.variables.map((v) => ({ ...v })) : [],
-    collection: collection.variables.map((v) => ({ ...v })),
+    environment: (input.variableOverlay?.environment ?? environment?.variables ?? []).map((v) => ({
+      ...v
+    })),
+    collection: (input.variableOverlay?.collection ?? collection.variables).map((v) => ({ ...v })),
     local: []
   }
   const common = {
@@ -213,12 +225,15 @@ export async function executeRequest(
   }
 
   // ── commit, mask, persist ────────────────────────────────────────
-  await commitVariableWrites(deps.store, {
-    worktreeId: input.worktreeId,
-    collectionId: collection.id,
-    environmentId: environment?.id ?? null,
-    writes: diffWorkingVariables(initial, working)
-  })
+  const writes = diffWorkingVariables(initial, working)
+  await (input.variableSink
+    ? input.variableSink(writes)
+    : commitVariableWrites(deps.store, {
+        worktreeId: input.worktreeId,
+        collectionId: collection.id,
+        environmentId: environment?.id ?? null,
+        writes
+      }))
 
   const secrets = secretsOf(working)
   const outcomeSource = failure

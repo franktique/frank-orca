@@ -9,7 +9,12 @@ export type RowAction =
   | 'move'
   | 'delete'
   | 'run'
+  | 'run-as-test'
+  | 'run-cleanup-only'
   | 'export'
+  | 'load-test-map'
+  | 'export-test-map'
+  | 'remove-test-map'
 
 export type RowMenuEntry = {
   action: RowAction
@@ -18,8 +23,14 @@ export type RowMenuEntry = {
   separatorBefore?: boolean
 }
 
+export type TestMapMenuState = 'unavailable' | 'none' | 'loaded'
+
 /** One list drives both the right-click menu and the row's "more" button. */
-export function buildRowMenuEntries(row: TreeRow): RowMenuEntry[] {
+export function buildRowMenuEntries(
+  row: TreeRow,
+  testMap: TestMapMenuState = 'unavailable',
+  hasUncleaned = false
+): RowMenuEntry[] {
   const entries: RowMenuEntry[] = []
   if (row.kind !== 'request') {
     entries.push(
@@ -27,6 +38,18 @@ export function buildRowMenuEntries(row: TreeRow): RowMenuEntry[] {
       { action: 'new-folder', label: translate('apiClient.tree.newFolder', 'New folder') },
       { action: 'run', label: translate('apiClient.tree.run', 'Run…'), separatorBefore: true }
     )
+    if (row.kind === 'collection' && testMap !== 'unavailable') {
+      entries.push({
+        action: 'run-as-test',
+        label: translate('apiClient.testRun.runAsTest', 'Run as test…')
+      })
+      if (hasUncleaned) {
+        entries.push({
+          action: 'run-cleanup-only',
+          label: translate('apiClient.testRun.cleanupOnly', 'Run cleanup only')
+        })
+      }
+    }
   }
   entries.push(
     {
@@ -38,6 +61,25 @@ export function buildRowMenuEntries(row: TreeRow): RowMenuEntry[] {
   )
   if (row.kind === 'collection') {
     entries.push({ action: 'export', label: translate('apiClient.tree.export', 'Export…') })
+    if (testMap !== 'unavailable') {
+      entries.push({
+        action: 'load-test-map',
+        label: translate('apiClient.testMap.load', 'Load test map…'),
+        separatorBefore: true
+      })
+      if (testMap === 'loaded') {
+        entries.push(
+          {
+            action: 'export-test-map',
+            label: translate('apiClient.testMap.export', 'Export test map…')
+          },
+          {
+            action: 'remove-test-map',
+            label: translate('apiClient.testMap.remove', 'Remove test map')
+          }
+        )
+      }
+    }
   } else {
     entries.push({ action: 'move', label: translate('apiClient.tree.moveTo', 'Move to…') })
   }

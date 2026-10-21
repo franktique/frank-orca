@@ -44,7 +44,7 @@ export type RunnerEvents = {
 type RequestScope = NonNullable<ExecuteRequestInput['scope']>
 
 /** Collection and ancestor-folder settings without their items. */
-function snapshotScope(collection: Collection, requestId: ApiNodeId): RequestScope {
+export function snapshotScope(collection: Collection, requestId: ApiNodeId): RequestScope {
   const folders = findNode(collection, requestId)?.ancestors ?? []
   return {
     collection: structuredClone({ ...collection, items: [] }),
@@ -81,7 +81,7 @@ const sleep = (ms: number, signal: AbortSignal): Promise<void> =>
   })
 
 /** Body previews in a run are capped; the full body only ever lives in a request's latest result. */
-function capDetailBodies(outcome: ExecutionOutcome): ExecutionOutcome {
+export function capDetailBodies(outcome: ExecutionOutcome): ExecutionOutcome {
   const limit = API_CLIENT_LIMITS.consolePreviewMaxBytes
   if (outcome.kind !== 'response') {
     return outcome

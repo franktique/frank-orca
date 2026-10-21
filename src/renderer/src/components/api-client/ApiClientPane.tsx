@@ -9,6 +9,7 @@ import EnvironmentEditor from './environment-editor/EnvironmentEditor'
 import RequestEditor from './request-editor/RequestEditor'
 import RunnerView from './runner/RunnerView'
 import ResponseViewer from './response-viewer/ResponseViewer'
+import TestRunView from './test-run/TestRunView'
 
 const MIN_SPLIT = 0.2
 const MAX_SPLIT = 0.8
@@ -110,6 +111,12 @@ export default function ApiClientPane({
           </>
         ) : tab?.view.kind === 'runner' ? (
           <RunnerView worktreeId={worktreeId} scope={tab.view.scope} />
+        ) : tab?.view.kind === 'test-run' ? (
+          <TestRunView
+            key={tab.view.collectionId}
+            worktreeId={worktreeId}
+            collectionId={tab.view.collectionId}
+          />
         ) : tab?.view.kind === 'environment' ? (
           <EnvironmentEditor
             key={tab.view.environmentId}

@@ -1,0 +1,99 @@
+{
+  "orcaTestMap": 1,
+  "entries": [
+    {
+      "request": {
+        "path": ["Preflight", "Health"]
+      },
+      "stepId": "P-1",
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "request": {
+        "path": ["Setup", "Create case"]
+      },
+      "stepId": "S-1",
+      "captures": [
+        {
+          "variable": "caseId",
+          "from": "id"
+        }
+      ]
+    },
+    {
+      "request": {
+        "path": ["Scenarios", "SC-1 Bulk create"]
+      },
+      "stepId": "SC-1",
+      "expect": {
+        "status": 201
+      },
+      "captures": [
+        {
+          "variable": "requestId",
+          "from": "data.requestId"
+        }
+      ],
+      "before": [
+        {
+          "sql": "SELECT count(*) FROM requests WHERE case_id = '{{caseId}}'",
+          "description": "No rows yet"
+        }
+      ],
+      "after": [
+        {
+          "sql": "SELECT id, status FROM requests WHERE request_id = '{{requestId}}'",
+          "description": "Rows stored"
+        },
+        {
+          "sql": "SELECT count(*) FROM requests WHERE case_id = '{{caseId}}'",
+          "description": "Row count"
+        }
+      ]
+    },
+    {
+      "request": {
+        "path": ["Scenarios", "SC-4 Duplicate"]
+      },
+      "stepId": "SC-4",
+      "dependsOn": ["SC-1"],
+      "expect": {
+        "status": 422,
+        "errorCode": "AM00109"
+      }
+    },
+    {
+      "request": {
+        "path": ["Scenarios", "SC-14 Race A"]
+      },
+      "stepId": "SC-14a",
+      "concurrentGroup": "race",
+      "expectAll": [
+        {
+          "status": 201
+        },
+        {
+          "status": 409,
+          "errorCode": "AM00107"
+        }
+      ]
+    },
+    {
+      "request": {
+        "path": ["Scenarios", "SC-14 Race B"]
+      },
+      "stepId": "SC-14b",
+      "concurrentGroup": "race"
+    },
+    {
+      "request": {
+        "path": ["Cleanup", "Delete case"]
+      },
+      "stepId": "C-1",
+      "phase": "cleanup",
+      "forEach": "caseId"
+    }
+  ]
+}

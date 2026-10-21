@@ -52,6 +52,8 @@ export function isViewStillValid(view: ApiClientTabView, snapshot: WorktreeApiDa
           collection.id === view.scope.collectionId &&
           (!view.scope.folderId || findNode(collection, view.scope.folderId) !== null)
       )
+    case 'test-run':
+      return snapshot.collections.some((collection) => collection.id === view.collectionId)
     case 'empty':
       return true
   }

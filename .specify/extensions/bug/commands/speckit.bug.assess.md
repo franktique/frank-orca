@@ -1,5 +1,5 @@
 ---
-description: "Assess a bug report (pasted text or URL) against the codebase and produce an assessment with possible remediation"
+description: 'Assess a bug report (pasted text or URL) against the codebase and produce an assessment with possible remediation'
 ---
 
 # Assess Bug
@@ -140,13 +140,16 @@ Do not attempt to validate the URL by issuing a preflight `HEAD` (or any other) 
    **Preferred**: <one or two paragraphs describing the change.>
 
    **Alternatives** (optional):
+
    - <alternative + trade-off>
 
    **Files likely to change**:
+
    - `path/to/file.py`
    - `path/to/test_file.py`
 
    **Tests to add or update**:
+
    - <test description>
 
    ## Risks & Considerations

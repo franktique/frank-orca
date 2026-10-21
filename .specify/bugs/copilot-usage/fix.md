@@ -11,10 +11,10 @@ The Copilot reader now ignores signed-in accounts that have no premium quota. Be
 
 ## Changes
 
-| File | Change | Notes |
-|------|--------|-------|
-| `src/main/rate-limits/copilot-usage-fetch.ts` | modified | Adds `has_quota` to the snapshot type and a `hasPremiumQuota()` check, used both to choose the cache entry and in `mapMonthlyUsage` |
-| `src/main/rate-limits/copilot-usage-fetch.test.ts` | added tests | `NO_QUOTA` fixture plus 2 regression tests |
+| File                                               | Change      | Notes                                                                                                                               |
+| -------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `src/main/rate-limits/copilot-usage-fetch.ts`      | modified    | Adds `has_quota` to the snapshot type and a `hasPremiumQuota()` check, used both to choose the cache entry and in `mapMonthlyUsage` |
+| `src/main/rate-limits/copilot-usage-fetch.test.ts` | added tests | `NO_QUOTA` fixture plus 2 regression tests                                                                                          |
 
 ## Diff Highlights
 
