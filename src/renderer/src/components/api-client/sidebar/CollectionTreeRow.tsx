@@ -1,5 +1,13 @@
 import { Fragment, useState } from 'react'
-import { ChevronDown, ChevronRight, Ellipsis, Folder, Library } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronRight,
+  Database,
+  Ellipsis,
+  Folder,
+  Library,
+  Unlink
+} from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -18,8 +26,9 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { translate } from '@/i18n/i18n'
-import { buildRowMenuEntries, type RowAction } from './collection-tree-menu'
+import { buildRowMenuEntries, type RowAction, type TestMapMenuState } from './collection-tree-menu'
 import type { TreeRow } from './collection-tree-rows'
+import type { RequestTestMapMarker } from './test-map-markers'
 
 const INDENT_PX = 12
 const BASE_PADDING_PX = 8
@@ -28,6 +37,10 @@ type CollectionTreeRowProps = {
   row: TreeRow
   selected: boolean
   renaming: boolean
+  testMapState?: TestMapMenuState
+  hasUncleanedCaptures?: boolean
+  testMapMarker?: RequestTestMapMarker
+  brokenLinkCount?: number
   onToggle: (row: TreeRow) => void
   onOpen: (row: TreeRow) => void
   onAction: (row: TreeRow, action: RowAction) => void
@@ -43,10 +56,39 @@ function RowIcon({ row }: { row: TreeRow }): React.JSX.Element | null {
   return <Icon className="size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
 }
 
+function TestMapIndicator({
+  marker,
+  brokenLinkCount
+}: {
+  marker?: RequestTestMapMarker
+  brokenLinkCount: number
+}): React.JSX.Element | null {
+  if (marker === 'has-queries') {
+    const label = translate('apiClient.testMap.hasQueries', 'Has verification queries')
+    return <Database className="size-3 shrink-0 text-muted-foreground" aria-label={label} />
+  }
+  if (marker === 'broken' || brokenLinkCount > 0) {
+    const label =
+      marker === 'broken'
+        ? translate('apiClient.testMap.brokenLink', 'Test map link broken: request was deleted')
+        : translate(
+            'apiClient.testMap.brokenLinks',
+            '{{count}} test map entries point to deleted requests',
+            { count: brokenLinkCount }
+          )
+    return <Unlink className="size-3 shrink-0 text-destructive" aria-label={label} />
+  }
+  return null
+}
+
 export default function CollectionTreeRow({
   row,
   selected,
   renaming,
+  testMapState = 'unavailable',
+  hasUncleanedCaptures = false,
+  testMapMarker,
+  brokenLinkCount = 0,
   onToggle,
   onOpen,
   onAction,
@@ -54,7 +96,7 @@ export default function CollectionTreeRow({
   onRenameCancel
 }: CollectionTreeRowProps): React.JSX.Element {
   const [draftName, setDraftName] = useState(row.name)
-  const entries = buildRowMenuEntries(row)
+  const entries = buildRowMenuEntries(row, testMapState, hasUncleanedCaptures)
   const isContainer = row.kind !== 'request'
   const expanded = row.kind !== 'request' && row.expanded
 
@@ -90,6 +132,7 @@ export default function CollectionTreeRow({
       ) : null}
       <RowIcon row={row} />
       <span className="truncate text-[13px]">{row.name}</span>
+      <TestMapIndicator marker={testMapMarker} brokenLinkCount={brokenLinkCount} />
     </button>
   )
 

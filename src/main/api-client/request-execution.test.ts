@@ -380,3 +380,40 @@ describe('executeRequest — inherited auth', () => {
     expect(latest.outcome).toMatchObject({ kind: 'error', code: 'unsupported-auth' })
   })
 })
+
+describe('executeRequest — variable overlay and sink', () => {
+  it('resolves from the overlay and sends writes to the sink instead of the store', async () => {
+    const target = request('r', {
+      url: { raw: '{{base}}/echo', query: [] },
+      events: { test: script("pm.environment.set('token', 'abc')") }
+    })
+    await seed(collectionOf([target]))
+    const captured: unknown[] = []
+    const result = await executeRequest(deps, {
+      worktreeId: WT,
+      collectionId: 'col',
+      request: target,
+      environmentId: 'env',
+      origin: 'run',
+      variableOverlay: {
+        environment: [{ key: 'base', value: server.baseUrl, enabled: true, type: 'default' }],
+        collection: []
+      },
+      variableSink: async (writes) => {
+        captured.push(writes)
+      }
+    })
+    if (!result.ok) {
+      throw new Error(result.message)
+    }
+    expect(result.latest.resolvedRequest.url).toBe(`${server.baseUrl}/echo`)
+    expect(captured).toEqual([
+      {
+        environment: { set: { token: 'abc' }, unset: [] },
+        collection: { set: {}, unset: [] }
+      }
+    ])
+    const snapshot = await store.getSnapshot(WT, { revealSecrets: true })
+    expect(snapshot.environments[0].variables.some((v) => v.key === 'token')).toBe(false)
+  })
+})

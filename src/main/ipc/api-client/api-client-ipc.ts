@@ -20,7 +20,7 @@ import {
   type ApiClientFailure
 } from '../../../shared/api-client/api-client-ipc-schemas'
 import { exportPostmanFile } from '../../api-client/api-client-export'
-import { importPostmanContent, readPostmanFile } from '../../api-client/api-client-import'
+import { readPostmanFile } from '../../api-client/api-client-import'
 import { envOp, saveEnvironment, saveRequest, treeOp } from '../../api-client/api-client-operations'
 import { readLatestResult, readLatestRun } from '../../api-client/api-client-results'
 import { getApiClientService, initApiClientService } from '../../api-client/api-client-service'
@@ -140,7 +140,7 @@ export function registerApiClientHandlers(orcaStore: ApiClientServiceDeps['orcaS
     if (!loaded.ok) {
       return loaded
     }
-    return importPostmanContent(service.store, params.worktreeId, loaded.json, params.onDuplicate)
+    return service.importPostman(params.worktreeId, loaded.json, params.onDuplicate)
   })
 
   handle('apiClient:export', exportParamsSchema, (params) =>

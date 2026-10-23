@@ -16,10 +16,16 @@ const OVERSCAN = 12
 type Props = {
   columns: SqlColumn[]
   rows: (string | null)[][]
+  /** Mounts every row and clips at this height instead of scrolling; for screenshots. */
+  staticMaxHeight?: number
 }
 
 /** Virtualized, read-only result grid; copying is by click, keyboard, or range. */
-export default function SqlResultsGrid({ columns, rows }: Props): React.JSX.Element {
+export default function SqlResultsGrid({
+  columns,
+  rows,
+  staticMaxHeight
+}: Props): React.JSX.Element {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [widths, setWidths] = useState(() => measureColumnWidths(columns, rows))
   const { copiedCell, announcement, copy } = useGridCopy()
@@ -29,10 +35,11 @@ export default function SqlResultsGrid({ columns, rows }: Props): React.JSX.Elem
     [columns]
   )
   const rowCount = rows.length
+  const isStatic = staticMaxHeight !== undefined
   const columnCount = columns.length
 
   const virtualizer = useVirtualizer({
-    count: rowCount,
+    count: isStatic ? 0 : rowCount,
     getScrollElement: () => scrollRef.current,
     estimateSize: () => ROW_HEIGHT,
     overscan: OVERSCAN
@@ -86,6 +93,11 @@ export default function SqlResultsGrid({ columns, rows }: Props): React.JSX.Elem
     [clickCell]
   )
 
+  const visibleItems = isStatic
+    ? rows.map((_row, index) => ({ key: index, index, start: index * ROW_HEIGHT }))
+    : virtualizer.getVirtualItems()
+  const totalHeight = isStatic ? rowCount * ROW_HEIGHT : virtualizer.getTotalSize()
+
   const gridTemplate = useMemo(
     () => `${GUTTER_PX}px ${widths.map((width) => `${width}px`).join(' ')}`,
     [widths]
@@ -111,10 +123,15 @@ export default function SqlResultsGrid({ columns, rows }: Props): React.JSX.Elem
   }
 
   return (
-    <div className="relative flex h-full min-h-0 flex-col">
+    <div className={isStatic ? 'relative flex flex-col' : 'relative flex h-full min-h-0 flex-col'}>
       <div
         ref={scrollRef}
-        className="min-h-0 flex-1 overflow-auto scrollbar-editor font-mono text-xs outline-none"
+        style={isStatic ? { maxHeight: staticMaxHeight } : undefined}
+        className={
+          isStatic
+            ? 'overflow-hidden font-mono text-xs outline-none'
+            : 'min-h-0 flex-1 overflow-auto scrollbar-editor font-mono text-xs outline-none'
+        }
         role="grid"
         aria-rowcount={rowCount + 1}
         aria-colcount={columnCount + 1}
@@ -160,8 +177,8 @@ export default function SqlResultsGrid({ columns, rows }: Props): React.JSX.Elem
               </div>
             ))}
           </div>
-          <div style={{ height: virtualizer.getTotalSize(), position: 'relative' }}>
-            {virtualizer.getVirtualItems().map((item) => (
+          <div style={{ height: totalHeight, position: 'relative' }}>
+            {visibleItems.map((item) => (
               <div
                 key={item.key}
                 role="row"
@@ -188,7 +205,7 @@ export default function SqlResultsGrid({ columns, rows }: Props): React.JSX.Elem
                     rowIndex={item.index}
                     columnIndex={col}
                     selected={selection.isSelected(item.index, col)}
-                    focused={selection.focus?.row === item.index && selection.focus.col === col}
+                    focused={selection.focus?.row === item.index && selection.focus?.col === col}
                     copied={copiedCell === `${item.index}:${col}`}
                     onSelect={handleCellSelect}
                   />

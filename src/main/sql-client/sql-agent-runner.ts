@@ -43,7 +43,7 @@ function closeQuietly(client: Client): Promise<void> {
 }
 
 /** Rejects text that could lift the read-only session before anything is sent. */
-function rejectsBypass(sql: string): boolean {
+export function rejectsBypass(sql: string): boolean {
   return splitSqlStatements(sql).some(
     (statement) =>
       isTransactionControlStatement(statement.text) || isReadOnlyBypassStatement(statement.text)
@@ -54,14 +54,27 @@ export function resolveAgentAccess(connection: Pick<SqlConnection, 'host'>): Sql
   return getSqlAgentAccess(connection.host)
 }
 
+export type IsolatedQueryOptions = AgentRunOptions & {
+  readOnly: boolean
+  applicationName: string
+}
+
+/** Runs agent SQL on a fresh connection; local hosts allow any statement, others are read-only. */
+export function runAgentQuery(options: AgentRunOptions): Promise<SqlRunResult> {
+  return runIsolatedQuery({
+    ...options,
+    readOnly: resolveAgentAccess(options.connection) === 'read-only',
+    applicationName: 'Orca SQL (agent)'
+  })
+}
+
 /**
- * Runs agent SQL on a fresh connection that is always closed afterwards. Local hosts allow any
- * statement; everywhere else the session is read-only and a rollback ends the run.
+ * Runs SQL on a fresh connection that is always closed afterwards. A read-only session rejects
+ * bypass text up front and ends in a rollback.
  */
-export async function runAgentQuery(options: AgentRunOptions): Promise<SqlRunResult> {
-  const { connection, password, sql, timeoutMs } = options
+export async function runIsolatedQuery(options: IsolatedQueryOptions): Promise<SqlRunResult> {
+  const { connection, password, sql, timeoutMs, readOnly, applicationName } = options
   const startedAt = Date.now()
-  const readOnly = resolveAgentAccess(connection) === 'read-only'
   if (readOnly && rejectsBypass(sql)) {
     return readOnlyRejection(Date.now() - startedAt)
   }
@@ -73,7 +86,7 @@ export async function runAgentQuery(options: AgentRunOptions): Promise<SqlRunRes
   let client: Client
   try {
     client = await connectPgClient(connection, password, {
-      applicationName: 'Orca SQL (agent)',
+      applicationName,
       options: serverOptions
     })
   } catch (error) {

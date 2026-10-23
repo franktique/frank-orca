@@ -1,4 +1,5 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAppStore } from '@/store'
@@ -11,6 +12,8 @@ import KeyValueTable from './KeyValueTable'
 import RequestSettings from './RequestSettings'
 import ScriptsEditor from './ScriptsEditor'
 import UrlBar from './UrlBar'
+import VerificationQueriesSection from '../verification-queries/VerificationQueriesSection'
+import { useRequestTestMapState } from '../verification-queries/use-request-test-map'
 import { useRequestVariableScopes } from './use-variable-scopes'
 import { RequestDraftNotices } from './RequestDraftNotices'
 
@@ -35,6 +38,10 @@ export default function RequestEditor({
   const send = useAppStore((state) => state.sendApiClientRequest)
   const cancel = useAppStore((state) => state.cancelApiClientExecution)
   const scopes = useRequestVariableScopes(worktreeId, request.id)
+  const testMapState = useRequestTestMapState(worktreeId, request.id)
+  const [addedFirstQuery, setAddedFirstQuery] = useState(false)
+  const [tab, setTab] = useState('params')
+  const showVerification = Boolean(testMapState && (testMapState.hasTestMap || addedFirstQuery))
   const requestDraft = draft?.kind === 'request' ? draft : undefined
   const current = requestDraft?.request ?? request
   const update = (patch: Partial<ApiRequest>): void => edit(tabId, { ...current, ...patch })
@@ -70,11 +77,26 @@ export default function RequestEditor({
       />
       <div className="flex items-center justify-between gap-2">
         <span className="truncate text-sm font-medium">{current.name}</span>
-        <Button size="sm" variant="secondary" disabled={!draft} onClick={() => void save(tabId)}>
-          {translate('apiClient.request.save', 'Save')}
-        </Button>
+        <div className="flex items-center gap-2">
+          {testMapState && !showVerification ? (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                setAddedFirstQuery(true)
+                setTab('verification')
+              }}
+            >
+              <Plus />
+              {translate('apiClient.verification.addFirst', 'Add verification queries')}
+            </Button>
+          ) : null}
+          <Button size="sm" variant="secondary" disabled={!draft} onClick={() => void save(tabId)}>
+            {translate('apiClient.request.save', 'Save')}
+          </Button>
+        </div>
       </div>
-      <Tabs defaultValue="params" className="flex min-h-0 flex-1 flex-col">
+      <Tabs value={tab} onValueChange={setTab} className="flex min-h-0 flex-1 flex-col">
         <TabsList>
           <TabsTrigger value="params">
             {translate('apiClient.request.params', 'Params')}
@@ -90,6 +112,11 @@ export default function RequestEditor({
           <TabsTrigger value="settings">
             {translate('apiClient.request.settings', 'Settings')}
           </TabsTrigger>
+          {showVerification ? (
+            <TabsTrigger value="verification">
+              {translate('apiClient.verification.title', 'Verification queries')}
+            </TabsTrigger>
+          ) : null}
         </TabsList>
         <div className="scrollbar-sleek min-h-0 flex-1 overflow-y-auto pt-3">
           <TabsContent value="params">
@@ -125,6 +152,16 @@ export default function RequestEditor({
               onChange={(settings) => update({ settings })}
             />
           </TabsContent>
+          {showVerification && testMapState ? (
+            <TabsContent value="verification">
+              <VerificationQueriesSection
+                worktreeId={worktreeId}
+                collectionId={testMapState.collectionId}
+                requestId={request.id}
+                scopes={scopes}
+              />
+            </TabsContent>
+          ) : null}
         </div>
       </Tabs>
     </div>

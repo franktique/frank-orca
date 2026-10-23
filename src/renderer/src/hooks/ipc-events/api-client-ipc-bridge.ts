@@ -46,6 +46,18 @@ export function registerApiClientIpcBridge(unsubs: (() => void)[]): void {
   if (unsubscribeRunFinished) {
     unsubs.push(unsubscribeRunFinished)
   }
+  const testRunApi = window.api.testRun
+  const testRunUnsubs = [
+    testRunApi?.onChanged((event) => useAppStore.getState().applyTestRunChanged(event)),
+    testRunApi?.onPaused((event) => useAppStore.getState().applyTestRunPaused(event)),
+    testRunApi?.onFinished((event) => useAppStore.getState().applyTestRunFinished(event)),
+    testRunApi?.onTestMapChanged((event) => useAppStore.getState().applyTestMapChanged(event))
+  ]
+  for (const unsubscribe of testRunUnsubs) {
+    if (unsubscribe) {
+      unsubs.push(unsubscribe)
+    }
+  }
   const unsubscribeConsole = window.api.apiClient?.onConsoleAppended((event) => {
     useAppStore.getState().applyApiClientConsoleAppended(event)
   })

@@ -1,0 +1,151 @@
+# Contract: Evidence Bundle Format
+
+This is what a run writes into the repository. A reviewer reads it in any Markdown viewer (SC-004), so the format is a public output and changes to it must stay readable.
+
+## Layout
+
+```
+<worktree or folder-workspace root>/
+└── evidencias/
+    └── <plan-slug>/                       # from the collection name: ascii, [a-z0-9-], ≤ 60 chars
+        └── 2026-10-19_14-32-05/           # local start time; "-2", "-3" … if it already exists
+            ├── report.md
+            ├── setup/                     # one folder per phase, named as in the collection
+            │   └── S1/
+            │       └── S1-request.png
+            ├── scenarios/
+            │   └── SC-1/                  # one folder per test case, named by its stepId
+            │       ├── SC-1-before-1.png
+            │       ├── SC-1-request.png
+            │       ├── SC-1-after-1.png
+            │       └── SC-1-after-2.png
+            └── cleanUp/
+                └── L1/
+                    └── L1-request.png
+```
+
+- Phase folders take the name of the collection folder that marks the step's phase (`setup`, `scenarios`, `cleanUp`, `01 - Setup` → `01-Setup`). When no folder names the phase (no folder, or the test map moved the step to another phase), the phase's default name is used: `preflight`, `setup`, `scenarios`, `cleanup`.
+
+- Case folders are named `<case>`, the test-map `stepId` with its casing kept (`SC-1`, `S-1`); a case's request and query screenshots share one folder. Characters outside `[A-Za-z0-9._-]` become `-`, the name is capped at 60 chars, and Windows device names get a `-case` suffix.
+- Image names follow `<case>-<request|before-K|after-K>[-<n>].png`. `-<n>` is the request's index within a concurrent group.
+- Runs written before this layout keep a flat `images/NN-<step-slug>-….png` folder; their `report.md` links still resolve.
+- All links in `report.md` are relative (`scenarios/SC-1/SC-1-request.png`), so the folder can be moved or committed as is (FR-026).
+- The run never stages or commits anything (FR-027).
+
+## `report.md` structure
+
+````markdown
+# <Plan name> — test run evidence
+
+|               |                                                                                                                        |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Guide         | [manual-testing-nuc-84270-generator.html](../../../smoke-test-NUC-84270-…/…html) ← only when the test map declares one |
+| Target        | `qa.example.com`                                                                                                       |
+| Started       | 2026-10-19 14:32:05 (UTC-05:00)                                                                                        |
+| Duration      | 4 min 12 s (paused 1 min 03 s)                                                                                         |
+| Database mode | Automatic — connection "qa-readonly" · Browser — console at `console.cloud.example.com` · Manual · Not used            |
+| Outcome       | ✅ Passed · ❌ Failed (3 of 27 steps) · ⏹ Stopped by user · ⚠ Preflight failed · ⏳ Run in progress                    |
+
+> ⚠ `evidencias/` is ignored by source control in this repository. ← only when true
+
+## Summary
+
+| Step | Title             | Expected      | Actual        | Result                                 |
+| ---- | ----------------- | ------------- | ------------- | -------------------------------------- |
+| P-1  | Health            | 200           | 200           | ✅ Pass                                |
+| SC-4 | Duplicate request | 422 · AM00109 | 422 · AM00109 | ✅ Pass                                |
+| SC-7 | …                 | 201           | —             | ⛔ Blocked — blocked by setup step S-3 |
+
+## Cleanup
+
+- Cleaned: 12 values (requestId ×10, caseId ×2)
+- Not cleaned: `requestId` = `8f1c…` — DELETE returned 500 ← or "Data kept by user"
+
+---
+
+## Preflight
+
+### P-1 · Health
+
+…
+
+## Setup
+
+### S-1 · Create case
+
+…
+
+## Scenarios
+
+### SC-1 · Bulk create returns 201 and stores one row per user
+
+**Before**
+
+1. Rows for this case (description)
+   ```sql
+   SELECT count(*) FROM requests WHERE case_id = 'c-123'
+   ```
+````
+
+![SC-1 before 1](SC-1/SC-1-before-1.png)
+
+| count |
+| ----- |
+| 0     |
+
+**Request**
+
+`POST https://qa.example.com/api/v1/cases/c-123/assessment-requests/bulk`
+
+| Header        | Value            |
+| ------------- | ---------------- |
+| Authorization | Bearer ••••      |
+| Content-Type  | application/json |
+
+```json
+{ "users": ["u-1", "u-2", "u-3"] }
+```
+
+![SC-1 request and response](SC-1/SC-1-request.png)
+
+**Response** — `201 Created` · 312 ms · 1.2 KB
+
+```json
+{ "data": { "requestId": "r-77" } }
+```
+
+**After**
+
+1. … (same as Before)
+
+**Expected** 201 · **Actual** 201 · **Result** ✅ Pass
+
+## Cleanup
+
+### C-1 · Delete request (requestId = r-77)
+
+…
+
+---
+
+<sub>Generated by Orca <version> · run <runId></sub>
+
+```
+
+## Rules
+
+| Rule | Source |
+|---|---|
+| Steps appear in execution order, under their phase heading. Each step shows Before → Request → Response → After → verdict. | FR-023 |
+| Every planned step appears with a result, including `skipped`, `blocked`, and the steps never reached after Stop (`skipped — run stopped`). | SC-002 |
+| A query's `how` is shown on its own line: `run automatically`, `run in browser console`, `run manually by the user`, `skipped by user`, `skipped — data change not approved`, `failed: <error>`. | FR-006c, FR-009 |
+| Manual mode: no screenshot. If the user pasted a result, it appears as a fenced `text` block. | US5-AS3 |
+| Browser mode: a `> Result may be partial (the console paginates results).` note when this was detected. | Edge case |
+| Bodies: up to 100 KB, then `> Truncated: showing 100 KB of 2.4 MB.` Query results: up to 200 rows, then `> Truncated: showing 200 of 1,532 rows.` | FR-026 |
+| Non-JSON bodies are fenced as `text`. Binary bodies show `(binary, 34 KB, image/png)` and no content. | 001 body encodings |
+| Masking: `••••` replaces every sensitive value (R9) in all text and in rendered screenshots. | FR-025, FR-025a |
+| Browser mode: sensitive values visible on the console page are blurred before the screenshot. When any were, a `> 3 sensitive values blurred in the screenshot.` note follows the image. When they could not be hidden, there is no image and the note reads `> Screenshot withheld: a sensitive value could not be blurred (<reason>).` | FR-025b |
+| Concurrent groups: one Request/Response block per request, with `sent +0 ms`, `sent +3 ms`, and the `expectAll` verdict for the group. | FR-018 |
+| While the run is going, the Outcome reads `⏳ Run in progress`. A crash leaves the last per-step write on disk. | FR-027 |
+| Labels are English (Orca UI language). Titles, descriptions, and SQL from the plan are copied unchanged. Markdown special characters in table cells are escaped. | Assumptions |
+```

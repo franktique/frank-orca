@@ -5,6 +5,7 @@ import type {
 import type {
   ApiNodeId,
   ApiRequest,
+  Collection,
   ConsoleEntry,
   LatestResult,
   Run,
@@ -19,6 +20,7 @@ import { ApiClientStore } from './api-client-store'
 import { electronFetchFor } from './api-client-electron-fetch'
 import { HttpRequestSender, type FetchFunction } from './http-request-sender'
 import { setApiClientCacheEvictor } from './api-client-data-deletion'
+import { importPostmanContent, type ImportMode } from './api-client-import'
 import { CollectionRunner } from './collection-runner'
 import { executeRequest } from './request-execution'
 import { ScriptSandboxClient, type ScriptRunner } from './script-sandbox/script-sandbox-client'
@@ -61,6 +63,9 @@ export class ApiClientService {
   readonly sandbox: ScriptRunner
   readonly runner: CollectionRunner
   private readonly orcaStore: ApiClientServiceDeps['orcaStore']
+  private collectionReplacedHandler:
+    | ((worktreeId: string, collection: Collection) => Promise<string[]>)
+    | null = null
   private readonly listeners = new Set<(event: ApiClientServiceEvent) => void>()
   private readonly executions = new Map<string, AbortController>()
 
@@ -196,6 +201,31 @@ export class ApiClientService {
     return this.showHandler
       ? this.showHandler(worktreeId, requestId)
       : Promise.resolve({ ok: false, message: 'No Orca window is available to show the request.' })
+  }
+
+  /** Called after an import replaces a collection; returns extra warning lines for the result. */
+  setCollectionReplacedHandler(
+    handler: (worktreeId: string, collection: Collection) => Promise<string[]>
+  ): void {
+    this.collectionReplacedHandler = handler
+  }
+
+  async importPostman(worktreeId: string, json: unknown, mode?: ImportMode) {
+    const result = await importPostmanContent(this.store, worktreeId, json, mode)
+    if (!(result.ok && result.kind === 'collection' && mode === 'replace')) {
+      return result
+    }
+    const collection = (await this.store.getState(worktreeId)).collections.get(result.id)
+    if (!collection || !this.collectionReplacedHandler) {
+      return result
+    }
+    try {
+      const extra = await this.collectionReplacedHandler(worktreeId, collection)
+      return { ...result, warnings: [...result.warnings, ...extra] }
+    } catch {
+      // Why: a test-map problem must not turn a completed import into a failure.
+      return result
+    }
   }
 
   cancel(executionId: string): boolean {

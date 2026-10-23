@@ -5,6 +5,11 @@ import { is } from '@electron-toolkit/utils'
 import { StarNagService } from '../star-nag/service'
 import { AgentBrowserBridge } from '../browser/agent-browser-bridge'
 import { EmulatorBridge } from '../emulator/emulator-bridge'
+import { initApiClientService } from '../api-client/api-client-service'
+import { TestMapStore } from '../test-orchestrator/test-map-store'
+import { initTestOrchestratorService } from '../test-orchestrator/test-orchestrator-service'
+import { createTestRunRuntime } from '../test-orchestrator/test-run-runtime'
+import { broadcastTestRunEvent } from '../ipc/test-orchestrator/test-run-ipc'
 import { RpcDispatcher } from '../runtime/rpc/dispatcher'
 import { browserManager } from '../browser/browser-manager'
 import { configureBrowserClientPageAutomationRuntime } from '../browser/browser-client-page-automation-runtime'
@@ -56,6 +61,18 @@ export async function initializeReadyRuntimeServices(): Promise<void> {
     onTabsChanged: (worktreeId) => runtime.notifyMobileSessionTabsChanged(worktreeId)
   })
   runtime.setAgentBrowserBridge(state.agentBrowserBridge)
+  const apiClient = initApiClientService({ orcaStore: store })
+  const testOrchestrator = initTestOrchestratorService({
+    store: new TestMapStore(),
+    apiClient,
+    browserBridge: state.agentBrowserBridge,
+    runtime: createTestRunRuntime(apiClient, state.agentBrowserBridge),
+    emitTestMapChanged: (worktreeId, collectionId) =>
+      broadcastTestRunEvent('testRun:testMapChanged', { worktreeId, collectionId })
+  })
+  apiClient.setCollectionReplacedHandler((worktreeId, collection) =>
+    testOrchestrator.rematchAfterImport(worktreeId, collection)
+  )
   // Why: daemons a crashed or SIGKILL'd previous run left behind answer to nobody; nothing else reclaims them.
   void state.agentBrowserBridge.sweepOrphanedSessions()
   const browserClientAutomationDispatcher = new RpcDispatcher({ runtime })

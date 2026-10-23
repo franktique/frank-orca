@@ -233,6 +233,18 @@ vi.mock('../skills', () => ({
   registerSkillsHandlers: registerSkillsHandlersMock
 }))
 
+vi.mock('../api-client/api-client-ipc', () => ({
+  registerApiClientHandlers: vi.fn()
+}))
+
+vi.mock('../test-orchestrator/test-run-ipc', () => ({
+  registerTestRunHandlers: vi.fn()
+}))
+
+vi.mock('../sql-client/sql-client-ipc', () => ({
+  registerSqlClientHandlers: vi.fn()
+}))
+
 vi.mock('../skill-delete/handlers', () => ({
   registerSkillDeleteIpcHandlers: registerSkillDeleteIpcHandlersMock
 }))

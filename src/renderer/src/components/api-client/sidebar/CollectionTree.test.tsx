@@ -15,6 +15,8 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true
 const mocks = vi.hoisted(() => ({
   state: {
     apiClientTabsById: {},
+    apiClientTestRunByTarget: {},
+    loadApiClientTestMap: vi.fn(),
     requestApiClientTabView: vi.fn()
   },
   treeOp: vi.fn()

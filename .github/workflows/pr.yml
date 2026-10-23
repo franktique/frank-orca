@@ -203,6 +203,9 @@ jobs:
       - name: Verify the generated RPC params catalog
         run: pnpm run verify:rpc-params-catalog
 
+      - name: Verify the generated test map JSON Schema
+        run: pnpm run verify:test-map-json-schema
+
       - name: Verify bundled skill guides
         run: pnpm run verify:bundled-skill-guides
 

@@ -23,6 +23,10 @@ export type ApiClientWorktreePaths = {
   environmentFile: (environmentId: string) => string
   resultFile: (requestId: string) => string
   runFile: (scopeId: string) => string
+  testMapFile: (collectionId: string) => string
+  testPlanFile: (collectionId: string) => string
+  testCapturesFile: (collectionId: string) => string
+  testRunFile: (collectionId: string) => string
 }
 
 // Why: node ids come from imported Postman files, so they must never escape the data dir.
@@ -49,7 +53,11 @@ export function getApiClientWorktreePaths(
     collectionFile: (id) => join(dir, 'collections', `${toSafeFileStem(id)}.json`),
     environmentFile: (id) => join(dir, 'environments', `${toSafeFileStem(id)}.json`),
     resultFile: (id) => join(dir, 'results', `${toSafeFileStem(id)}.json`),
-    runFile: (id) => join(dir, 'runs', `${toSafeFileStem(id)}.json`)
+    runFile: (id) => join(dir, 'runs', `${toSafeFileStem(id)}.json`),
+    testMapFile: (id) => join(dir, 'test-maps', `${toSafeFileStem(id)}.json`),
+    testPlanFile: (id) => join(dir, 'test-plans', `${toSafeFileStem(id)}.json`),
+    testCapturesFile: (id) => join(dir, 'test-captures', `${toSafeFileStem(id)}.json`),
+    testRunFile: (id) => join(dir, 'test-runs', `${toSafeFileStem(id)}.json`)
   }
 }
 

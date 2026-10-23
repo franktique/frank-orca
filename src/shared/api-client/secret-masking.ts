@@ -4,7 +4,7 @@ import { SECRET_MASK, type Environment } from './api-client-types'
 // URL), so short values are masked only when they are the entire field.
 const MIN_SUBSTRING_LENGTH = 4
 
-function variants(value: string): string[] {
+export function variants(value: string): string[] {
   const percentEncoded = encodeURIComponent(value)
   return [
     value,

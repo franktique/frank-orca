@@ -160,7 +160,7 @@ export type PersistedEnvironment = z.infer<typeof persistedEnvironmentSchema>
 
 // ─── Results and runs ───────────────────────────────────────────────
 
-const resolvedRequestSchema = z.object({
+export const resolvedRequestSchema = z.object({
   method: z.string(),
   url: z.string(),
   headers: z.array(z.tuple([z.string(), z.string()])),
@@ -192,12 +192,12 @@ export const apiErrorCodeSchema = z.enum([
   'invalid-url'
 ])
 
-const executionOutcomeSchema = z.discriminatedUnion('kind', [
+export const executionOutcomeSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('response'), response: responseSnapshotSchema }),
   z.object({ kind: z.literal('error'), code: apiErrorCodeSchema, message: z.string() })
 ])
 
-const testResultSchema = z.object({
+export const testResultSchema = z.object({
   name: z.string(),
   passed: z.boolean(),
   error: z.string().optional()
@@ -317,7 +317,8 @@ export const apiClientPersistedTabSchema = z.object({
     z.object({ kind: z.literal('empty') }),
     z.object({ kind: z.literal('request'), requestId: apiNodeIdSchema }),
     z.object({ kind: z.literal('environment'), environmentId: apiNodeIdSchema }),
-    z.object({ kind: z.literal('runner'), scope: runScopeSchema })
+    z.object({ kind: z.literal('runner'), scope: runScopeSchema }),
+    z.object({ kind: z.literal('test-run'), collectionId: apiNodeIdSchema })
   ]),
   consoleCollapsed: z.boolean().optional(),
   consoleHeight: z.number().finite().positive().optional(),

@@ -18586,6 +18586,187 @@
     },
     "web": {
       "unavailable": "The API Client is unavailable on web."
+    },
+    "verification": {
+      "addFirst": "Add verification queries",
+      "title": "Verification queries",
+      "conflict": "The test map was replaced while you were editing. Your changes were not saved; reload the queries and try again.",
+      "add": "Add query",
+      "empty": "No queries.",
+      "save": "Save queries",
+      "before": "Before the request",
+      "after": "After the request",
+      "queryLabel": "Query {{number}}",
+      "descriptionPlaceholder": "What does this query check?",
+      "description": "Description",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "remove": "Remove query",
+      "precondition": "Precondition",
+      "changesData": "Changes data"
+    },
+    "testMap": {
+      "hasQueries": "Has verification queries",
+      "brokenLink": "Test map link broken: request was deleted",
+      "brokenLinks": "{{count}} test map entries point to deleted requests",
+      "replaceTitle": "Replace the test map?",
+      "replaceBody": "This collection already has a test map. Loading this file replaces it, including any verification queries you added here.",
+      "replaceConfirm": "Replace",
+      "removeTitle": "Remove the test map?",
+      "removeBody": "The test map and its verification queries for \"{{name}}\" will be removed. The collection itself is not changed.",
+      "remove": "Remove test map",
+      "invalidTitle": "Test map not loaded",
+      "warningsTitle": "Test map loaded with warnings",
+      "warningsBody": "Some entries could not be matched to a request. They are kept but will not run.",
+      "unmatched": "No matching request",
+      "ambiguous": "More than one matching request",
+      "unknownFields": "Unknown fields (ignored)",
+      "load": "Load test map…",
+      "export": "Export test map…",
+      "loaded": "Test map loaded.",
+      "exported": "Test map exported."
+    },
+    "testRun": {
+      "runAsTest": "Run as test…",
+      "inputs": {
+        "title": "Inputs",
+        "optional": " (optional)",
+        "remembered": "Remembered",
+        "rememberedHint": "A remembered value will be used unless you type a new one.",
+        "rememberInputs": "Remember inputs",
+        "rememberSecrets": "Remember secrets",
+        "clearSecrets": "Clear remembered secrets"
+      },
+      "pause": {
+        "manualQueries": "Run the queries yourself",
+        "browserRecovery": "The database console needs help",
+        "credentials": "Credentials expired",
+        "label": "Waiting for you",
+        "step": "Paused at step {{stepId}}",
+        "credentialsHint": "Enter fresh values to resume the run, or stop it.",
+        "resume": "Resume",
+        "stop": "Stop",
+        "copy": "Copy",
+        "skip": "Skip",
+        "pasteResult": "Paste result (optional)",
+        "continue": "Continue",
+        "stopping": "Stopping the run",
+        "stoppingHint": "Cleanup removes the data this run created. Keep data leaves it for you to inspect.",
+        "runCleanup": "Run cleanup",
+        "keepData": "Keep data"
+      },
+      "progress": {
+        "title": "Test run progress",
+        "starting": "Starting…",
+        "elapsed": "Elapsed {{time}}",
+        "waiting": "Waiting for you",
+        "stopping": "Stopping",
+        "steps": "Steps"
+      },
+      "stop": "Stop",
+      "blocker": {
+        "environment": "Choose an environment.",
+        "inputs": "Fill in: {{names}}",
+        "targetsPending": "Checking the target host…",
+        "unresolved": "Could not resolve: {{names}}",
+        "refused": "This run targets {{host}}, which is not in the test map allowed hosts: {{allowed}}.",
+        "confirmHosts": "Confirm the target host.",
+        "database": "Choose how to run the queries."
+      },
+      "environment": "Environment",
+      "targets": {
+        "title": "Target hosts",
+        "confirm": "I confirm this run targets {{host}}"
+      },
+      "start": "Start",
+      "cleanupOnly": "Run cleanup only",
+      "steps": {
+        "title": "Steps",
+        "queries": "{{count}} queries"
+      },
+      "result": {
+        "pass": "Passed",
+        "fail": "Failed",
+        "skipped": "Skipped",
+        "blocked": "Blocked",
+        "running": "Running",
+        "pending": "Pending"
+      },
+      "detail": {
+        "none": "No request was sent for this step."
+      },
+      "ending": {
+        "passed": "All steps passed",
+        "failed": "Finished with failures",
+        "stopped": "Stopped by user",
+        "preflight": "Preflight failed",
+        "error": "Ended with an error"
+      },
+      "summary": {
+        "title": "Summary",
+        "passed": "Passed: {{n}}",
+        "failed": "Failed: {{n}}",
+        "skipped": "Skipped: {{n}}",
+        "blocked": "Blocked: {{n}}",
+        "duration": "Duration: {{time}}",
+        "cleaned": "Cleaned up: {{n}}",
+        "kept": "Data was kept at your request.",
+        "notCleaned": "Not cleaned up:",
+        "memoryOnly": "Some captured values are held in memory only and will not survive a restart.",
+        "ignored": "The evidence folder is ignored by source control.",
+        "openEvidence": "Open evidence",
+        "newRun": "New run",
+        "forget": "Forget captured values",
+        "forgetConfirm": "Confirm: forget values"
+      },
+      "unavailable": "Test runs are not available for this workspace.",
+      "phase": {
+        "preflight": "Preflight",
+        "setup": "Setup",
+        "scenario": "Scenarios",
+        "cleanup": "Cleanup"
+      },
+      "database": {
+        "title": "Database queries",
+        "automatic": "Automatic",
+        "manual": "Manual",
+        "manualHint": "The run pauses at each step so you can run its queries yourself.",
+        "connection": "SQL connection",
+        "noConnections": "No SQL connections in this project. Add one in a SQL tab first.",
+        "test": "Test connection",
+        "testOk": "Connection works.",
+        "consoleTab": "Database console tab",
+        "browserHint": "Open your database console in an Orca browser tab, then pick it here. Sensitive values are blurred in console screenshots; a screenshot is withheld if they cannot be blurred.",
+        "noTabs": "No browser tabs are open in this worktree.",
+        "refreshTabs": "Refresh tabs",
+        "checkConsole": "Check console",
+        "consoleOk": "Console found.",
+        "consoleScreenshot": "Screenshot of the database console tab",
+        "checkAgain": "Check again",
+        "chooseAnotherMode": "Choose another mode",
+        "cancel": "Cancel",
+        "browser": "Browser"
+      },
+      "approvals": {
+        "title": "Steps that change data",
+        "hint": "Unapproved steps are skipped when the database is not local.",
+        "step": "Allow {{title}} ({{count}} data-changing queries)"
+      },
+      "recovery": {
+        "notFound": "The query editor or run control was not found on the page.",
+        "error": "The console reported an error.",
+        "signIn": "The console is asking you to sign in.",
+        "timeout": "The console did not return a result in time.",
+        "tabClosed": "The console tab was closed.",
+        "screenshot": "Screenshot of the console",
+        "noScreenshot": "No screenshot is shown because sensitive values could not be blurred.",
+        "retry": "Retry",
+        "doManually": "Do it manually",
+        "skip": "Skip this query",
+        "restManual": "Do the rest manually",
+        "skipRemaining": "Skip remaining queries",
+        "pickTab": "Use a different tab"
+      }
     }
   },
   "sqlClient": {
@@ -18741,5 +18922,13 @@
       "refresh": "Refresh schema",
       "primaryKey": "PK"
     }
+  },
+  "evidenceSnapshot": {
+    "moreLines": "… {{count}} more lines",
+    "requestHeaders": "Request headers",
+    "requestBody": "Request body",
+    "bodyNotShown": "Response body not shown as text.",
+    "rowsTruncated": "Showing {{shown}} of {{total}} rows",
+    "rowCount": "{{count}} rows"
   }
 }

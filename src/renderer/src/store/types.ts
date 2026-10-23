@@ -50,6 +50,7 @@ import type { SqlClientRunSlice } from './slices/sql-client-run'
 import type { ApiClientDraftSlice } from './slices/api-client-drafts'
 import type { ApiClientExecutionSlice } from './slices/api-client-execution'
 import type { ApiClientRunnerSlice } from './slices/api-client-runner'
+import type { ApiClientTestRunSlice } from './slices/api-client-test-run'
 import type { QuickNotesSlice } from './slices/quick-notes'
 import type { AgentExplanationsSlice } from './slices/agent-explanations'
 import type { QuickLinksSlice } from './slices/quick-links'
@@ -104,6 +105,7 @@ export type AppState = RepoSlice &
   ApiClientDraftSlice &
   ApiClientExecutionSlice &
   ApiClientRunnerSlice &
+  ApiClientTestRunSlice &
   AgentExplanationsSlice &
   SqlClientSlice &
   SqlClientRunSlice
