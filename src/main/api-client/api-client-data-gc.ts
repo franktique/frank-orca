@@ -7,6 +7,7 @@ import {
   scheduleApiClientTreeDeletion
 } from './api-client-data-deletion'
 import { API_CLIENT_PENDING_DELETE_DIR_NAME, getApiClientRoot } from './api-client-storage-paths'
+import { runExplanationDataGc } from '../agent-explanations/explanation-data-deletion'
 
 // Why 5 minutes: GC runs shortly after startup from a snapshot of live worktrees. A worktree created
 // between that snapshot and the scan would otherwise look orphaned and lose its freshly written data.
@@ -62,14 +63,30 @@ export async function runApiClientGc(
 }
 
 /** Runs GC once, a while after startup so it never competes with startup-critical I/O. */
-export function scheduleApiClientGc(getLiveWorktreeIds: () => Promise<Set<string>>): void {
+export function scheduleApiClientGc(
+  getLiveWorktreeIds: () => Promise<Set<string>>,
+  options: { apiClientRoot?: string; explanationRoot?: string; now?: () => number } = {}
+): void {
   if (gcTimer !== null || activeGc !== null) {
     return
   }
   gcTimer = setTimeout(() => {
     gcTimer = null
     activeGc = getLiveWorktreeIds()
-      .then((live) => runApiClientGc(live))
+      .then(async (live) => {
+        const nowOptions = options.now ? { now: options.now } : {}
+        await runApiClientGc(live, {
+          ...(options.apiClientRoot ? { root: options.apiClientRoot } : {}),
+          ...nowOptions
+        })
+        // Why: the agent-explanations root shares the live-worktree snapshot so both
+        // sweeps see the same generation; an empty set still refuses (see runApiClientGc).
+        await runExplanationDataGc(live, {
+          ...(options.explanationRoot ? { root: options.explanationRoot } : {}),
+          ...nowOptions,
+          minAgeMs: API_CLIENT_GC_MIN_AGE_MS
+        })
+      })
       .then(() => undefined)
       .catch((error: unknown) => {
         console.warn(
@@ -87,5 +104,12 @@ export function cancelApiClientGc(): void {
   if (gcTimer !== null) {
     clearTimeout(gcTimer)
     gcTimer = null
+  }
+}
+
+/** Awaits a scheduled GC run. Tests only. */
+export async function flushApiClientGcForTests(): Promise<void> {
+  while (activeGc !== null) {
+    await activeGc
   }
 }

@@ -11661,6 +11661,57 @@
             "mayBeSlower": "Puede ser más lento",
             "slowest": "Más lento",
             "unlimited": "Sin límite"
+          },
+          "explanations": {
+            "base": {
+              "uncommittedOnly": "solo cambios sin confirmar"
+            },
+            "card": {
+              "close": "Cerrar explicación",
+              "detachedHeading": "Desvinculadas",
+              "detachedHint": "El código al que apuntaban estas explicaciones ha cambiado o ya no existe.",
+              "outdated": "Desactualizada"
+            },
+            "clear": {
+              "action": "Borrar explicación",
+              "confirm": "Borrar",
+              "description": "Se eliminan la explicación y las preguntas que hiciste sobre ella. Las notas de revisión se conservan.",
+              "title": "¿Borrar esta explicación?"
+            },
+            "empty": "No hay ninguna explicación para este espacio de trabajo.",
+            "file": {
+              "noLongerChanged": "sin cambios"
+            },
+            "header": {
+              "adjusted": "Se ajustaron {{total}} anclas",
+              "agent": "Explicado por {{agent}}",
+              "disconnected": "Host desconectado: se muestra la última explicación guardada",
+              "replaced": "Reemplazada por una explicación más reciente"
+            },
+            "legend": {
+              "focus": "Mostrar solo los archivos del cambio {{letter}}"
+            },
+            "nav": {
+              "next": "Explicación siguiente",
+              "position": "{{label}} · {{current}} de {{total}}",
+              "previous": "Explicación anterior"
+            },
+            "questions": {
+              "ask": "Hacer una pregunta",
+              "askAgain": "Editar y preguntar de nuevo",
+              "delete": "Eliminar pregunta",
+              "discard": "Descartar",
+              "newAgent": "un agente nuevo",
+              "placeholder": "Pregunta al agente sobre este cambio",
+              "scope": "Esta pregunta",
+              "send": "Enviar",
+              "sentTo": "Enviada a {{target}} · {{time}}",
+              "writeFirst": "Escribe primero una pregunta",
+              "noExplanation": "No hay ninguna explicación sobre la que preguntar."
+            },
+            "tab": "Explicaciones",
+            "unexplained": "Sin explicar",
+            "unsupported": "Este host de Orca no admite explicaciones del agente."
           }
         }
       },

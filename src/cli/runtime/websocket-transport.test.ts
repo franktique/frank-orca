@@ -18,6 +18,7 @@ import { launchOrcaApp } from './launch'
 import { addEnvironmentFromPairingCode } from './environments'
 import { RuntimeClientError } from './types'
 import {
+  AGENT_EXPLANATIONS_RUNTIME_CAPABILITY,
   AGENT_SESSION_BACKGROUND_TASK_ROW_STOP_CAPABILITY,
   AGENT_SESSION_TURN_ITEM_CAPABILITY,
   AGENT_SESSION_BACKGROUND_TASK_STOP_CAPABILITY,
@@ -73,6 +74,7 @@ describe('CLI remote WebSocket transport', () => {
     expect(runtime.authFrames).toContainEqual(
       expect.objectContaining({
         clientCapabilities: [
+          AGENT_EXPLANATIONS_RUNTIME_CAPABILITY,
           AGENT_SESSION_BACKGROUND_TASK_STOP_CAPABILITY,
           AGENT_SESSION_BACKGROUND_TASK_ROW_STOP_CAPABILITY,
           AGENT_SESSION_TURN_ITEM_CAPABILITY,

@@ -121,6 +121,30 @@ describe('GitHandler', () => {
         })
       ).rejects.toThrow('outside the worktree')
     })
+
+    it('honours leftOid as the left side of an unstaged diff', async () => {
+      gitInit(tmpDir)
+      writeFileSync(path.join(tmpDir, 'file.txt'), 'base\n')
+      gitCommit(tmpDir, 'initial')
+      const mergeBase = execFileSync('git', ['rev-parse', 'HEAD'], {
+        cwd: tmpDir,
+        encoding: 'utf-8'
+      }).trim()
+      writeFileSync(path.join(tmpDir, 'file.txt'), 'base\ncommitted\n')
+      gitCommit(tmpDir, 'second')
+      writeFileSync(path.join(tmpDir, 'file.txt'), 'base\ncommitted\nworking\n')
+
+      // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: test double only needs the members the code under test reads.
+      const result = (await dispatcher.callRequest('git.diff', {
+        worktreePath: tmpDir,
+        filePath: 'file.txt',
+        staged: false,
+        leftOid: mergeBase
+      })) as { kind: string; originalContent: string; modifiedContent: string }
+      expect(result.kind).toBe('text')
+      expect(result.originalContent).toBe('base\n')
+      expect(result.modifiedContent).toContain('working')
+    })
   })
 
   describe('submodule', () => {

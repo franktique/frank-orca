@@ -42,6 +42,7 @@ import { registerDiagnosticsHandlers } from '../diagnostics'
 import { registerSkillsHandlers } from '../skills'
 import { registerApiClientHandlers } from '../api-client/api-client-ipc'
 import { registerTestRunHandlers } from '../test-orchestrator/test-run-ipc'
+import { registerExplanationHandlers } from '../agent-explanations/explanation-ipc'
 import { registerSqlClientHandlers } from '../sql-client/sql-client-ipc'
 import { registerSkillDeleteIpcHandlers } from '../skill-delete/handlers'
 import { registerWorkspaceSpaceHandlers } from '../workspace-space'
@@ -209,6 +210,7 @@ export function registerCoreHandlers(
   registerEmulatorVideoStreamHandlers()
   registerApiClientHandlers(store)
   registerTestRunHandlers(store)
+  registerExplanationHandlers(runtime)
   registerSqlClientHandlers(store)
   registerWorkspaceSpaceHandlers(store)
   registerWorkspacePortHandlers(store)

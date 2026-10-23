@@ -2,6 +2,7 @@ import { getRegisteredSshState, listRegisteredSshTargets } from '../../../ssh/ss
 import { getPublicSshState } from '../../public-ssh-state'
 import { defineMethod, defineStreamingMethod } from '../core'
 import { ClientEventsUnsubscribeParams } from '../../../../shared/rpc-contract/client-events-params'
+import { AGENT_EXPLANATIONS_RUNTIME_CAPABILITY } from '../../../../shared/protocol-version'
 
 let clientEventSubscriptionSeq = 0
 
@@ -9,12 +10,20 @@ export const CLIENT_EVENT_METHODS = [
   defineStreamingMethod({
     name: 'runtime.clientEvents.subscribe',
     params: null,
-    handler: async (_params, { runtime, connectionId, clientKind }, emit) => {
+    handler: async (_params, { runtime, connectionId, clientKind, clientCapabilities }, emit) => {
       await new Promise<void>((resolve) => {
         // Why: mobile discards terminalSideEffects; excluding it stops the
         // per-OSC batch frames from crossing the relay.
         const unsubscribe = runtime.onClientEvent(
           (event) => {
+            // Why: clients that never advertised explanations cannot decode the event
+            // (mixed host/client versions are normal); drop it before the wire.
+            if (
+              event.type === 'explanationsChanged' &&
+              clientCapabilities?.includes(AGENT_EXPLANATIONS_RUNTIME_CAPABILITY) !== true
+            ) {
+              return
+            }
             emit(event)
           },
           { consumesTerminalSideEffects: clientKind !== 'mobile' }

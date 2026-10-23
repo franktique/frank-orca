@@ -48,7 +48,10 @@ export type NotesSendMenuProps<TNote> = {
   // so it reads exact time rather than a render clock that can lag or freeze.
   openRequestExpiresAt?: number | null
   onOpenRequestHandled?: () => void
-  onDelivered: (notes: readonly TNote[]) => void
+  /** Lists this agent pane first when it is still live. */
+  preferredTargetPaneKey?: string
+  /** `target` is set only when the prompt went to an existing agent pane. */
+  onDelivered: (notes: readonly TNote[], target?: { paneKey?: string; label: string }) => void
 }
 
 export function buildNotesSendTargetModeId(modeIdParts: readonly string[]): string {
@@ -75,6 +78,7 @@ export function NotesSendMenu<TNote>({
   openRequestNonce = null,
   openRequestExpiresAt = null,
   onOpenRequestHandled,
+  preferredTargetPaneKey,
   onDelivered
 }: NotesSendMenuProps<TNote>): React.JSX.Element {
   const openAgentSendPopoverTargetMode = useAppStore((s) => s.openAgentSendPopoverTargetMode)
@@ -90,8 +94,12 @@ export function NotesSendMenu<TNote>({
   const hasDeliverableNotes = enabledScopes.length > 0
 
   const markDelivered = useCallback(
-    (notes: readonly TNote[]) => {
-      onDelivered(notes)
+    (notes: readonly TNote[], target?: { paneKey?: string; label: string }) => {
+      if (target) {
+        onDelivered(notes, target)
+      } else {
+        onDelivered(notes)
+      }
     },
     [onDelivered]
   )
@@ -243,7 +251,8 @@ export function NotesSendMenu<TNote>({
                     prompt={scope.prompt}
                     promptDelivery="submit-after-ready"
                     launchSource="notes_send"
-                    onPromptDelivered={() => markDelivered(scope.notes)}
+                    preferredTargetPaneKey={preferredTargetPaneKey}
+                    onPromptDelivered={(target) => markDelivered(scope.notes, target)}
                   />
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
@@ -256,9 +265,10 @@ export function NotesSendMenu<TNote>({
             prompt={defaultScope?.prompt ?? ''}
             promptDelivery="submit-after-ready"
             launchSource="notes_send"
-            onPromptDelivered={() => {
+            preferredTargetPaneKey={preferredTargetPaneKey}
+            onPromptDelivered={(target) => {
               if (defaultScope) {
-                markDelivered(defaultScope.notes)
+                markDelivered(defaultScope.notes, target)
               }
             }}
           />

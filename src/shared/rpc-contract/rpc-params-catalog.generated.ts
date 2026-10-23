@@ -165,6 +165,16 @@ import {
   TypeParams
 } from './emulator-params'
 import {
+  ExplanationChangeSetParams,
+  ExplanationClearParams,
+  ExplanationFileDiffParams,
+  ExplanationGetParams,
+  ExplanationPublishParams,
+  ExplanationQuestionDeleteParams,
+  ExplanationQuestionMarkSentParams,
+  ExplanationQuestionUpsertParams
+} from './explanation-params'
+import {
   FileCommitUpload,
   FileCopy,
   FileDelete,
@@ -755,6 +765,14 @@ export const RPC_PARAMS_BY_METHOD = {
   'emulator.tap': TapParams,
   'emulator.type': TypeParams,
   'emulator.unregisterActive': EmulatorUnregisterActiveParams,
+  'explanation.changeSet': ExplanationChangeSetParams,
+  'explanation.clear': ExplanationClearParams,
+  'explanation.fileDiff': ExplanationFileDiffParams,
+  'explanation.get': ExplanationGetParams,
+  'explanation.publish': ExplanationPublishParams,
+  'explanation.questions.delete': ExplanationQuestionDeleteParams,
+  'explanation.questions.markSent': ExplanationQuestionMarkSentParams,
+  'explanation.questions.upsert': ExplanationQuestionUpsertParams,
   'files.browseServerDir': ServerDirectoryBrowse,
   'files.commitUpload': FileCommitUpload,
   'files.copy': FileCopy,

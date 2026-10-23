@@ -125,6 +125,11 @@ const CENSUS: readonly CensusRow[] = [
     role: 'indexes rows by pane key to attach dispatch context'
   },
   {
+    path: 'main/runtime/rpc/methods/explanation.ts',
+    kind: 'consumes',
+    role: 'explanation.publish — names the publishing pane and agent from its terminal handle (identity only, no liveness verdict)'
+  },
+  {
     path: 'main/runtime/rpc/methods/orchestration/worker/worker-list-method.ts',
     kind: 'consumes',
     role: 'worker-list fleet verdict (driven below)'

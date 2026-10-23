@@ -1,3 +1,4 @@
+import { downlevelExplanationsSidebarTab } from '../../../../shared/explanations-sidebar-tab-compat'
 import { omitPairingLocalUiFields } from '../../../../shared/pairing-local-ui-fields'
 import type { PersistedUIState } from '../../../../shared/persisted-ui-state-types'
 import { defineMethod } from '../core'
@@ -59,16 +60,24 @@ export const CLIENT_UI_METHODS = [
   defineMethod({
     name: 'ui.get',
     params: null,
-    handler: (_params, { runtime }) => ({ ui: omitPairingLocalUiFields(runtime.getUIState()) })
+    handler: (_params, { runtime, clientCapabilities }) => ({
+      ui: downlevelExplanationsSidebarTab(
+        omitPairingLocalUiFields(runtime.getUIState()),
+        clientCapabilities
+      )
+    })
   }),
   defineMethod({
     name: 'ui.set',
     params: UiUpdate,
     // Why the fields are dropped here rather than removed from the schema: UiUpdate is strict, so
     // an unlisted key would make the dispatcher reject an old client's ENTIRE payload.
-    handler: (params, { runtime }) => ({
-      ui: omitPairingLocalUiFields(
-        runtime.updateUIState(omitPairingLocalUiFields(params) as Partial<PersistedUIState>)
+    handler: (params, { runtime, clientCapabilities }) => ({
+      ui: downlevelExplanationsSidebarTab(
+        omitPairingLocalUiFields(
+          runtime.updateUIState(omitPairingLocalUiFields(params) as Partial<PersistedUIState>)
+        ),
+        clientCapabilities
       )
     })
   }),

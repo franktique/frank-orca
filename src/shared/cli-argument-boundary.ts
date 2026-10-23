@@ -22,6 +22,7 @@ export const CLI_BOOLEAN_FLAGS = new Set([
   'include-archived',
   'include-remote',
   'include-visual-layouts',
+  'input-stdin',
   'index-status',
   'interrupt',
   'json',

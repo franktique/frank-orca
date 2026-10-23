@@ -101,6 +101,7 @@ describe('runtime git diff transport budget', () => {
       '/remote/repo',
       'assets/logo.png',
       false,
+      undefined,
       undefined
     )
     expect(mocks.getDiff).not.toHaveBeenCalled()

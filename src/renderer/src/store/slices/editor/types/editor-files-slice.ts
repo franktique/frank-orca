@@ -18,6 +18,7 @@ import type {
   ConflictReviewEntry,
   ConflictReviewState,
   EditorOpenTargetOptions,
+  ExplanationDiffRef,
   OpenFile
 } from './open-file'
 import type { OpenFilePathRekey, RekeyOpenFilesResult } from './open-file-path-rekey'
@@ -116,6 +117,14 @@ export type EditorFilesSlice = {
     worktreePath: string,
     entry: GitBranchChangeEntry,
     compare: CommitCompareLike,
+    language: string,
+    options?: EditorOpenTargetOptions
+  ) => void
+  openExplanationDiff: (
+    worktreeId: string,
+    worktreePath: string,
+    entry: { path: string; oldPath?: string },
+    ref: ExplanationDiffRef,
     language: string,
     options?: EditorOpenTargetOptions
   ) => void

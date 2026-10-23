@@ -54,6 +54,7 @@ import { createApiClientExecutionSlice } from './slices/api-client-execution'
 import { createApiClientRunnerSlice } from './slices/api-client-runner'
 import { createApiClientTestRunSlice } from './slices/api-client-test-run'
 import { createQuickNotesSlice } from './slices/quick-notes'
+import { createAgentExplanationsSlice } from './slices/agent-explanations'
 import { createQuickLinksSlice } from './slices/quick-links'
 import { e2eConfig } from '@/lib/e2e-config'
 import type { createWebRuntimeSessionTerminal } from '@/runtime/web-runtime-session'
@@ -135,6 +136,7 @@ export const useAppStore = create<AppState>()(
         ...createApiClientExecutionSlice(...a),
         ...createApiClientRunnerSlice(...a),
         ...createApiClientTestRunSlice(...a),
+        ...createAgentExplanationsSlice(...a),
         ...createSqlClientSlice(...a),
         ...createSqlClientRunSlice(...a)
       }

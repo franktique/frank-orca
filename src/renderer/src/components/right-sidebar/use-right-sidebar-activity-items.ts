@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
-import { Plug, Files, GitBranch, ListChecks, Workflow } from 'lucide-react'
+import { useEffect, useMemo } from 'react'
+import { Plug, Files, GitBranch, ListChecks, MessageSquareText, Workflow } from 'lucide-react'
 import { useAppStore } from '@/store'
 import { useRepoById } from '@/store/selectors'
 import { isFolderRepo } from '../../../../shared/repo-kind'
@@ -45,6 +45,17 @@ export function useRightSidebarActivityItems({
   const isFolderWorkspace = activeWorkspaceScope?.type === 'folder'
   const isFolder = isFolderWorkspace || (activeRepo ? isFolderRepo(activeRepo) : false)
   const isSshRepo = Boolean(activeRepo?.connectionId)
+  const hasExplanation = useAppStore((s) =>
+    activeWorktreeId ? s.explanationsByWorkspace?.[activeWorktreeId]?.explanation != null : false
+  )
+  const loadExplanation = useAppStore((s) => s.loadExplanation)
+  const canHaveExplanation = Boolean(activeWorktreeId) && !isFolder
+  // Why: the tab is hidden until an explanation exists, so the sidebar itself must look for one.
+  useEffect(() => {
+    if (activeWorktreeId && canHaveExplanation) {
+      void loadExplanation(activeWorktreeId)
+    }
+  }, [activeWorktreeId, canHaveExplanation, loadExplanation])
   const pluginSystemEnabled = useAppStore((s) => s.settings?.pluginSystemEnabled === true)
   const pluginPanels = usePluginPanels()
   const visiblePluginPanels = useMemo(
@@ -98,6 +109,14 @@ export function useRightSidebarActivityItems({
         gitOnly: true
       },
       {
+        id: 'explanations',
+        icon: MessageSquareText,
+        title: translate('auto.components.right.sidebar.explanations.tab', 'Explanations'),
+        shortcut: '',
+        gitOnly: true,
+        requiresExplanation: true
+      },
+      {
         id: 'checks',
         icon: ListChecks,
         title: translate('auto.components.right.sidebar.index.83a10e3c44', 'Checks'),
@@ -130,9 +149,10 @@ export function useRightSidebarActivityItems({
       getVisibleRightSidebarActivityItems(activityItems, {
         isFolder,
         isFolderWorkspace,
-        isSshRepo
+        isSshRepo,
+        hasExplanation
       }),
-    [activityItems, isFolder, isFolderWorkspace, isSshRepo]
+    [activityItems, hasExplanation, isFolder, isFolderWorkspace, isSshRepo]
   )
 
   const activeFolderWorkspaceKey = isFolderWorkspace ? (activeWorktreeId ?? null) : null

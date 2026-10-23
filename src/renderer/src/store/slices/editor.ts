@@ -13,6 +13,7 @@ export type {
   ConflictReviewState,
   DiffSource,
   EditorViewMode,
+  ExplanationDiffRef,
   MarkdownViewMode,
   OpenConflictMetadata,
   OpenFile,
