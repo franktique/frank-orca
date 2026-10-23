@@ -9,6 +9,7 @@ import type {
   TestMapRef
 } from '../../shared/test-orchestrator/test-orchestrator-types'
 import type { TestMapStore } from './test-map-store'
+import { classifyDataChange } from './database-modes/automatic-query-runner'
 import type { PlanContext } from './test-run-plan-context'
 import { deriveStepInputs } from './test-run-plan-context'
 
@@ -77,7 +78,7 @@ export function buildSetupModel(args: {
   )
   const dataChangingSteps = context.steps.flatMap((step) => {
     const queryIds = [...(step.entry?.before ?? []), ...(step.entry?.after ?? [])]
-      .filter((query) => query.changesData)
+      .filter((query) => query.changesData || classifyDataChange(query.sql))
       .map((query) => query.id)
     return queryIds.length > 0 ? [{ stepId: step.stepId, queryIds }] : []
   })
@@ -123,7 +124,8 @@ export function applyRememberChoices(args: {
   remember: { inputs: boolean; secrets: boolean }
   databaseMode: PlanSettings['databaseMode']
 }): PlanSettings | null {
-  if (!args.remember.inputs && !args.remember.secrets) {
+  // Why: the last database mode is remembered on every Start, whatever the inputs toggle says.
+  if (!args.remember.inputs && !args.remember.secrets && !args.databaseMode) {
     return null
   }
   const next: PlanSettings = {
@@ -144,7 +146,7 @@ export function applyRememberChoices(args: {
       next.inputs[input.name] = value
     }
   }
-  if (args.remember.inputs && args.databaseMode) {
+  if (args.databaseMode) {
     next.databaseMode = args.databaseMode
   }
   return next

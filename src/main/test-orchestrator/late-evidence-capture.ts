@@ -12,6 +12,6 @@ export function lateEvidenceCapture(slot: EvidenceCaptureSlot): StepEvidenceCapt
   }
   return {
     renderer: { render: (card) => target().renderer.render(card) },
-    writeImage: (order, stepId, role, png) => target().writeImage(order, stepId, role, png)
+    writeImage: (step, role, png) => target().writeImage(step, role, png)
   }
 }

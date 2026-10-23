@@ -16,7 +16,7 @@ import type {
   TestPlanStep
 } from '../../shared/test-orchestrator/test-orchestrator-types'
 import type { ExecuteRequestInput, ExecuteRequestResult } from '../api-client/request-execution'
-import type { EvidenceImageRole } from './evidence-names'
+import type { EvidenceImageRole, EvidenceStep } from './evidence-names'
 import type { RunInput, RunVariableScope } from './run-variable-scope'
 import { askForCredentials } from './test-run-credentials'
 import {
@@ -35,12 +35,7 @@ export type EvidenceSnapshotRenderer = {
 /** Per-run screenshot capture: render a masked card, then store the PNG and get its link. */
 export type StepEvidenceCapture = {
   renderer: EvidenceSnapshotRenderer
-  writeImage: (
-    stepOrder: number,
-    stepId: string,
-    role: EvidenceImageRole,
-    png: Uint8Array
-  ) => Promise<string>
+  writeImage: (step: EvidenceStep, role: EvidenceImageRole, png: Uint8Array) => Promise<string>
 }
 
 export type StepHookContext = {
@@ -177,7 +172,7 @@ async function captureRequestCard(
       step.requests.length > 1
         ? { kind: 'request', concurrentIndex: requestIndex + 1 }
         : { kind: 'request' }
-    return await deps.capture.writeImage(step.index + 1, step.stepId, role, png)
+    return await deps.capture.writeImage(step, role, png)
   } catch {
     return null
   }

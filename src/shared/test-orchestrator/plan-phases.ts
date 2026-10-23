@@ -53,7 +53,12 @@ export function normalizePhaseFolderName(name: string): string {
     .trim()
 }
 
+/** The phase a folder name stands for, or null when the name is not a phase name. */
+export function knownPhaseFromFolderName(name: string): Phase | null {
+  return PHASE_BY_NAME.get(normalizePhaseFolderName(name)) ?? null
+}
+
 /** Unknown folders are scenarios. */
 export function derivePhaseFromFolderName(name: string): Phase {
-  return PHASE_BY_NAME.get(normalizePhaseFolderName(name)) ?? 'scenario'
+  return knownPhaseFromFolderName(name) ?? 'scenario'
 }

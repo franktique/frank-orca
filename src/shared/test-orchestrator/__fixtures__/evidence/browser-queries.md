@@ -36,7 +36,7 @@
 
    > Result may be partial (the console paginates results).
 
-   ![SC-1 before 1](images/03-sc-1-before-1.png)
+   ![SC-1 before 1](SC-1/SC-1-before-1.png)
 
    > 3 sensitive values blurred in the screenshot.
 

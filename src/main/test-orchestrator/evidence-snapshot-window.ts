@@ -12,6 +12,8 @@ import {
 const PAINT_TIMEOUT_MS = 10_000
 const RESEND_INTERVAL_MS = 250
 const MAX_CARD_HEIGHT = 8_000
+const CAPTURE_ATTEMPTS = 5
+const CAPTURE_RETRY_MS = 100
 const INITIAL_HEIGHT = 800
 // Why: no "persist:" prefix keeps the session in memory, so nothing touches disk.
 const SNAPSHOT_PARTITION = 'orca-evidence-snapshot'
@@ -127,13 +129,20 @@ export function createEvidenceSnapshotWindow(): EvidenceSnapshotWindow {
     const { width, height } = await painted.finally(() => clearInterval(resend))
     const captureHeight = Math.min(Math.max(1, height), MAX_CARD_HEIGHT)
     target.setContentSize(width, captureHeight)
-    const image = await target.webContents.capturePage({
-      x: 0,
-      y: 0,
-      width,
-      height: captureHeight
-    })
-    return image.toPNG()
+    const rect = { x: 0, y: 0, width, height: captureHeight }
+    // Why: right after a resize the offscreen compositor has no frame at the new size yet and
+    // capturePage rejects with UnknownVizError; a fresh frame arrives a few ms later.
+    for (let attempt = 1; ; attempt++) {
+      try {
+        return (await target.webContents.capturePage(rect)).toPNG()
+      } catch (error) {
+        if (attempt >= CAPTURE_ATTEMPTS || destroyed) {
+          throw error
+        }
+        target.webContents.invalidate()
+        await new Promise((resolve) => setTimeout(resolve, CAPTURE_RETRY_MS))
+      }
+    }
   }
 
   return {

@@ -68,11 +68,11 @@ describe('createRunEvidenceSession', () => {
     const h = harness({ render: async () => Buffer.from('png-bytes') })
     const run = await runOnce(h)
     const link = run.steps[0].exchanges[0].screenshot
-    expect(link).toMatch(/^images\/01-s-1-request\.png$/)
+    expect(link).toMatch(/^scenarios\/S-1\/S-1-request\.png$/)
     expect(JSON.stringify(h.cards)).not.toContain('tok-secret-123')
     expect(h.cards[0]).toMatchObject({ kind: 'request', title: 'Title S-1' })
     const folder = run.evidence?.folder ?? ''
-    expect(await readdir(join(folder, 'images'))).toHaveLength(1)
+    expect(await readdir(join(folder, 'scenarios', 'S-1'))).toHaveLength(1)
     const report = await readFile(run.evidence?.reportPath ?? '', 'utf8')
     expect(report).toContain('S-1')
     expect(report).not.toContain('tok-secret-123')

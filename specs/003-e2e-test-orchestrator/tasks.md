@@ -333,3 +333,11 @@ T068 database-query-runner.ts  |  T071 QueryEvidenceCard.tsx  |  T075 PG integra
 - Never commit or stage evidence; never show, focus, or raise a window (SC-008).
 - Every evidence string and snapshot model goes through the run's masker before it leaves main (SC-003).
 - Commit only when the user asks.
+
+---
+
+## Phase 12: Convergence
+
+- [X] T111 Build `dataChangingSteps` in `src/main/test-orchestrator/test-run-setup.ts` with the same rule the runners enforce (`query.changesData || classifyDataChange(query.sql)` from `database-modes/automatic-query-runner.ts`), so unflagged write statements can be approved at the start instead of always being skipped as not approved; add a case to the setup tests per FR-009, US3/AC3, US4/AC4 (partial)
+- [X] T112 Record the user's wait time in Manual mode: measure from raising the `manual-queries` pause to its answer in `src/main/test-orchestrator/database-modes/manual-query-runner.ts` and set `waitedMs` on each resulting `QueryEvidence` so the report shows `run manually by the user · waited …`; extend `manual-query-runner.test.ts` per edge case "Manual pause left open" and T089 (partial)
+- [X] T113 Remember the last database mode on every Start, whatever the "Remember inputs" toggle says: save `PlanSettings.databaseMode` in `src/main/test-orchestrator/test-run-setup.ts` (`applyRememberChoices`/`saveRememberChoices`) without storing inputs the user chose not to remember; add a test per FR-006 (partial)

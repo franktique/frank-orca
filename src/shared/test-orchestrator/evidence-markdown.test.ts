@@ -50,7 +50,7 @@ function step(overrides: Partial<StepResult>): StepResult {
     actualText: '201',
     before: [],
     after: [],
-    exchanges: [exchange({ screenshot: 'images/03-sc-1-request.png' })],
+    exchanges: [exchange({ screenshot: 'SC-1/SC-1-request.png' })],
     durationMs: 312,
     ...overrides
   }
@@ -115,7 +115,7 @@ describe('renderEvidenceReport', () => {
       how: 'automatic',
       result: { columns: ['count'], rows: [['0']], totalRows: 1, truncated: false },
       partial: false,
-      screenshot: 'images/03-sc-1-before-1.png',
+      screenshot: 'SC-1/SC-1-before-1.png',
       ...overrides
     })
     const report = renderEvidenceReport(
@@ -127,7 +127,7 @@ describe('renderEvidenceReport', () => {
             after: [
               query({
                 queryId: 'q-2',
-                screenshot: 'images/03-sc-1-after-1.png',
+                screenshot: 'SC-1/SC-1-after-1.png',
                 result: {
                   columns: ['id', 'note'],
                   rows: [

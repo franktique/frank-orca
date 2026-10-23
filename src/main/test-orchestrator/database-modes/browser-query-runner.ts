@@ -86,8 +86,7 @@ export function createBrowserQueryHooks(options: BrowserQueryHooksOptions): Step
     // Why: a failed write only loses the image; the query result stands.
     try {
       return await capture.writeImage(
-        step.index + 1,
-        step.stepId,
+        step,
         { kind: side, queryIndex },
         Buffer.from(shot.data, 'base64')
       )

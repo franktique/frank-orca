@@ -114,7 +114,7 @@ describe('createQueryStepHooks', () => {
       runner,
       capture: {
         renderer: { render: async () => new Uint8Array([1]) },
-        writeImage: async (_order, _id, role) => (written.push(role), 'images/x.png')
+        writeImage: async (_step, role) => (written.push(role), 'images/x.png')
       }
     })
     const result = await hooks.runBefore?.(step, context)

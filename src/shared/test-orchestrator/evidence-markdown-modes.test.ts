@@ -116,7 +116,7 @@ describe('evidence markdown by database mode and concurrency', () => {
               result,
               partial: true,
               blurredCount: 3,
-              screenshot: 'images/03-sc-1-before-1.png'
+              screenshot: 'SC-1/SC-1-before-1.png'
             })
           ],
           after: [

@@ -18,7 +18,8 @@ async function runManualSide(
   step: TestPlanStep,
   side: Side,
   queries: readonly VerificationQuery[],
-  context: StepHookContext
+  context: StepHookContext,
+  now: () => number
 ): Promise<QueryEvidence[]> {
   if (queries.length === 0) {
     return []
@@ -34,6 +35,7 @@ async function runManualSide(
       : { description: sensitive.maskText(query.description) })
   }))
 
+  const raisedAt = now()
   const answer: PauseAnswer = await context.pause({
     kind: 'manual-queries',
     stepId: step.stepId,
@@ -43,6 +45,7 @@ async function runManualSide(
   if (answer.kind !== 'manual-queries') {
     throw new Error(`Unexpected ${answer.kind} answer to a manual-queries pause.`)
   }
+  const waitedMs = now() - raisedAt
   const skipped = new Set(answer.action === 'skip' ? answer.queryIds : [])
   const pasted = answer.action === 'continue' ? (answer.pasted ?? {}) : {}
 
@@ -64,18 +67,19 @@ async function runManualSide(
     return {
       ...base,
       how: 'manual',
+      waitedMs,
       ...(text === undefined || text === '' ? {} : { pastedText: sensitive.maskText(text) })
     }
   })
 }
 
 /** Manual database mode (FR-006c): the user runs each step side's queries themselves. */
-export function createManualQueryHooks(): StepQueryHooks {
+export function createManualQueryHooks(now: () => number = Date.now): StepQueryHooks {
   return {
     // Manual answers never fail a precondition; the user sees the queries and decides.
     runBefore: async (step, context): Promise<BeforeQueriesResult> => ({
-      evidence: await runManualSide(step, 'before', step.entry?.before ?? [], context)
+      evidence: await runManualSide(step, 'before', step.entry?.before ?? [], context, now)
     }),
-    runAfter: (step, context) => runManualSide(step, 'after', step.entry?.after ?? [], context)
+    runAfter: (step, context) => runManualSide(step, 'after', step.entry?.after ?? [], context, now)
   }
 }

@@ -1,4 +1,7 @@
 // Windows-safe folder and image names for the evidence bundle (FR-021).
+import { knownPhaseFromFolderName } from '../../shared/test-orchestrator/plan-phases'
+import type { Phase } from '../../shared/test-orchestrator/test-orchestrator-types'
+
 const MAX_SLUG_LENGTH = 60
 const WINDOWS_RESERVED_NAMES = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/
 
@@ -31,17 +34,50 @@ export type EvidenceImageRole =
   | { kind: 'request'; concurrentIndex?: number }
   | { kind: 'before' | 'after'; queryIndex: number }
 
-/** `NN-<step-slug>-<request|before-K|after-K>[-<n>].png` */
-export function evidenceImageName(
-  stepOrder: number,
-  stepId: string,
-  role: EvidenceImageRole
-): string {
-  const order = String(stepOrder).padStart(stepOrder >= 100 ? 3 : 2, '0')
-  const stepSlug = slugifyForEvidence(stepId, 'step')
-  if (role.kind === 'request') {
-    const suffix = role.concurrentIndex === undefined ? '' : `-${role.concurrentIndex}`
-    return `${order}-${stepSlug}-request${suffix}.png`
+/** Filesystem-safe case sigla that keeps the original casing (`SC-1`, `S-1`). */
+export function safeCaseName(stepId: string, fallback = 'step'): string {
+  const name = stepId
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Za-z0-9._-]+/g, '-')
+    .replace(/-{2,}/g, '-')
+    .slice(0, MAX_SLUG_LENGTH)
+    .replace(/^[-.]+|[-.]+$/g, '')
+  if (name === '') {
+    return fallback
   }
-  return `${order}-${stepSlug}-${role.kind}-${role.queryIndex}.png`
+  return WINDOWS_RESERVED_NAMES.test(name.toLowerCase()) ? `${name}-case` : name
+}
+
+/** The parts of a plan step that decide where its evidence goes; a `TestPlanStep` fits. */
+export type EvidenceStep = {
+  stepId: string
+  phase: Phase
+  requests: readonly { scope: { folders: readonly { name: string }[] } }[]
+}
+
+const DEFAULT_PHASE_FOLDER: Record<Phase, string> = {
+  preflight: 'preflight',
+  setup: 'setup',
+  scenario: 'scenarios',
+  cleanup: 'cleanup'
+}
+
+/** The collection folder that holds the step's phase (`setup`, `scenarios`, `cleanUp`), as named there. */
+export function evidencePhaseFolder(step: EvidenceStep): string {
+  const folders = step.requests[0]?.scope.folders ?? []
+  const phaseFolder = folders.findLast(
+    (folder) => knownPhaseFromFolderName(folder.name) === step.phase
+  )
+  return safeCaseName(phaseFolder?.name ?? '', DEFAULT_PHASE_FOLDER[step.phase])
+}
+
+/** `<phase>/<case>/<case>-<request|before-K|after-K>[-<n>].png`, relative to the run folder. */
+export function evidenceImageName(step: EvidenceStep, role: EvidenceImageRole): string {
+  const caseName = safeCaseName(step.stepId)
+  const file =
+    role.kind === 'request'
+      ? `${caseName}-request${role.concurrentIndex === undefined ? '' : `-${role.concurrentIndex}`}.png`
+      : `${caseName}-${role.kind}-${role.queryIndex}.png`
+  return `${evidencePhaseFolder(step)}/${caseName}/${file}`
 }

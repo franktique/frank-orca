@@ -135,7 +135,7 @@ All three use feature 001's `variants()` spellings (plain, percent-encoded, `+`-
 **Decision**: `src/main/test-orchestrator/evidence-writer.ts` writes to `<worktree root>/evidencias/<plan slug>/<YYYY-MM-DD_HH-mm-ss>/`:
 
 - `report.md`: the full format is in [contracts/evidence-bundle-format.md](./contracts/evidence-bundle-format.md).
-- `images/NN-<step-slug>-request.png`, `images/NN-<step-slug>-before-K.png`, and `images/NN-<step-slug>-after-K.png`.
+- `<phase>/<case>/<case>-request.png`, `<phase>/<case>/<case>-before-K.png`, and `<phase>/<case>/<case>-after-K.png`.
 
 The plan slug is ASCII, lowercase, `[a-z0-9-]`, at most 60 characters, so it is valid on Windows, macOS, and Linux. Paths are built with `path.join`, and links in the Markdown always use `/` (relative). If the folder already exists, a `-2`/`-3` suffix is added, so earlier runs are never overwritten. Images are written as each step finishes. `report.md` is rewritten (`writeFileDurable`) after every step with "Run in progress" as its outcome, and written a final time at the end. A crash therefore still leaves readable evidence (FR-027).
 

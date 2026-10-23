@@ -38,7 +38,7 @@ export function createRunEvidenceSession(
         }),
       capture: {
         renderer: { render: (card) => snapshotWindow.render(card) },
-        writeImage: (order, stepId, role, png) => writer.writeImage(order, stepId, role, png)
+        writeImage: (step, role, png) => writer.writeImage(step, role, png)
       },
       close: () => snapshotWindow.destroy()
     }

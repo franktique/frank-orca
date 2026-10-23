@@ -59,7 +59,7 @@ function setup(
         inputs: [],
         requestStop: () => {},
         pause,
-        hooks: createManualQueryHooks(),
+        hooks: createManualQueryHooks(() => t),
         pausedWithin: (s, e) => pauses.pausedWithin(s, e),
         now: () => t
       },
@@ -112,5 +112,11 @@ describe('createManualQueryHooks', () => {
     const { run } = setup(() => ({ kind: 'manual-queries', action: 'continue' }), 500)
     const result = await run()
     expect(result.durationMs).toBe(0)
+  })
+
+  it('records how long the user took on manual evidence only', async () => {
+    const { run } = setup(() => ({ kind: 'manual-queries', action: 'continue' }), 500)
+    const result = await run()
+    expect([...result.before, ...result.after].map((q) => q.waitedMs)).toEqual([500, 500, 500])
   })
 })

@@ -44,6 +44,7 @@ const { instances, ipcHandlers, ipcMainMock, BrowserWindowMock, replyFrom } = vi
           )
         )
       }),
+      invalidate: vi.fn(),
       capturePage: vi.fn(async () => ({ toPNG: () => Buffer.from('png') }))
     }
     constructor(options: Electron.BrowserWindowConstructorOptions) {
@@ -115,6 +116,25 @@ describe('createEvidenceSnapshotWindow', () => {
       width: 900,
       height: 321
     })
+    snapshot.destroy()
+  })
+
+  it('retries a capture that fails right after the resize', async () => {
+    const snapshot = createEvidenceSnapshotWindow()
+    await snapshot.render(card)
+    const { webContents } = instances[0]
+    webContents.capturePage.mockRejectedValueOnce(new Error('UnknownVizError'))
+    expect((await snapshot.render(card)).toString()).toBe('png')
+    expect(webContents.invalidate).toHaveBeenCalledTimes(1)
+    snapshot.destroy()
+  })
+
+  it('gives up after repeated capture failures', async () => {
+    const snapshot = createEvidenceSnapshotWindow()
+    await snapshot.render(card)
+    instances[0].webContents.capturePage.mockRejectedValue(new Error('UnknownVizError'))
+    await expect(snapshot.render(card)).rejects.toThrow('UnknownVizError')
+    expect(instances[0].webContents.capturePage).toHaveBeenCalledTimes(6)
     snapshot.destroy()
   })
 

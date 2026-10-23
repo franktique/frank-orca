@@ -90,7 +90,7 @@ export function createQueryStepHooks(options: QueryStepHooksOptions): QueryStepH
         result: evidence.result,
         ...(evidence.error === undefined ? {} : { error: evidence.error })
       })
-      return await capture.writeImage(step.index + 1, step.stepId, { kind: side, queryIndex }, png)
+      return await capture.writeImage(step, { kind: side, queryIndex }, png)
     } catch {
       return null
     }

@@ -52,8 +52,7 @@ export function formatLocalTimestamp(epochMs: number, utcOffsetMinutes: number):
   return `${date} ${time} (UTC${sign}${pad2(Math.floor(absolute / 60))}:${pad2(absolute % 60)})`
 }
 
-/** Screenshot paths are stored relative to the evidence folder; links always use `/`. */
+/** Screenshot paths are stored relative to the evidence folder (`SC-1/…` or legacy `images/…`); links always use `/`. */
 export function toRelativeImageLink(path: string): string {
-  const normalized = path.replace(/\\/g, '/').replace(/^\.\//, '')
-  return normalized.startsWith('images/') ? normalized : `images/${normalized}`
+  return path.replace(/\\/g, '/').replace(/^\.\//, '')
 }

@@ -1,6 +1,6 @@
 // Writes the evidence bundle: specs/003-e2e-test-orchestrator/contracts/evidence-bundle-format.md
 import { mkdir, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { checkIgnoredPaths } from '../git/check-ignored-paths'
 import { writeFileDurable } from '../durable-file-write'
 import { splitWorktreeIdForFilesystem } from '../../shared/worktree/id'
@@ -8,7 +8,7 @@ import { renderEvidenceReport } from '../../shared/test-orchestrator/evidence-ma
 import type { EvidenceReportContext } from '../../shared/test-orchestrator/evidence-markdown'
 import type { TestRun } from '../../shared/test-orchestrator/test-orchestrator-types'
 import { evidenceImageName, formatRunFolderTimestamp, slugifyForEvidence } from './evidence-names'
-import type { EvidenceImageRole } from './evidence-names'
+import type { EvidenceImageRole, EvidenceStep } from './evidence-names'
 
 const EVIDENCE_DIR = 'evidencias'
 const MAX_FOLDER_ATTEMPTS = 1000
@@ -23,13 +23,8 @@ export type EvidenceWriterOptions = {
 export type EvidenceWriter = {
   folder: string
   reportPath: string
-  /** Writes the PNG and returns its `images/…` link for `report.md`. */
-  writeImage: (
-    stepOrder: number,
-    stepId: string,
-    role: EvidenceImageRole,
-    png: Uint8Array
-  ) => Promise<string>
+  /** Writes the PNG into the case's folder and returns its relative link for `report.md`. */
+  writeImage: (step: EvidenceStep, role: EvidenceImageRole, png: Uint8Array) => Promise<string>
   /** Rewrites `report.md`; returns the evidence location to store on the run. */
   writeReport: (
     run: TestRun,
@@ -73,7 +68,6 @@ export async function createEvidenceWriter(
   const now = options.now ?? new Date()
   const planDir = join(root, EVIDENCE_DIR, slugifyForEvidence(options.planName, 'plan'))
   const folder = await createRunFolder(planDir, formatRunFolderTimestamp(now))
-  const imagesDir = join(folder, 'images')
   const reportPath = join(folder, 'report.md')
   let ignoredByGit = false
   let gitChecked = options.isFolderWorkspace
@@ -103,11 +97,12 @@ export async function createEvidenceWriter(
   return {
     folder,
     reportPath,
-    async writeImage(stepOrder, stepId, role, png) {
-      const name = evidenceImageName(stepOrder, stepId, role)
-      await mkdir(imagesDir, { recursive: true })
-      await writeFile(join(imagesDir, name), png)
-      return `images/${name}`
+    async writeImage(step, role, png) {
+      const link = evidenceImageName(step, role)
+      const target = join(folder, ...link.split('/'))
+      await mkdir(dirname(target), { recursive: true })
+      await writeFile(target, png)
+      return link
     },
     writeReport(run, context) {
       // Why: serialize so overlapping step updates cannot race on the same temp file.

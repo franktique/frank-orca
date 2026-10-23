@@ -34,7 +34,7 @@
 
    run automatically
 
-   ![SC-1 before 1](images/03-sc-1-before-1.png)
+   ![SC-1 before 1](SC-1/SC-1-before-1.png)
 
    | count |
    | --- |
@@ -53,7 +53,7 @@
 {"users":["u-1"]}
 ```
 
-![SC-1 request and response](images/03-sc-1-request.png)
+![SC-1 request and response](SC-1/SC-1-request.png)
 
 **Response** — `201 Created` · 312 ms · 1.2 KB
 
@@ -71,7 +71,7 @@
 
    run automatically
 
-   ![SC-1 after 1](images/03-sc-1-after-1.png)
+   ![SC-1 after 1](SC-1/SC-1-after-1.png)
 
    | id | note |
    | --- | --- |

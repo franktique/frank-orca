@@ -10,15 +10,26 @@ This is what a run writes into the repository. A reviewer reads it in any Markdo
     └── <plan-slug>/                       # from the collection name: ascii, [a-z0-9-], ≤ 60 chars
         └── 2026-10-19_14-32-05/           # local start time; "-2", "-3" … if it already exists
             ├── report.md
-            └── images/
-                ├── 03-sc-1-before-1.png
-                ├── 03-sc-1-request.png
-                ├── 03-sc-1-after-1.png
-                └── 03-sc-1-after-2.png
+            ├── setup/                     # one folder per phase, named as in the collection
+            │   └── S1/
+            │       └── S1-request.png
+            ├── scenarios/
+            │   └── SC-1/                  # one folder per test case, named by its stepId
+            │       ├── SC-1-before-1.png
+            │       ├── SC-1-request.png
+            │       ├── SC-1-after-1.png
+            │       └── SC-1-after-2.png
+            └── cleanUp/
+                └── L1/
+                    └── L1-request.png
 ```
 
-- Image names follow `NN-<step-slug>-<request|before-K|after-K>[-<n>].png`. `NN` is the step's order in the run, padded to two or three digits. `-<n>` is the request's index within a concurrent group.
-- All links in `report.md` are relative (`images/03-sc-1-request.png`), so the folder can be moved or committed as is (FR-026).
+- Phase folders take the name of the collection folder that marks the step's phase (`setup`, `scenarios`, `cleanUp`, `01 - Setup` → `01-Setup`). When no folder names the phase (no folder, or the test map moved the step to another phase), the phase's default name is used: `preflight`, `setup`, `scenarios`, `cleanup`.
+
+- Case folders are named `<case>`, the test-map `stepId` with its casing kept (`SC-1`, `S-1`); a case's request and query screenshots share one folder. Characters outside `[A-Za-z0-9._-]` become `-`, the name is capped at 60 chars, and Windows device names get a `-case` suffix.
+- Image names follow `<case>-<request|before-K|after-K>[-<n>].png`. `-<n>` is the request's index within a concurrent group.
+- Runs written before this layout keep a flat `images/NN-<step-slug>-….png` folder; their `report.md` links still resolve.
+- All links in `report.md` are relative (`scenarios/SC-1/SC-1-request.png`), so the folder can be moved or committed as is (FR-026).
 - The run never stages or commits anything (FR-027).
 
 ## `report.md` structure
@@ -76,7 +87,7 @@ This is what a run writes into the repository. A reviewer reads it in any Markdo
    ```
 ````
 
-![SC-1 before 1](images/03-sc-1-before-1.png)
+![SC-1 before 1](SC-1/SC-1-before-1.png)
 
 | count |
 | ----- |
@@ -95,7 +106,7 @@ This is what a run writes into the repository. A reviewer reads it in any Markdo
 { "users": ["u-1", "u-2", "u-3"] }
 ```
 
-![SC-1 request and response](images/03-sc-1-request.png)
+![SC-1 request and response](SC-1/SC-1-request.png)
 
 **Response** — `201 Created` · 312 ms · 1.2 KB
 

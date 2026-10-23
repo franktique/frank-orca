@@ -40,7 +40,7 @@
 {"users":["u-1"]}
 ```
 
-![S-3 request and response](images/03-sc-1-request.png)
+![S-3 request and response](SC-1/SC-1-request.png)
 
 **Response** — `201 Created` · 312 ms · 1.2 KB
 
